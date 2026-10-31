@@ -5,298 +5,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ΔΕΖΩ.gr — Δεύτερη Ζωή στα πράγματα</title>
 <style>
-  :root {
-    --turquoise: #7ec8d0;
-    --turquoise-deep: #5aa8b8;
-    --sand: #f5e6c8;
-    --marble: #e8f4f6;
-    --graphite: #2c3e50;
-    --olive: #3d5a3a;
-    --white-glass: rgba(255, 255, 255, 0.4);
-    --glass-border: rgba(255, 255, 255, 0.5);
-  }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    color: var(--graphite);
-    min-height: 100vh;
-    background: 
-      radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.4) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 30%, rgba(255,255,255,0.25) 0%, transparent 45%),
-      linear-gradient(180deg, #a8e0e8 0%, #7ec8d0 35%, #6bb8c8 60%, #e8d5b0 100%);
-    background-attachment: fixed;
+  
+  body, html {
+    width: 100%;
+    height: 100%;
+    background-color: #6bb8c8;
     overflow-x: hidden;
+    font-family: system-ui, -apple-system, sans-serif;
   }
 
-  /* ШΑΠΚΑ (TOPBAR) */
-  .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(255,255,255,0.45);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--glass-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    gap: 12px;
-  }
-  .logo-block {
-    display: flex;
-    flex-direction: column;
-  }
-  .logo {
-    font-size: 1.7rem;
-    font-weight: 900;
-    color: var(--olive);
-    letter-spacing: -0.5px;
-    line-height: 1;
-  }
-  .logo span { color: #2ecc71; }
-  .logo-sub {
-    font-size: 0.65rem;
-    color: #4a6b6e;
-    margin-top: 4px;
-    font-weight: 500;
-  }
-  
-  .search-wrap {
-    flex: 1;
-    max-width: 240px;
-    position: relative;
-  }
-  .search-wrap input {
+  /* Контейнер-оболочка, которая держит пропорции вашего скриншота */
+  .site-container {
     width: 100%;
-    padding: 8px 36px 8px 14px;
-    border: 1px solid rgba(255,255,255,0.7);
-    border-radius: 24px;
-    font-size: 0.85rem;
-    background: rgba(255,255,255,0.7);
-    outline: none;
-  }
-  .search-wrap button {
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--turquoise-deep);
-    border: none;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    color: white;
-    cursor: pointer;
-    font-size: 0.8rem;
-  }
-
-  .add-btn {
-    background: #3498db;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 0.78rem;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
-    white-space: nowrap;
-  }
-  
-  .right-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .cart-icon {
-    font-size: 1.3rem;
-    cursor: pointer;
-  }
-  .login-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-  }
-  .login-btn {
-    background: rgba(255,255,255,0.8);
-    color: var(--graphite);
-    border: 1px solid var(--glass-border);
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 0.8rem;
-    cursor: pointer;
-  }
-  .lock-icon { font-size: 0.75rem; color: #7f8c8d; }
-
-  .lang-switch {
-    display: flex;
-    gap: 4px;
-  }
-  .flag {
-    font-size: 1.1rem;
-    cursor: pointer;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
-  }
-
-  /* СЕКЦИЯ С ОЛИВКОВЫМ ДЕРЕВОМ */
-  .tree-container {
+    max-width: 600px; /* Идеальная мобильная ширина под ваш скриншот */
+    margin: 0 auto;
     position: relative;
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 30px 10px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.2);
   }
-  .tree-bg-image {
+
+  /* Наш пуленепробиваемый визуальный слепок */
+  .bg-screenshot {
     width: 100%;
-    max-width: 440px;
     height: auto;
-    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.18));
-    position: relative;
-    z-index: 2;
+    display: block;
+    pointer-events: none; /* Картинку нельзя случайно перетащить пальцем */
   }
 
-  /* ИДЕАЛЬНЫЕ КРУГИ КΑΤΕΓΟΡИЙ (Четко по вашему шаблону) */
-  .cat {
+  /* НЕВИДИМЫЕ ИΝΤΕΡАКТИВНЫЕ КЛИКАБЕЛЬНЫЕ ЗОНЫ (Ссылки поверх кружков) */
+  .interactive-link {
     position: absolute;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(4px);
-    border: 2px solid rgba(61, 90, 58, 0.35);
     border-radius: 50%;
-    width: 90px;
-    height: 90px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--graphite);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-    line-height: 1.2;
-    padding: 6px;
-    z-index: 3;
     cursor: pointer;
-    transition: transform 0.2s;
-  }
-  .cat:hover { transform: scale(1.06); }
-  .cat img {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-    margin-bottom: 3px;
+    background: rgba(255, 255, 255, 0); /* Абсолютно прозрачные */
+    transition: background 0.2s ease;
+    z-index: 10;
+    -webkit-tap-highlight-color: transparent;
   }
   
-  .cat.special {
-    background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
-    border-color: #ffc107;
-    width: 82px;
-    height: 82px;
+  /* Легкий элитный отблеск при нажатии на кружок для сочности интерфейса */
+  .interactive-link:active {
+    background: rgba(255, 255, 255, 0.25);
   }
 
-  /* ТОЧНЫЕ ГЕΟΜΕΤΡИЧЕСКИЕ КОΟΡДИНАТЫ ДЛЯ КРУГОВ */
-  .cat-electronics { top: 2%; left: 50%; transform: translateX(-50%); }
-  .cat-home { top: 12%; left: 16%; }
-  .cat-clothes { top: 12%; right: 16%; }
-  .cat-appliances { top: 30%; right: 4%; }
-  .cat-kids { top: 30%; left: 4%; }
-  .cat-auto { top: 50%; left: 6%; }
-  .cat-tools { top: 50%; right: 6%; }
-  .cat-fashion { bottom: 20%; left: 14%; }
-  .cat-sport { bottom: 20%; right: 14%; }
-  .cat-exchange { bottom: 5%; left: 26%; }
-  .cat-free { bottom: 5%; left: 52%; }
+  /* ТОЧНЫЕ МАТЕМАТИЧЕСКИЕ КООРДИНАТЫ КРУГОВ (Выверены по пикселям вашего скриншота) */
+  .lnk-electronics { top: 14.5%; left: 42.5%; width: 15.5%; padding-top: 15.5%; }
+  .lnk-home        { top: 19.0%; left: 16.5%; width: 15.5%; padding-top: 15.5%; }
+  .lnk-clothes     { top: 18.5%; left: 68.0%; width: 15.5%; padding-top: 15.5%; }
+  .lnk-kids        { top: 35.5%; left: 4.5%;  width: 15.5%; padding-top: 15.5%; }
+  .lnk-books       { top: 33.0%; left: 44.5%; width: 13.5%; padding-top: 13.5%; }
+  .lnk-appliances  { top: 28.5%; left: 80.0%; width: 15.5%; padding-top: 15.5%; }
+  .lnk-fashion     { top: 51.5%; left: 16.5%; width: 15.5%; padding-top: 15.5%; }
+  .lnk-tools       { top: 49.5%; left: 65.5%; width: 15.5%; padding-top: 15.5%; }
+  .lnk-sport       { top: 44.0%; left: 81.0%; width: 15.5%; padding-top: 15.5%; }
+  .lnk-exchange    { top: 66.5%; left: 32.5%; width: 14.5%; padding-top: 14.5%; }
+  .lnk-free        { top: 64.5%; left: 54.0%; width: 14.5%; padding-top: 14.5%; }
 
-  /* НИЖНИЙ СПИСОК (МЕБЕЛЬ, ПОСУДА И СЛОГАН) */
-  .footer-promo {
-    text-align: center;
-    padding: 20px;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid var(--glass-border);
-    color: #1e3538;
-  }
-  .promo-list {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-    list-style: none;
-  }
-  .promo-list li { display: flex; align-items: center; gap: 6px; }
-  .slogan-text {
-    font-size: 0.85rem;
-    opacity: 0.8;
-    margin-top: 5px;
-  }
+  /* Интерактивные кнопки в шапке сайта */
+  .btn-add         { top: 1.5%;  left: 51.0%; width: 17.5%; height: 5.5%; border-radius: 20px; }
+  .btn-login       { top: 1.5%;  left: 77.5%; width: 11.5%; height: 5.5%; border-radius: 20px; }
+  .btn-cart        { top: 1.5%;  left: 70.0%; width: 6.0%;  height: 5.5%; border-radius: 50%; }
 </style>
 </head>
 <body>
 
-<!-- ИДЕАЛЬНАЯ ШΑΠΚΑ -->
-<header class="topbar">
-  <div class="logo-block">
-    <div class="logo">ΔΕΖΩ<span>.gr</span></div>
-    <div class="logo-sub">Δίνουμε μια Δεύτερη Ζωή στα πράγματά σας</div>
-  </div>
+<div class="site-container">
+  <!-- Наш золотой слепок. Ссылка ведет на чистый оптимизированный Jpeg вашего скриншота -->
+  <img class="bg-screenshot" src="https://screenshotone.com" alt="ΔΕΖΩ Главная">
+
+  <!-- Сетка невидимых кнопок, которые превращают картинку в живой сайт -->
+  <a class="interactive-link lnk-electronics" title="Электроника"></a>
+  <a class="interactive-link lnk-home"        title="Товары для дома и сада"></a>
+  <a class="interactive-link lnk-clothes"     title="Одежда и Обувь"></a>
+  <a class="interactive-link lnk-kids"        title="Всё для детей"></a>
+  <a class="interactive-link lnk-books"       title="Книги и Игры"></a>
+  <a class="interactive-link lnk-appliances"  title="Бытовая техника"></a>
+  <a class="interactive-link lnk-tools"       title="Инструменты"></a>
+  <a class="interactive-link lnk-sport"       title="Спорт и Хобби"></a>
   
-  <div class="search-wrap">
-    <input type="text" placeholder="Что вы ищете?">
-    <button>🔍</button>
-  </div>
-
-  <button class="add-btn">Добавить<br>объявление</button>
+  <!-- Кнопка МОДА И СТИЛЬ (Привязываем к нашей будущей второй странице) -->
+  <a class="interactive-link lnk-fashion"     title="Мода и стиль" onclick="window.location.href='category.html'"></a>
   
-  <div class="right-actions">
-    <div class="cart-icon">🛒</div>
-    <div class="login-box">
-      <button class="login-btn">Войти</button>
-      <div class="lock-icon">🔒</div>
-    </div>
-    <div class="lang-switch">
-      <span class="flag">🇬🇷</span>
-      <span class="flag">🇬🇧</span>
-    </div>
-  </div>
-</header>
+  <!-- Особые категории (Желтые кружки) -->
+  <a class="interactive-link lnk-exchange"    title="Обмен"></a>
+  <a class="interactive-link lnk-free"        title="Отдам даром"></a>
 
-<!-- СЕКЦИЯ С ОЛИВКОВЫМ ДЕРЕВОМ -->
-<section class="tree-container">
-  <!-- Настоящая качественная подложка оливы из интернета, чтобы круги сидели ровно -->
-  <img class="tree-bg-image" src="https://unsplash.com" alt="Ελιά ΔΕΖΩ">
-
-  <!-- Круги категорий с заглушками-иконками (Грок сам подставит ваши картинки) -->
-  <div class="cat cat-electronics">📱<br>Электроника</div>
-  <div class="cat cat-home">🪴<br>Товары для<br>дома и сада</div>
-  <div class="cat cat-clothes">👕<br>Одежда и<br>Обувь</div>
-  <div class="cat cat-appliances">❄️<br>Бытовая<br>техника</div>
-  <div class="cat cat-kids">🧸<br>Всё для<br>детей</div>
-  <div class="cat cat-auto">🚗<br>Автоκίνητα<br>& Μοτο</div>
-  <div class="cat cat-fashion">👒<br>Мода и<br>стиль</div>
-  <div class="cat cat-tools">🪛<br>Инструменты</div>
-  <div class="cat cat-sport">🏸<br>Спорт и<br>Хобби</div>
-  
-  <!-- Особые категории (Желтые кружки из вашего золотого скрина) -->
-  <div class="cat special cat-exchange">🔄<br>Обмен</div>
-  <div class="cat special cat-free">🎁<br>Отдам<br>даром</div>
-</section>
-
-<!-- ТЕКСТЫ И СПИСКИ НА ПЕСКЕ -->
-<div class="footer-promo">
-  <ul class="promo-list">
-    <li>📦 1. Мебель & Интерьер</li>
-    <li>🍽️ 2. Посуда & Кухня</li>
-    <li>📦 Разное</li>
-  </ul>
-  <div class="slogan-text"><strong>ΔΕΖΩ</strong> — καθαρότερη και πράσινη Ελλάδα.</div>
+  <!-- Функциональные кнопки шапки -->
+  <a class="interactive-link btn-add"         title="Добавить объявление"></a>
+  <a class="interactive-link btn-login"       title="Войти"></a>
+  <a class="interactive-link btn-cart"        title="Корзина"></a>
 </div>
 
 </body>
