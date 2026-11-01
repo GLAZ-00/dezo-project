@@ -343,7 +343,8 @@ async function postAd() {
 
 // Init
 updateUserMenu();
-loadCategories().then(() => showHome());
+// loadCategories().then(() => showHome()); // Временно отключили звонок на сервер
+loadCategories(); showHome(); // Включили наш внутренний новый список категорий
 </script>
 </body>
 </html>
