@@ -321,14 +321,21 @@ async function postAd() {
     const data = await res.json();
     photoUrl = data.url;
   }
+  
+  // Достаем выбранную подкатегорию (например, "Smartphones & Gadgets" или "Άλλο")
+  const subCatSelect = document.getElementById('adSubCat');
+  const subCategoryValue = subCatSelect ? subCatSelect.value : 'Другое';
+
   await api('/api/ads', { method: 'POST', body: JSON.stringify({
     title: document.getElementById('adTitle').value,
     category: document.getElementById('adCat').value,
+    subcategory: subCategoryValue, // Передаем подкатегорию серверу
     price: document.getElementById('adPrice').value,
     city: document.getElementById('adCity').value,
     description: document.getElementById('adDesc').value,
     photos: photoUrl ? [photoUrl] : []
   })});
+  
   closeModal('postModal');
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
   showHome();
