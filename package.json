@@ -1,0 +1,18 @@
+{
+  "name": "dezo",
+  "version": "1.0.0",
+  "description": "ΔΕΖΟ - Μια Δεύτερη Ζωή για τα πράγματά σας (OLX-like classifieds demo)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "multer": "^1.4.5-lts.1",
+    "cors": "^2.8.5",
+    "sharp": "^0.33.5",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^10.0.0"
+  }
+}
