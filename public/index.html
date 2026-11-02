@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ΔΕΖΟ - Μια Δεύτερη Ζωή για τα πράγματά σας</title>
+<title>ΔΕΖΩ - Μια Δεύτερη Ζωή για τα πράγματά σας</title>
 <style>
 :root { --primary: #00a046; --vip: #ff6b00; --bg: #f5f5f5; --card: #fff; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -43,7 +43,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 </head>
 <body>
 <header>
-  <div class="logo" onclick="showHome()">ΔΕΖΟ<span id="tagline">Μια Δεύτερη Ζωή για τα πράγματά σας</span></div>
+  <div class="logo" onclick="showHome()">ΔΕΖΩ<span id="tagline">Μια Δεύτερη Ζωή για τα πράγματά σας</span></div>
   <div class="search">
     <input id="searchInput" placeholder="Αναζήτηση..." onkeypress="if(event.key==='Enter') searchAds()">
     <button onclick="searchAds()">🔍</button>
@@ -54,7 +54,21 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <button id="addBtn" class="hidden" onclick="showPostAd()" style="margin-left:12px; background:var(--primary); color:#fff; border:none; padding:8px 16px; border-radius:20px; cursor:pointer;">+ Προσθήκη</button>
   </div>
 </header>
-<nav id="categories"></nav>
+
+<!-- Фиксированная чистая шапка категорий, независимая от капризов старого сервера -->
+<nav id="categories">
+  <div class="cat-btn active" onclick="loadAds()">Όλα</div>
+  <div class="cat-btn" data-id="kids" onclick="loadAds('kids')">Παιδικός κόσμος</div>
+  <div class="cat-btn" data-id="furniture" onclick="loadAds('furniture')">Έπιπλα & Διακόσμηση</div>
+  <div class="cat-btn" data-id="clothes" onclick="loadAds('clothes')">Ρούχα & Παπούτσια</div>
+  <div class="cat-btn" data-id="fashion" onclick="loadAds('fashion')">Μόδα & Αξεσουάρ</div>
+  <div class="cat-btn" data-id="electronics" onclick="loadAds('electronics')">Ηλεκτρονικά</div>
+  <div class="cat-btn" data-id="tools" onclick="loadAds('tools')">Εργαλεία</div>
+  <div class="cat-btn" data-id="home" onclick="loadAds('home')">Σπίτι & Κήπος</div>
+  <div class="cat-btn" data-id="free" onclick="loadAds('free')">Ανταλλαγή / Χάρισμα</div>
+  <div class="cat-btn" data-id="other" onclick="loadAds('other')">Διάφορα</div>
+</nav>
+
 <div class="container" id="mainContent"></div>
 
 <!-- Modals -->
@@ -113,7 +127,7 @@ const t = {
     new: 'Νέο',
     price: 'Τιμή',
     phone: 'Τηλέφωνο',
-    reveal: 'Πατήστε για να δείτε',
+    reveal: 'Πατήστε для να δείτε',
     message: 'Μήνυμα',
     send: 'Αποστολή',
     promote: 'Προώθηση (VIP)',
@@ -172,13 +186,44 @@ async function api(path, opts = {}) {
   return res.json();
 }
 
-async function loadCategories() {
-  categories = await api('/api/categories');
-  const nav = document.getElementById('categories');
-  nav.innerHTML = `<div class="cat-btn active" onclick="loadAds()">${lang==='el'?'Όλα':'All'}</div>` +
-    categories.map(c => `<div class="cat-btn" data-id="${c.id}" onclick="loadAds('${c.id}')">${lang==='el'?c.name_el:c.name_en}</div>`).join('');
-  const sel = document.getElementById('adCat');
-  sel.innerHTML = categories.map(c => `<option value="${c.id}">${lang==='el'?c.name_el:c.name_en}</option>`).join('');
+// Наша финальная структура категорий ΔΕΖΩ
+const dezoCategories = [
+  { id: "kids", el: "Παιδικός κόσμος", en: "Children's world", subs: { el: ["Δетские вещи и одежда", "Κολάσκες και καθίσματα", "Παιχνίδια", "Άλλο"], en: ["Children's clothes", "Strollers & Car seats", "Toys", "Other"] } },
+  { id: "furniture", el: "Έπιπλα & Διακόσμηση", en: "Furniture & Decor", subs: { el: ["Έπιπλα κουζίνας", "Καναπέδες & Πολυθρόνες", "Ντουλάπες & Τραπέζια", "Άλλο"], en: ["Kitchen furniture", "Sofas & Armchairs", "Wardrobes & Tables", "Other"] } },
+  { id: "clothes", el: "Ρούχα & Παπούτσια", en: "Clothes & Shoes", subs: { el: ["Ανδρικά", "Γυναικεία", "Άλλο"], en: ["Men's wardrobe", "Women's wardrobe", "Other"] } },
+  { id: "fashion", el: "Μόδα & Αξεσουάρ", en: "Fashion & Accessories", subs: { el: ["Τσάντες & Πορτοφόλια", "Κοσμήματα & Μπιζού", "Καπέλα", "Άλλο"], en: ["Bags & Wallets", "Jewelry", "Hats", "Other"] } },
+  { id: "electronics", el: "Ηλεκτρονικά", en: "Electronics", subs: { el: ["Smartphones & Gadgets", "Μεγάλες οικιακές συσκευές", "Μικροσυσκευές", "Τηλεοράσεις & Ήχος", "Άλλο"], en: ["Smartphones & Gadgets", "Large home appliances", "Small appliances", "TV & Audio", "Other"] } },
+  { id: "tools", el: "Εργαλεία", en: "Tools", subs: { el: ["Ηλεκτρικά εργαλεία", "Εργαλεία χειρός", "Άλλο"], en: ["Power tools", "Hand tools", "Other"] } },
+  { id: "home", el: "Σπίτι & Κήπος", en: "Home & Garden", subs: { el: ["Είδη κουζίνας & Πιάτα", "Εργαλεία κήπου", "Λευκά είδη & Υφάσματα", "Άλλο"], en: ["Kitchenware", "Garden tools", "Home textiles", "Other"] } },
+  { id: "free", el: "Ανταλλαγή / Χάρισμα", en: "Exchange / Free", subs: { el: ["Άλλο"], en: ["Other"] } },
+  { id: "other", el: "Διάφορα", en: "Other", subs: { el: ["Άλλο"], en: ["Other"] } }
+];
+
+function loadCategories() {
+  const mainSel = document.getElementById('adCat');
+  if (mainSel) {
+    mainSel.innerHTML = dezoCategories.map(c => `<option value="${c.id}">${lang==='el' ? c.el : c.en}</option>`).join('');
+    let subSel = document.getElementById('adSubCat');
+    if (!subSel) {
+      const subGroup = document.createElement('div');
+      subGroup.className = 'form-group';
+      subGroup.innerHTML = `<select id="adSubCat"></select>`;
+      mainSel.parentNode.insertAdjacentElement('afterend', subGroup);
+      subSel = document.getElementById('adSubCat');
+    }
+    mainSel.onchange = () => updateSubDropdown(mainSel.value);
+    updateSubDropdown(mainSel.value);
+  }
+}
+
+function updateSubDropdown(catId) {
+  const subSel = document.getElementById('adSubCat');
+  if (!subSel) return;
+  const targetCat = dezoCategories.find(c => c.id === catId);
+  if (targetCat) {
+    const list = lang === 'el' ? targetCat.subs.el : targetCat.subs.en;
+    subSel.innerHTML = list.map(sub => `<option value="${sub}">${sub}</option>`).join('');
+  }
 }
 
 async function loadAds(category) {
@@ -200,7 +245,7 @@ function renderAds(list) {
     <div class="ad-card" onclick="showAd('${ad.id}')">
       ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
       ${Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;">${tr('new')}</div>` : ''}
-      <img src="${ad.photos[0] || 'https://via.placeholder.com/300x180?text=No+Photo'}" alt="">
+      <img src="${ad.photos || 'https://placeholder.com'}" alt="">
       <div class="info">
         <div style="font-weight:600;margin-bottom:4px;">${ad.title}</div>
         <div class="price">${ad.price} €</div>
@@ -210,39 +255,21 @@ function renderAds(list) {
 }
 
 function showHome() { loadAds(); }
-
 function searchAds() { loadAds(); }
 
-async function showAd(id) {
-  const ad = await api('/api/ads/' + id);
-  const modal = document.getElementById('adModal');
-  const detail = document.getElementById('adDetail');
-  const isOwner = currentUser && currentUser.id === ad.userId;
-  detail.innerHTML = `
-    <h2>${ad.title}</h2>
-    <img src="${ad.photos[0] || 'https://via.placeholder.com/400x250'}" style="width:100%;border-radius:8px;margin:12px 0;">
-    <p style="font-size:24px;font-weight:700;color:var(--primary);">${ad.price} €</p>
-    <p style="margin:12px 0;">${ad.description}</p>
-    <p><strong>${tr('phone')}:</strong> <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phone} (${tr('reveal')})</span></p>
-    <p style="font-size:13px;color:#666;">${ad.city} · ${ad.views} views</p>
-    ${isOwner ? `<button class="primary" style="margin-top:12px;" onclick="promoteAd('${ad.id}')">${tr('promote')}</button>` : ''}
-    ${currentUser && !isOwner ? `
-      <div class="chat-box" id="chatBox"></div>
-      <div style="display:flex;gap:8px;">
-        <input id="msgInput" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:8px;" placeholder="${tr('message')}">
-        <button onclick="sendMessage('${ad.id}', '${ad.userId}')" style="background:var(--primary);color:#fff;border:none;padding:10px 16px;border-radius:8px;">${tr('send')}</button>
-      </div>` : ''}
-    <button onclick="closeModal('adModal')" style="margin-top:16px;background:#eee;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">Κλείσιμο</button>
-  `;
-  modal.classList.add('open');
-  if (currentUser && !isOwner) loadMessages(ad.id);
-}
-
 async function revealPhone(id, el) {
-  // In real app would call API; here we just show full if available
-  el.textContent = el.textContent.replace(/\*+/g, '****'); // demo
-  el.style.textDecoration = 'none';
-  el.onclick = null;
+  try {
+    const data = await api('/api/ads/' + id + '/phone');
+    if (data && data.phone) {
+      el.textContent = data.phone;
+      el.style.textDecoration = 'none';
+      el.onclick = null;
+    } else {
+      alert(lang === 'el' ? 'Δεν βρέθηκε τηλέφωνο' : 'Phone not found');
+    }
+  } catch (err) {
+    alert(lang === 'el' ? 'Πρέπει να συνδεθείτε' : 'You must be logged in');
+  }
 }
 
 async function promoteAd(id) {
@@ -312,7 +339,7 @@ function logout() {
 }
 
 async function postAd() {
-  const file = document.getElementById('adPhoto').files[0];
+  const file = document.getElementById('adPhoto').files;
   let photoUrl = '';
   if (file) {
     const form = new FormData();
@@ -321,21 +348,17 @@ async function postAd() {
     const data = await res.json();
     photoUrl = data.url;
   }
-  
-  // Достаем выбранную подкатегорию (например, "Smartphones & Gadgets" или "Άλλο")
   const subCatSelect = document.getElementById('adSubCat');
   const subCategoryValue = subCatSelect ? subCatSelect.value : 'Другое';
-
   await api('/api/ads', { method: 'POST', body: JSON.stringify({
     title: document.getElementById('adTitle').value,
     category: document.getElementById('adCat').value,
-    subcategory: subCategoryValue, // Передаем подкатегорию серверу
+    subcategory: subCategoryValue,
     price: document.getElementById('adPrice').value,
     city: document.getElementById('adCity').value,
     description: document.getElementById('adDesc').value,
     photos: photoUrl ? [photoUrl] : []
   })});
-  
   closeModal('postModal');
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
   showHome();
@@ -343,8 +366,8 @@ async function postAd() {
 
 // Init
 updateUserMenu();
-// loadCategories().then(() => showHome()); // Временно отключили звонок на сервер
-loadCategories(); showHome(); // Включили наш внутренний новый список категорий
+loadCategories();
+showHome();
 </script>
 </body>
 </html>
