@@ -293,22 +293,20 @@ async function showAd(id) {
     const isOwner = currentUser && currentUser.id === ad.userId;
     
     detail.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <h2>\${ad.title}</h2>
-        <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
-      </div>
-      <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background: url(&quot;\${ad.photos && ad.photos ? ad.photos : 'https://placeholder.com'}&quot;) center/cover no-repeat; position:relative;">
-        <div style="position:absolute; inset:0; background: rgba(255,255,255,0.2); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);"></div>
-        <img src="\${ad.photos && ad.photos ? ad.photos : 'https://placeholder.com'}" style="width:100%; height:100%; object-fit:contain; position:relative; z-index:2;">
-      </div>
-      <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">\${ad.price} €</div>
-      <div style="color:#666; margin-bottom:12px;">\${ad.city}</div>
-      <p style="margin-bottom:16px; white-space:pre-wrap;">\${ad.description}</p>
-      
-      <div style="border-top:1px solid #eee; padding-top:16px;">
-        <p style="margin-bottom:8px;"><strong>\${tr('phone')}:</strong> 
-          <span class="phone" onclick="revealPhone('\${ad.id}', this)">\${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
-        </p>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <h2>${ad.title}</h2>
+    <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
+  </div>
+  <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
+    <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+  </div>
+  <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
+  <div style="color:#666; margin-bottom:12px;">${ad.city}</div>
+  <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
+  <div style="border-top:1px solid #eee; padding-top:16px;">
+    <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
+      <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
+    </p>
         
         \${currentUser && !isOwner ? `
           <h3>\${tr('message')}</h3>
