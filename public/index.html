@@ -283,6 +283,46 @@ async function revealPhone(id, el) {
     alert(lang === 'el' ? 'Πρέπει να συνδεθείτε' : 'You must be logged in');
   }
 }
+async function showAd(id) {
+  try {
+    const ad = await api('/api/ads/' + id);
+    const detail = document.getElementById('adDetail');
+    if (!detail) return;
+    
+    const isOwner = currentUser && currentUser.id === ad.userId;
+    
+    detail.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h2>${ad.title}</h2>
+        <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
+      </div>
+      <img src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placeholder.com'}" style="width:100%; max-height:300px; object-fit:cover; border-radius:8px; margin-bottom:12px;">
+      <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
+      <div style="color:#666; margin-bottom:12px;">${ad.city}</div>
+      <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
+      
+      <div style="border-top:1px solid #eee; padding-top:16px;">
+        <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
+          <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
+        </p>
+        
+        ${currentUser && !isOwner ? `
+          <h3>${tr('message')}</h3>
+          <div class="chat-box" id="chatBox"></div>
+          <div style="display:flex; gap:8px;">
+            <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
+            <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', '${ad.userId}')">${tr('send')}</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+    
+    document.getElementById('adModal').classList.add('open');
+    if (currentUser && !isOwner) loadMessages(ad.id);
+  } catch (err) {
+    alert('Σφάλμα φόρτωσης αγγελίας');
+  }
+}
 
 async function promoteAd(id) {
   await api('/api/ads/' + id + '/promote', { method: 'POST' });
