@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ΔΕΖΩ - Μια Δεύτερη Ζωή για τα πράγματά σας</title>
+<title>ΔΕΖΩ.gr- Μια Δεύτερη Ζωή για τα πράγματά σας</title>
 <style>
 :root { --primary: #00a046; --vip: #ff6b00; --bg: #f5f5f5; --card: #fff; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -349,7 +349,7 @@ async function postAd() {
     photoUrl = data.url;
   }
   const subCatSelect = document.getElementById('adSubCat');
-  const subCategoryValue = subCatSelect ? subCatSelect.value : 'Άλλο';
+  const subCategoryValue = subCatSelect ? subCatSelect.value : ' Άλλο';
   await api('/api/ads', { method: 'POST', body: JSON.stringify({
     title: document.getElementById('adTitle').value,
     category: document.getElementById('adCat').value,
