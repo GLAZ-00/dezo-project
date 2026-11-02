@@ -323,7 +323,7 @@ ${tr('phone')}:
 ${displayPhone}
 ${currentUser && !isOwner ? <h3>${tr('message')}</h3> <div class="chat-box" id="chatBox"></div> <div style="display:flex; gap:8px;"> <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;"> <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', '${ad.userId}')">${tr('send')}</button> </div> : ''}
 
-`;
+\;
 document.getElementById('adModal').classList.add('open');
 if (currentUser && !isOwner) loadMessages(ad.id);
 } catch (err) {
