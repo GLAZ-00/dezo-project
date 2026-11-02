@@ -125,6 +125,13 @@ app.get('/api/ads', (req, res) => {
   res.json(result);
 });
 
+app.get('/api/ads/:id/phone', (req, res) => {
+  const ad = ads.find(a => a.id === req.params.id);
+  if (!ad) return res.status(404).json({ error: 'Ad not found' });
+  const owner = users.find(u => u.id === ad.userId);
+  res.json({ phone: owner ? owner.phone : ad.phone || 'Нет номера' });
+});
+
 // Get single ad
 app.get('/api/ads/:id', (req, res) => {
   const ad = ads.find(a => a.id === req.params.id);
