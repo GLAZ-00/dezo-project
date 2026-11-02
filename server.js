@@ -91,11 +91,18 @@ app.post('/api/upload', auth, upload.single('photo'), async (req, res) => {
 
 // Create ad
 app.post('/api/ads', auth, (req, res) => {
-  const { title, description, price, category, photos, city, phoneVisible } = req.body;
+  // 1. Добавили subcategory в список — достаём её из посылки фронтенда
+  const { title, description, price, category, subcategory, photos, city, phoneVisible } = req.body;
+  
   const ad = {
     id: uuidv4(),
     userId: req.user.id,
-    title, description, price: Number(price), category, photos: photos || [],
+    title,
+    description,
+    price: Number(price),
+    category,
+    subcategory: subcategory || 'Άλλο', // 2. Записываем её в карточку товара (если пусто — пишем «Другое»)
+    photos: photos || [],
     city: city || 'Αθήνα',
     phone: users.find(u => u.id === req.user.id)?.phone || '',
     phoneVisible: !!phoneVisible,
