@@ -40,31 +40,11 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 .msg.me { background: #dcf8c6; margin-left: auto; }
 .msg.them { background: #fff; border: 1px solid #eee; }
 
-/* Умный контейнер для размытия фона вертикальных изображений */
-.blur-img-container {
-  position: relative;
+#adDetail img {
   width: 100%;
   height: 350px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  overflow: hidden;
-  background: #000;
-}
-.blur-bg {
-  position: absolute;
-  inset: -10px;
-  background-size: cover;
-  background-position: center;
-  filter: blur(15px);
-  opacity: 0.6;
-  z-index: 1;
-}
-.main-img {
-  position: relative;
-  width: 100%;
-  height: 100%;
   object-fit: contain;
-  z-index: 2;
+  background: #000;
 }
 </style>
 </head>
@@ -97,7 +77,6 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 
 <div class="container" id="mainContent"></div>
 
-<!-- Modals -->
 <div class="modal" id="loginModal">
   <div class="modal-content">
     <h2 id="loginTitle">Σύνδεση</h2>
@@ -152,7 +131,7 @@ const t = {
     new: 'Νέο',
     price: 'Τιμή',
     phone: 'Τηλέφωνο',
-    reveal: 'Πατήστε για να δείτε',
+    reveal: 'Πατήστε для να δείτε',
     message: 'Μήνυμα',
     send: 'Αποστολή',
     promote: 'Προώθηση (VIP)',
@@ -223,8 +202,8 @@ async function api(path, opts = {}) {
 }
 
 const dezoCategories = [
-  { id: "kids", el: "Παιδικός κόσμος", en: "Children's world", subs: { el: ["Παιδιά είδη και ρούχα","Καροτσάκια και καθίσματα", "Παιχνίδια", "Άλλο"], en: ["Children's clothes", "Strollers & Car seats", "Toys", "Other"] } },
-{ id: "furniture", el: "Έπιπλα & Διακόσμηση", en: "Furniture & Decor", subs: { el: ["Έπιπλα κουζίνας", "Καναπέδες & Πολυθρόνες", "Ντουλάπες & Τραπέζια", "Άλλο"], en: ["Kitchen furniture", "Sofas & Armchairs", "Wardrobes & Tables", "Other"] } },
+  { id: "kids", el: "Παιδικός κόσμος", en: "Children's world", subs: { el: ["Παιδικά είδη και ρούχα","Καροτσάκια και καθίσματα", "Παιχνίδια", "Άλλο"], en: ["Children's clothes", "Strollers & Car seats", "Toys", "Other"] } },
+  { id: "furniture", el: "Έπιπλα & Διακόσμηση", en: "Furniture & Decor", subs: { el: ["Έπιπλα κουζίνας", "Καναπέδες & Πολυθρόνες", "Ντουλάπες & Τραπέζια", "Άλλο"], en: ["Kitchen furniture", "Sofas & Armchairs", "Wardrobes & Tables", "Other"] } },
 { id: "clothes", el: "Ρούχα & Παπούτσια", en: "Clothes & Shoes", subs: { el: ["Ανδρικά", "Γυναικεία", "Άλλο"], en: ["Men's wardrobe", "Women's wardrobe", "Other"] } },
 { id: "fashion", el: "Μόδα & Αξεσουάρ", en: "Fashion & Accessories", subs: { el: ["Τσάντες & Πορτοφόλια", "Κοσμήματα & Μπιζού", "Καπέλα", "Άλλο"], en: ["Bags & Wallets", "Jewelry", "Hats", "Other"] } },
 { id: "electronics", el: "Ηλεκτρονικά", en: "Electronics", subs: { el: ["Smartphones & Gadgets", "Μεγάλες οικιακές συσκευές", "Μικροσυσκευές", "Τηλεοράσεις & Ήχος", "Άλλο"], en: ["Smartphones & Gadgets", "Large home appliances", "Small appliances", "TV & Audio", "Other"] } },
@@ -270,7 +249,7 @@ try {
 currentAds = await api('/api/ads?' + params);
 renderAds(currentAds);
 } catch (e) {
-console.error("Ошибка загрузки объявлений:", e);
+console.error(e);
 }
 }
 function renderAds(list) {
@@ -316,6 +295,10 @@ detail.innerHTML = `
 
 ${ad.title}
 ×
+
+
+
+
 ${ad.price} €
 ${ad.city}
 ${ad.description || ''}
@@ -323,7 +306,7 @@ ${tr('phone')}:
 ${displayPhone}
 ${currentUser && !isOwner ? <h3>${tr('message')}</h3> <div class="chat-box" id="chatBox"></div> <div style="display:flex; gap:8px;"> <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;"> <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', '${ad.userId}')">${tr('send')}</button> </div> : ''}
 
-\;
+`;
 document.getElementById('adModal').classList.add('open');
 if (currentUser && !isOwner) loadMessages(ad.id);
 } catch (err) {
