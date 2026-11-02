@@ -159,6 +159,18 @@ function toggleLang() {
   document.getElementById('tagline').textContent = tr('tagline');
   document.getElementById('searchInput').placeholder = tr('search');
   updateUserMenu();
+  
+  // Переводим кнопки категорий в шапке сайта на лету
+  document.querySelectorAll('#categories .cat-btn').forEach(btn => {
+    const id = btn.getAttribute('data-id');
+    if (id) {
+      const catData = dezoCategories.find(c => c.id === id);
+      if (catData) btn.textContent = lang === 'el' ? catData.el : catData.en;
+    } else {
+      btn.textContent = lang === 'el' ? 'Όλα' : 'All';
+    }
+  });
+
   loadCategories();
   showHome();
 }
