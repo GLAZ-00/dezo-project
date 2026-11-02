@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -39,13 +40,6 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 .msg { margin: 8px 0; padding: 8px 12px; border-radius: 12px; max-width: 80%; }
 .msg.me { background: #dcf8c6; margin-left: auto; }
 .msg.them { background: #fff; border: 1px solid #eee; }
-
-#adDetail img {
-  width: 100%;
-  height: 350px;
-  object-fit: contain;
-  background: #000;
-}
 </style>
 </head>
 <body>
@@ -62,6 +56,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
   </div>
 </header>
 
+<!-- Фиксированная чистая шапка категорий, независимая от капризов старого сервера -->
 <nav id="categories">
   <div class="cat-btn active" onclick="loadAds()">Όλα</div>
   <div class="cat-btn" data-id="kids" onclick="loadAds('kids')">Παιδικός κόσμος</div>
@@ -77,6 +72,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 
 <div class="container" id="mainContent"></div>
 
+<!-- Modals -->
 <div class="modal" id="loginModal">
   <div class="modal-content">
     <h2 id="loginTitle">Σύνδεση</h2>
@@ -118,6 +114,7 @@ const API = '';
 let lang = 'el';
 let token = localStorage.getItem('dezo_token');
 let currentUser = JSON.parse(localStorage.getItem('dezo_user') || 'null');
+let categories = [];
 let currentAds = [];
 
 const t = {
@@ -131,7 +128,7 @@ const t = {
     new: 'Νέο',
     price: 'Τιμή',
     phone: 'Τηλέφωνο',
-    reveal: 'Πατήστε для να δείτε',
+    reveal: 'Πατήστε για να δείτε',
     message: 'Μήνυμα',
     send: 'Αποστολή',
     promote: 'Προώθηση (VIP)',
@@ -164,6 +161,7 @@ function toggleLang() {
   document.getElementById('searchInput').placeholder = tr('search');
   updateUserMenu();
   
+  // Переводим кнопки категорий в шапке сайта на лету
   document.querySelectorAll('#categories .cat-btn').forEach(btn => {
     const id = btn.getAttribute('data-id');
     if (id) {
@@ -201,210 +199,229 @@ async function api(path, opts = {}) {
   return res.json();
 }
 
+// Наша финальная структура категорий ΔΕΖΩ
 const dezoCategories = [
   { id: "kids", el: "Παιδικός κόσμος", en: "Children's world", subs: { el: ["Παιδικά είδη και ρούχα","Καροτσάκια και καθίσματα", "Παιχνίδια", "Άλλο"], en: ["Children's clothes", "Strollers & Car seats", "Toys", "Other"] } },
   { id: "furniture", el: "Έπιπλα & Διακόσμηση", en: "Furniture & Decor", subs: { el: ["Έπιπλα κουζίνας", "Καναπέδες & Πολυθρόνες", "Ντουλάπες & Τραπέζια", "Άλλο"], en: ["Kitchen furniture", "Sofas & Armchairs", "Wardrobes & Tables", "Other"] } },
-{ id: "clothes", el: "Ρούχα & Παπούτσια", en: "Clothes & Shoes", subs: { el: ["Ανδρικά", "Γυναικεία", "Άλλο"], en: ["Men's wardrobe", "Women's wardrobe", "Other"] } },
-{ id: "fashion", el: "Μόδα & Αξεσουάρ", en: "Fashion & Accessories", subs: { el: ["Τσάντες & Πορτοφόλια", "Κοσμήματα & Μπιζού", "Καπέλα", "Άλλο"], en: ["Bags & Wallets", "Jewelry", "Hats", "Other"] } },
-{ id: "electronics", el: "Ηλεκτρονικά", en: "Electronics", subs: { el: ["Smartphones & Gadgets", "Μεγάλες οικιακές συσκευές", "Μικροσυσκευές", "Τηλεοράσεις & Ήχος", "Άλλο"], en: ["Smartphones & Gadgets", "Large home appliances", "Small appliances", "TV & Audio", "Other"] } },
-{ id: "tools", el: "Εργαλεία", en: "Tools", subs: { el: ["Ηλεκτρικά εργαλεία", "Εργαλεία χειρός", "Άλλο"], en: ["Power tools", "Hand tools", "Other"] } },
-{ id: "home", el: "Σπίτι & Κήπος", en: "Home & Garden", subs: { el: ["Είδη κουζίνας & Πιάτα", "Εργαλεία κήπου", "Λευκά είδη & Υφάσματα", "Άλλο"], en: ["Kitchenware", "Garden tools", "Home textiles", "Other"] } },
-{ id: "free", el: "Ανταλλαγή / Χάρισμα", en: "Exchange / Free", subs: { el: ["Άλλο"], en: ["Other"] } },
-{ id: "other", el: "Διάφορα", en: "Other", subs: { el: ["Άλλο"], en: ["Other"] } }
+  { id: "clothes", el: "Ρούχα & Παπούτσια", en: "Clothes & Shoes", subs: { el: ["Ανδρικά", "Γυναικεία", "Άλλο"], en: ["Men's wardrobe", "Women's wardrobe", "Other"] } },
+  { id: "fashion", el: "Μόδα & Αξεσουάρ", en: "Fashion & Accessories", subs: { el: ["Τσάντες & Πορτοφόλια", "Κοσμήματα & Μπιζού", "Καπέλα", "Άλλο"], en: ["Bags & Wallets", "Jewelry", "Hats", "Other"] } },
+  { id: "electronics", el: "Ηλεκτρονικά", en: "Electronics", subs: { el: ["Smartphones & Gadgets", "Μεγάλες οικιακές συσκευές", "Μικροσυσκευές", "Τηλεοράσεις & Ήχος", "Άλλο"], en: ["Smartphones & Gadgets", "Large home appliances", "Small appliances", "TV & Audio", "Other"] } },
+  { id: "tools", el: "Εργαλεία", en: "Tools", subs: { el: ["Ηλεκτρικά εργαλεία", "Εργαλεία χειρός", "Άλλο"], en: ["Power tools", "Hand tools", "Other"] } },
+  { id: "home", el: "Σπίτι & Κήπος", en: "Home & Garden", subs: { el: ["Είδη κουζίνας & Πιάτα", "Εργαλεία κήπου", "Λευκά είδη & Υφάσματα", "Άλλο"], en: ["Kitchenware", "Garden tools", "Home textiles", "Other"] } },
+  { id: "free", el: "Ανταλλαγή / Χάρισμα", en: "Exchange / Free", subs: { el: ["Άλλο"], en: ["Other"] } },
+  { id: "other", el: "Διάφορα", en: "Other", subs: { el: ["Άλλο"], en: ["Other"] } }
 ];
+
 function loadCategories() {
-const mainSel = document.getElementById('adCat');
-if (mainSel) {
-mainSel.innerHTML = dezoCategories.map(c => <option value="${c.id}">${lang==='el' ? c.el : c.en}</option>).join('');
-let subSel = document.getElementById('adSubCat');
-if (!subSel) {
-const subGroup = document.createElement('div');
-subGroup.className = 'form-group';
-subGroup.innerHTML = <select id="adSubCat"></select>;
-mainSel.parentNode.insertAdjacentElement('afterend', subGroup);
-subSel = document.getElementById('adSubCat');
+  const mainSel = document.getElementById('adCat');
+  if (mainSel) {
+    mainSel.innerHTML = dezoCategories.map(c => `<option value="${c.id}">${lang==='el' ? c.el : c.en}</option>`).join('');
+    let subSel = document.getElementById('adSubCat');
+    if (!subSel) {
+      const subGroup = document.createElement('div');
+      subGroup.className = 'form-group';
+      subGroup.innerHTML = `<select id="adSubCat"></select>`;
+      mainSel.parentNode.insertAdjacentElement('afterend', subGroup);
+      subSel = document.getElementById('adSubCat');
+    }
+    mainSel.onchange = () => updateSubDropdown(mainSel.value);
+    updateSubDropdown(mainSel.value);
+  }
 }
-mainSel.onchange = () => updateSubDropdown(mainSel.value);
-updateSubDropdown(mainSel.value);
-}
-}
+
 function updateSubDropdown(catId) {
-const subSel = document.getElementById('adSubCat');
-if (!subSel) return;
-const targetCat = dezoCategories.find(c => c.id === catId);
-if (targetCat) {
-const list = lang === 'el' ? targetCat.subs.el : targetCat.subs.en;
-subSel.innerHTML = list.map(sub => <option value="${sub}">${sub}</option>).join('');
+  const subSel = document.getElementById('adSubCat');
+  if (!subSel) return;
+  const targetCat = dezoCategories.find(c => c.id === catId);
+  if (targetCat) {
+    const list = lang === 'el' ? targetCat.subs.el : targetCat.subs.en;
+    subSel.innerHTML = list.map(sub => `<option value="${sub}">${sub}</option>`).join('');
+  }
 }
-}
+
 async function loadAds(category) {
-document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-if (category) document.querySelector([data-id="${category}"])?.classList.add('active');
-else document.querySelector('.cat-btn')?.classList.add('active');
-const q = document.getElementById('searchInput').value;
-const params = new URLSearchParams();
-if (category) params.set('category', category);
-if (q) params.set('q', q);
-try {
-currentAds = await api('/api/ads?' + params);
-renderAds(currentAds);
-} catch (e) {
-console.error(e);
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  if (category) document.querySelector(`[data-id="${category}"]`)?.classList.add('active');
+  else document.querySelector('.cat-btn')?.classList.add('active');
+  const q = document.getElementById('searchInput').value;
+  const params = new URLSearchParams();
+  if (category) params.set('category', category);
+  if (q) params.set('q', q);
+  currentAds = await api('/api/ads?' + params);
+  renderAds(currentAds);
 }
-}
+
 function renderAds(list) {
-const main = document.getElementById('mainContent');
-if (!list || !list.length) { main.innerHTML = 'Δεν βρέθηκαν αγγελίες'; return; }
-main.innerHTML = <div class="ads-grid">${list.map(ad => { const imgUrl = ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placeholder.com'; return 
-
-${ad.vip ? <div class="badge">${tr('vip')}</div> : ''}
-${Date.now() - ad.created < 86400000 ? <div class="badge new" style="left:auto;right:8px;">${tr('new')}</div> : ''}
-
-
-${ad.title}
-${ad.price} €
-${ad.city}
-
-; }).join('')}</div>;
+  const main = document.getElementById('mainContent');
+  if (!list.length) { main.innerHTML = '<p style="text-align:center;padding:40px;">Δεν βρέθηκαν αγγελίες</p>'; return; }
+  main.innerHTML = `<div class="ads-grid">${list.map(ad => `
+    <div class="ad-card" onclick="showAd('${ad.id}')">
+      ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
+      ${Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;">${tr('new')}</div>` : ''}
+      <img src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placeholder.com'}" alt="">
+      <div class="info">
+        <div style="font-weight:600;margin-bottom:4px;">${ad.title}</div>
+        <div class="price">${ad.price} €</div>
+        <div style="font-size:13px;color:#666;margin-top:4px;">${ad.city}</div>
+      </div>
+    </div>`).join('')}</div>`;
 }
+
 function showHome() { loadAds(); }
 function searchAds() { loadAds(); }
+
 async function revealPhone(id, el) {
-try {
-const data = await api('/api/ads/' + id + '/phone');
-if (data && data.phone) {
-el.textContent = data.phone;
-el.style.textDecoration = 'none';
-el.onclick = null;
-} else {
-alert(lang === 'el' ? 'Δεν βρέθηκε τηλέφωνο' : 'Phone not found');
-}
-} catch (err) {
-alert(lang === 'el' ? 'Πρέπει να συνδεθείτε' : 'You must be logged in');
-}
+  try {
+    const data = await api('/api/ads/' + id + '/phone');
+    if (data && data.phone) {
+      el.textContent = data.phone;
+      el.style.textDecoration = 'none';
+      el.onclick = null;
+    } else {
+      alert(lang === 'el' ? 'Δεν βρέθηκε τηλέφωνο' : 'Phone not found');
+    }
+  } catch (err) {
+    alert(lang === 'el' ? 'Πρέπει να συνδεθείτε' : 'You must be logged in');
+  }
 }
 async function showAd(id) {
-try {
-const ad = await api('/api/ads/' + id);
-const detail = document.getElementById('adDetail');
-if (!detail) return;
-const isOwner = currentUser && currentUser.id === ad.userId;
-const imgUrl = ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placeholder.com';
-const displayPhone = ad.phone ? (ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '') : '';
-detail.innerHTML = `
+  try {
+    const ad = await api('/api/ads/' + id);
+    const detail = document.getElementById('adDetail');
+    if (!detail) return;
+    
+    const isOwner = currentUser && currentUser.id === ad.userId;
+    
+    detail.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h2>\${ad.title}</h2>
+        <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
+      </div>
+      <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background: url(&quot;\${ad.photos && ad.photos ? ad.photos : 'https://placeholder.com'}&quot;) center/cover no-repeat; position:relative;">
+        <div style="position:absolute; inset:0; background: rgba(255,255,255,0.2); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);"></div>
+        <img src="\${ad.photos && ad.photos ? ad.photos : 'https://placeholder.com'}" style="width:100%; height:100%; object-fit:contain; position:relative; z-index:2;">
+      </div>
+      <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">\${ad.price} €</div>
+      <div style="color:#666; margin-bottom:12px;">\${ad.city}</div>
+      <p style="margin-bottom:16px; white-space:pre-wrap;">\${ad.description}</p>
+      
+      <div style="border-top:1px solid #eee; padding-top:16px;">
+        <p style="margin-bottom:8px;"><strong>\${tr('phone')}:</strong> 
+          <span class="phone" onclick="revealPhone('\${ad.id}', this)">\${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
+        </p>
+        
+        \${currentUser && !isOwner ? `
+          <h3>\${tr('message')}</h3>
+          <div class="chat-box" id="chatBox"></div>
+          <div style="display:flex; gap:8px;">
+            <input id="msgInput" placeholder="\${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
+            <button class="primary" style="width:auto;" onclick="sendMessage('\${ad.id}', '\${ad.userId}')">\${tr('send')}</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
 
-${ad.title}
-×
-
-
-
-
-${ad.price} €
-${ad.city}
-${ad.description || ''}
-${tr('phone')}:
-${displayPhone}
-${currentUser && !isOwner ? <h3>${tr('message')}</h3> <div class="chat-box" id="chatBox"></div> <div style="display:flex; gap:8px;"> <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;"> <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', '${ad.userId}')">${tr('send')}</button> </div> : ''}
-
-`;
-document.getElementById('adModal').classList.add('open');
-if (currentUser && !isOwner) loadMessages(ad.id);
-} catch (err) {
-alert('Σφάλμα φόρτωσης αγγελίας');
+    document.getElementById('adModal').classList.add('open');
+    if (currentUser && !isOwner) loadMessages(ad.id);
+  } catch (err) {
+    alert('Σφάλμα φόρτωσης αγγελίας');
+  }
 }
-}
+
 async function promoteAd(id) {
-await api('/api/ads/' + id + '/promote', { method: 'POST' });
-alert(lang==='el' ? 'Προωθήθηκε ως VIP!' : 'Promoted to VIP!');
-closeModal('adModal');
-showHome();
+  await api('/api/ads/' + id + '/promote', { method: 'POST' });
+  alert(lang==='el' ? 'Προωθήθηκε ως VIP!' : 'Promoted to VIP!');
+  closeModal('adModal');
+  showHome();
 }
+
 async function loadMessages(adId) {
-const msgs = await api('/api/messages/' + adId);
-const box = document.getElementById('chatBox');
-box.innerHTML = msgs.map(m => <div class="msg ${m.from === currentUser.id ? 'me' : 'them'}">${m.text}</div>).join('');
-box.scrollTop = box.scrollHeight;
+  const msgs = await api('/api/messages/' + adId);
+  const box = document.getElementById('chatBox');
+  box.innerHTML = msgs.map(m => `<div class="msg ${m.from === currentUser.id ? 'me' : 'them'}">${m.text}</div>`).join('');
+  box.scrollTop = box.scrollHeight;
 }
+
 async function sendMessage(adId, toUserId) {
-const input = document.getElementById('msgInput');
-const text = input.value.trim();
-if (!text) return;
-await api('/api/messages', { method: 'POST', body: JSON.stringify({ adId, text, toUserId }) });
-input.value = '';
-loadMessages(adId);
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text) return;
+  await api('/api/messages', { method: 'POST', body: JSON.stringify({ adId, text, toUserId }) });
+  input.value = '';
+  loadMessages(adId);
 }
+
 function showLogin() { document.getElementById('loginModal').classList.add('open'); document.getElementById('registerModal').classList.remove('open'); }
 function showRegister() { document.getElementById('registerModal').classList.add('open'); document.getElementById('loginModal').classList.remove('open'); }
 function showPostAd() { if (!currentUser) return showLogin(); document.getElementById('postModal').classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
 async function login() {
-try {
-const data = await api('/api/login', { method: 'POST', body: JSON.stringify({
-email: document.getElementById('loginEmail').value,
-password: document.getElementById('loginPass').value
-})});
-token = data.token; currentUser = data.user;
-localStorage.setItem('dezo_token', token);
-localStorage.setItem('dezo_user', JSON.stringify(currentUser));
-closeModal('loginModal');
-updateUserMenu();
-showHome();
-} catch { alert('Σφάλμα σύνδεσης'); }
+  try {
+    const data = await api('/api/login', { method: 'POST', body: JSON.stringify({
+      email: document.getElementById('loginEmail').value,
+      password: document.getElementById('loginPass').value
+    })});
+    token = data.token; currentUser = data.user;
+    localStorage.setItem('dezo_token', token);
+    localStorage.setItem('dezo_user', JSON.stringify(currentUser));
+    closeModal('loginModal');
+    updateUserMenu();
+  } catch { alert('Σφάλμα σύνδεσης'); }
 }
+
 async function register() {
-try {
-const data = await api('/api/register', { method: 'POST', body: JSON.stringify({
-name: document.getElementById('regName').value,
-email: document.getElementById('regEmail').value,
-phone: document.getElementById('regPhone').value,
-password: document.getElementById('regPass').value
-})});
-token = data.token; currentUser = data.user;
-localStorage.setItem('dezo_token', token);
-localStorage.setItem('dezo_user', JSON.stringify(currentUser));
-closeModal('registerModal');
-updateUserMenu();
-showHome();
-} catch { alert('Σφάλμα εγγραφής'); }
+  try {
+    const data = await api('/api/register', { method: 'POST', body: JSON.stringify({
+      name: document.getElementById('regName').value,
+      email: document.getElementById('regEmail').value,
+      phone: document.getElementById('regPhone').value,
+      password: document.getElementById('regPass').value
+    })});
+    token = data.token; currentUser = data.user;
+    localStorage.setItem('dezo_token', token);
+    localStorage.setItem('dezo_user', JSON.stringify(currentUser));
+    closeModal('registerModal');
+    updateUserMenu();
+  } catch { alert('Σφάλμα εγγραφής'); }
 }
+
 function logout() {
-token = null; currentUser = null;
-localStorage.removeItem('dezo_token');
-localStorage.removeItem('dezo_user');
-updateUserMenu();
-showHome();
+  token = null; currentUser = null;
+  localStorage.removeItem('dezo_token');
+  localStorage.removeItem('dezo_user');
+  updateUserMenu();
+  showHome();
 }
+
 async function postAd() {
-try {
-const fileInput = document.getElementById('adPhoto');
-let photoUrl = '';
-if (fileInput && fileInput.files && fileInput.files[0]) {
-const form = new FormData();
-form.append('photo', fileInput.files[0]);
-const res = await fetch('/api/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: form });
-if (res.ok) {
-const data = await res.json();
-photoUrl = data.url;
+  const fileInput = document.getElementById('adPhoto');
+  let photoUrl = '';
+  if (fileInput && fileInput.files && fileInput.files[0]) {
+    const form = new FormData();
+    form.append('photo', fileInput.files[0]); // Передаем строго ПЕРВЫЙ файл из списка
+    const res = await fetch('/api/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: form });
+    if (res.ok) {
+      const data = await res.json();
+      photoUrl = data.url;
+    }
+  }
+  const subCatSelect = document.getElementById('adSubCat');
+  const subCategoryValue = subCatSelect ? subCatSelect.value : 'Άλλο';
+  await api('/api/ads', { method: 'POST', body: JSON.stringify({
+    title: document.getElementById('adTitle').value,
+    category: document.getElementById('adCat').value,
+    subcategory: subCategoryValue,
+    price: document.getElementById('adPrice').value,
+    city: document.getElementById('adCity').value,
+    description: document.getElementById('adDesc').value,
+    photos: photoUrl ? [photoUrl] : []
+  })});
+  closeModal('postModal');
+  alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
+  showHome();
 }
-}
-const subCatSelect = document.getElementById('adSubCat');
-const subCategoryValue = subCatSelect ? subCatSelect.value : 'Άλλο';
-await api('/api/ads', { method: 'POST', body: JSON.stringify({
-title: document.getElementById('adTitle').value,
-category: document.getElementById('adCat').value,
-subcategory: subCategoryValue,
-price: document.getElementById('adPrice').value,
-city: document.getElementById('adCity').value,
-description: document.getElementById('adDesc').value,
-photos: photoUrl ? [photoUrl] : []
-})});
-closeModal('postModal');
-alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
-showHome();
-} catch (e) {
-alert('Σφάλμα δημοσίευσης αγγελίας');
-}
-}
+
 // Init
 updateUserMenu();
 loadCategories();
@@ -412,3 +429,4 @@ showHome();
 </script>
 </body>
 </html>
+
