@@ -43,19 +43,16 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 </style>
 </head>
 <body>
-<header>
-  <div class="logo" onclick="showHome()">ΔΕΖΩ.gr<span id="tagline" style="font-size: 10px; line-height: 1.1; margin-top: 2px;">Μια ΔΕύτερη ΖΩή<br>για τα πράγματά σας</span></div>
-  <div class="search">
-    <input id="searchInput" placeholder="Αναζήτηση..." onkeypress="if(event.key==='Enter') searchAds()">
-    <button onclick="searchAds()">🔍</button>
-  </div>
-  <div>
-    <span class="lang" onclick="toggleLang()" id="langToggle">EN</span>
-    <span id="userMenu" style="margin-left:16px; cursor:pointer;" onclick="showLogin()">Σύνδεση</span>
-    <button id="addBtn" class="hidden" onclick="showPostAd()" style="margin-left:12px; background:var(--primary); color:#fff; border:none; padding:8px 16px; border-radius:20px; cursor:pointer;">+ Προσθήκη</button>
-  </div>
-</header>
 
+<header style="background: #fff; padding: 12px 20px; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,.1); position: sticky; top: 0; z-index: 100;">
+  <div class="logo" onclick="showHome()">ΔΕΖΩ.gr<span id="tagline" style="font-size: 10px; line-height: 1.1; margin-top: 2px;">Μια ΔΕύτερη ΖΩή<br>για τα πράγματά σας</span></div>
+  <div class="search" style="max-width: 55%; margin: 0 15px 0 15px; display: flex; flex: 1;">
+    <input id="searchInput" placeholder="Αναζήτηση..." onkeypress="if(event.key==='Enter') searchAds()" style="flex: 1; padding: 10px 16px; border: 2px solid #ddd; border-radius: 24px 0 0 24px; outline: none;">
+    <button onclick="searchAds()" style="background: var(--primary); color: #fff; border: none; padding: 0 20px; border-radius: 0 24px 24px 0; cursor: pointer;">🔍</button>
+  </div>
+  <span class="lang" onclick="toggleLang()" id="langToggle" style="cursor: pointer; font-weight: 600; color: #555; margin-right: 25px; padding: 5px; white-space: nowrap;">EN</span>
+  <span id="userMenu" style="cursor: pointer; white-space: nowrap;" onclick="showLogin()">Σύνδεση</span>
+</header>
 <!-- Фиксированная чистая шапка категорий, независимая от капризов старого сервера -->
 <nav id="categories">
   <div class="cat-btn active" onclick="loadAds()">Όλα</div>
