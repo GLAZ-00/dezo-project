@@ -211,12 +211,26 @@ function updateUserMenu() {
   const menu = document.getElementById('userMenu');
   const addBtn = document.getElementById('addBtn');
   if (currentUser) {
-          menu.textContent = currentUser.name;
-      menu.onclick = () => {
+                menu.onclick = null;
+      menu.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; line-height: 1.2;">
+          <span id="goToProfile" style="font-weight: bold; color: var(--primary); font-size: 16px; cursor: pointer;">${currentUser.name}</span>
+          <span id="quickLogout" style="font-size: 11px; color: #d32f2f; cursor: pointer; text-decoration: underline; margin-top: 2px;">${tr('logout')}</span>
+        </div>
+      `;
+      
+      document.getElementById('goToProfile').onclick = (e) => {
+        e.stopPropagation();
         document.getElementById('profileModal').classList.add('open');
         const balEl = document.getElementById('userBalance');
         if (balEl) balEl.textContent = currentUser.balance || 0;
       };
+      
+      document.getElementById('quickLogout').onclick = (e) => {
+        e.stopPropagation();
+        logout();
+      };
+
 
     addBtn.classList.remove('hidden');
     addBtn.textContent = tr('add');
