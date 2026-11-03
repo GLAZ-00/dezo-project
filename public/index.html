@@ -218,11 +218,15 @@ function updateUserMenu() {
       `;
       
       document.getElementById('goToProfile').onclick = (e) => {
-        e.stopPropagation();
-        document.getElementById('profileModal').classList.add('open');
-        const balEl = document.getElementById('userBalance');
-        if (balEl) balEl.textContent = currentUser.balance || 0;
-      };
+  e.stopPropagation();
+  // Скрываем главную ленту объявлений
+  document.getElementById('mainContent').classList.add('hidden');
+  // Показываем просторный личный кабинет
+  document.getElementById('profileModal').classList.remove('hidden');
+  
+  const balEl = document.getElementById('userBalance');
+  if (balEl) balEl.textContent = currentUser.balance || 0;
+};
       
       document.getElementById('quickLogout').onclick = (e) => {
         e.stopPropagation();
