@@ -402,11 +402,40 @@ function switchProfileTab(tab) {
   const contentArea = document.getElementById('profileTabContent');
   if (!contentArea) return;
 
-  if (tab === 'items') {
-    contentArea.innerHTML = `
-      <p style="color:#888; font-style:italic; margin-bottom:16px;">Δεν υπάρχουν ακόμη ενεργές αγγελίες (Пока нет активных объявлений)</p>
-      <button onclick="showPostAd()" style="background:#00a046; color:#fff; border:none; padding:10px 20px; border-radius:20px; font-size:14px; font-weight:bold; cursor:pointer; box-shadow: 0 4px 6px rgba(0,160,70,0.15); white-space:nowrap;">+ Προσθήκη αγγελίας</button>
-    `;
+    if (tab === 'items') {
+    contentArea.innerHTML = `<p style="color:#888; font-style:italic;">Загрузка ваших вещей...</p>`;
+    
+    // Запрашиваем личные вещи с вашего сервера Render
+    api('/api/my-ads')
+      .then(myAds => {
+        if (!myAds || myAds.length === 0) {
+          // Если вещей на сервере пока нет — выводим кнопку подачи
+          contentArea.innerHTML = `
+            <p style="color:#888; font-style:italic; margin-bottom:16px;">Δεν υπάρχουν ακόμη ενεργές αγγελίες (Пока нет активных объявлений)</p>
+            <button onclick="showPostAd()" style="background:#00a046; color:#fff; border:none; padding:10px 20px; border-radius:20px; font-size:14px; font-weight:bold; cursor:pointer; box-shadow: 0 4px 6px rgba(0,160,70,0.15); white-space:nowrap;">+ Προσθήκη αγγελίας</button>
+          `;
+        } else {
+          // Если вещи есть — выводим их аккуратным списком (строчками)
+          contentArea.innerHTML = `
+            <div style="width:100%; display:flex; flex-direction:column; gap:10px; text-align:left;">
+              ${myAds.map(ad => `
+                <div onclick="showAd('${ad.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer;">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <!-- Красный маркер-кружок для будущих сообщений -->
+                    <div style="width:10px; height:10px; background:#d32f2f; border-radius:50%;"></div>
+                    <strong style="color:#222;">${ad.title}</strong>
+                  </div>
+                  <span style="color:var(--primary); font-weight:bold;">${ad.price} €</span>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+      })
+      .catch(() => {
+        contentArea.innerHTML = `<p style="color:#d32f2f; font-size:14px;">Ошибка загрузки данных с сервера</p>`;
+      });
+  }
   } else if (tab === 'messages') {
     contentArea.innerHTML = `<p style="color:#888; font-style:italic;">Δεν υπάρχουν μηνύματα (Нет сообщений)</p>`;
   } else if (tab === 'archive') {
