@@ -95,7 +95,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 </div>
 <div class="modal" id="postModal">
   <div class="modal-content">
-    <h2>Νέα αγγελία</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center;"><h2>Νέα αγγελία</h2><span onclick="closeModal('postModal')" style="cursor:pointer; font-size:28px; font-weight:bold; color:#888;">&times;</span></div>
     <div class="form-group"><input id="adTitle" placeholder="Τίτλος"></div>
     <div class="form-group"><select id="adCat"></select></div>
     <div class="form-group"><input id="adPrice" type="number" placeholder="Τιμή (€)"></div>
