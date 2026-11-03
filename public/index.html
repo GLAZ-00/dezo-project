@@ -212,10 +212,12 @@ function updateUserMenu() {
   const addBtn = document.getElementById('addBtn');
   if (currentUser) {
                 menu.onclick = null;
+            menu.onclick = null;
+      // Увеличили размер шрифта выхода до 14px и добавили отступ margin-top: 6px
       menu.innerHTML = `
         <div style="display: flex; flex-direction: column; align-items: center; line-height: 1.2;">
           <span id="goToProfile" style="font-weight: bold; color: var(--primary); font-size: 16px; cursor: pointer;">${currentUser.name}</span>
-          <span id="quickLogout" style="font-size: 11px; color: #d32f2f; cursor: pointer; text-decoration: underline; margin-top: 2px;">${tr('logout')}</span>
+          <span id="quickLogout" style="font-size: 14px; color: #d32f2f; cursor: pointer; text-decoration: underline; margin-top: 6px; font-weight: 500;">${tr('logout')}</span>
         </div>
       `;
       
