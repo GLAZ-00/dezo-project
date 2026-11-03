@@ -416,7 +416,12 @@ function switchProfileTab(tab) {
   
 function showLogin() { document.getElementById('loginModal').classList.add('open'); document.getElementById('registerModal').classList.remove('open'); }
 function showRegister() { document.getElementById('registerModal').classList.add('open'); document.getElementById('loginModal').classList.remove('open'); }
-function showPostAd() { if (!currentUser) return showLogin(); document.getElementById('postModal').classList.add('open'); }
+function showPostAd() { 
+  if (!currentUser) return showLogin(); 
+  // Принудительно наполняем списки категорий и подкатегорий перед открытием
+  loadCategories(); 
+  document.getElementById('postModal').classList.add('open'); 
+}
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 async function login() {
