@@ -211,8 +211,13 @@ function updateUserMenu() {
   const menu = document.getElementById('userMenu');
   const addBtn = document.getElementById('addBtn');
   if (currentUser) {
-    menu.textContent = currentUser.name || tr('logout');
-    menu.onclick = logout;
+          menu.textContent = currentUser.name;
+      menu.onclick = () => {
+        document.getElementById('profileModal').classList.add('open');
+        const balEl = document.getElementById('userBalance');
+        if (balEl) balEl.textContent = currentUser.balance || 0;
+      };
+
     addBtn.classList.remove('hidden');
     addBtn.textContent = tr('add');
   } else {
