@@ -398,7 +398,22 @@ async function sendMessage(adId, toUserId) {
   input.value = '';
   loadMessages(adId);
 }
+function switchProfileTab(tab) {
+  const contentArea = document.getElementById('profileTabContent');
+  if (!contentArea) return;
 
+  if (tab === 'items') {
+    contentArea.innerHTML = `
+      <p style="color:#888; font-style:italic; margin-bottom:16px;">Δεν υπάρχουν ακόμη ενεργές αγγελίες (Пока нет активных объявлений)</p>
+      <button onclick="showPostAd()" style="background:#00a046; color:#fff; border:none; padding:12px 24px; border-radius:24px; font-size:15px; font-weight:bold; cursor:pointer; box-shadow: 0 4px 6px rgba(0,160,70,0.15);">+ Έναρξη ανταλλαγής / Προσθήκη αγγελίας</button>
+    `;
+  } else if (tab === 'messages') {
+    contentArea.innerHTML = `<p style="color:#888; font-style:italic;">Δεν υπάρχουν μηνύματα (Нет сообщений)</p>`;
+  } else if (tab === 'archive') {
+    contentArea.innerHTML = `<p style="color:#888; font-style:italic;">Το αρχείο είναι άδειο (Архив пуст)</p>`;
+  }
+}
+  
 function showLogin() { document.getElementById('loginModal').classList.add('open'); document.getElementById('registerModal').classList.remove('open'); }
 function showRegister() { document.getElementById('registerModal').classList.add('open'); document.getElementById('loginModal').classList.remove('open'); }
 function showPostAd() { if (!currentUser) return showLogin(); document.getElementById('postModal').classList.add('open'); }
