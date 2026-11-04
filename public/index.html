@@ -351,7 +351,10 @@ async function showAd(id) {
     <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
   </div>
   <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
-  <div style="color:#666; margin-bottom:12px;">${ad.city}</div>
+  `<div style="color:#666; margin-bottom:12px; display:flex; justify-content:space-between;">` +
+  `<span>📍 \${ad.city}</span>` +
+  `<span>👤 \${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'Проδότης')} | 👁 \${ad.views || 0}</span>` +
+`</div>`
   <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
   <div style="border-top:1px solid #eee; padding-top:16px;">
     <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
