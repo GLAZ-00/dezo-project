@@ -361,7 +361,7 @@ async function showAd(id) {
       <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
     </p>
         
-        ${currentUser && !isOwner ? `
+        ${currentUser ? `
           <h3>${tr('message')}</h3>
           <div class="chat-box" id="chatBox"></div>
           <div style="display:flex; gap:8px;">
