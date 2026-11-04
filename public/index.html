@@ -1,4 +1,4 @@
-by<!DOCTYPE html>
+ by<!DOCTYPE html>
 <html lang="el">
 <head>
 <meta charset="UTF-8">
@@ -441,12 +441,12 @@ function switchProfileTab(tab) {
           // ЛЕВАЯ ШИРОКАЯ ЗΟΝΚΑ: Список вещей (70% ширины)
           // ЛЕВАЯ ШИРОКАЯ ЗΟΝΚΑ: Список вещей с плавным скроллом пальцем
        
-     html += '<div style="flex: 2.3; min-width: 0; height: 180px; max-height: 180px; overflow-y: auto; overflow-x: hidden; padding-right: 5px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;">';
+       html += '<div style="flex: 2.3; display: block; max-height: 240px; overflow-y: auto; padding-right: 5px;">';
 
           for (var i = 0; i < myAds.length; i++) {
             var ad = myAds[i];
-          html += '<div onclick="showAd(\'' + ad.id + '\')" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; height: 38px; box-sizing: border-box; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer; margin-bottom:6px;">'
-              '<div style="display:flex; align-items:center; gap:10px;">' +
+        html += '<div onclick="showAd(\'' + ad.id + '\')" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer;">'
+              '<div style="display:flex; align-items:center; gap:10px;">' +ж
                 '<div style="width:10px; height:10px; background:#00a046; border-radius:50%;"></div>' +
                 '<strong style="color:#222;">' + ad.title + '</strong>' +
               '</div>' +
