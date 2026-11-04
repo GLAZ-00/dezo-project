@@ -398,11 +398,24 @@ async function loadMessages(adId) {
   box.scrollTop = box.scrollHeight;
 }
 
-async function sendMessage(adId, toUserId) {
+async function sendMessage(adId) {
   const input = document.getElementById('msgInput');
   const text = input.value.trim();
   if (!text) return;
-  await api('/api/messages', { method: 'POST', body: JSON.stringify({ adId, text, toUserId }) });
+
+  // Находим текущее открытое объявление в системе
+  const currentAd = typeof currentAds !== 'undefined' ? currentAds.find(a => a.id === adId) : null;
+  let toUserId = currentAd ? currentAd.userId : null;
+
+  // Если пишет сам хозяин товара, нам нужно найти ID покупателя
+  if (currentUser && currentAd && currentUser.id === currentAd.userId) {
+    // Берём контейнер чата, чтобы вытащить историю
+    const box = document.getElementById('chatBox');
+    // Ищем на сервере или в разметке последнее сообщение, которое пришло НЕ от нас
+    toUserId = window.lastIncomingUserId || toUserId;
+  }
+
+  await api('/api/messages', { method: 'POST', body: JSON.stringify({ adId, text, toUserId: toUserId }) });
   input.value = '';
   loadMessages(adId);
 }
