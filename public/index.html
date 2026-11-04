@@ -393,11 +393,14 @@ async function promoteAd(id) {
 
 async function loadMessages(adId) {
   const msgs = await api('/api/messages/' + adId);
+  // Запоминаем, кто прислал последнее сообщение (для ответа хозяина)
+  const incoming = msgs.find(m => m.from !== currentUser.id);
+  if (incoming) window.lastIncomingUserId = incoming.from;
+
   const box = document.getElementById('chatBox');
   box.innerHTML = msgs.map(m => `<div class="msg ${m.from === currentUser.id ? 'me' : 'them'}">${m.text}</div>`).join('');
   box.scrollTop = box.scrollHeight;
 }
-
 async function sendMessage(adId) {
   const input = document.getElementById('msgInput');
   const text = input.value.trim();
