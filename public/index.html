@@ -373,7 +373,12 @@ async function showAd(id) {
     `;
 
     document.getElementById('adModal').classList.add('open');
-    if (currentUser && !isOwner) loadMessages(ad.id);
+        if (currentUser) {
+      loadMessages(ad.id);
+      // Запускаем пульс: проверяем новые сообщения каждые 3 секунды намертво
+      if (window.chatInterval) clearInterval(window.chatInterval);
+      window.chatInterval = setInterval(() => loadMessages(ad.id), 3000);
+    }
   } catch (err) {
     alert('Σφάλμα φόρτωσης αγγελίας');
   }
@@ -459,7 +464,10 @@ function showPostAd() {
   loadCategories(); 
   document.getElementById('postModal').classList.add('open'); 
 }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModal(id) { 
+  document.getElementById(id).classList.remove('open'); 
+  if (id === 'adModal' && window.chatInterval) clearInterval(window.chatInterval);
+}
 
 async function login() {
   try {
