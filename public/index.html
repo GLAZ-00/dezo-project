@@ -433,7 +433,7 @@ function switchProfileTab(tab) {
       .then(function(myAds) {
         if (!myAds || myAds.length === 0) {
           contentArea.innerHTML = '<p style="color:#888; font-style:italic; margin-bottom:16px;">Δεν υπάρχουν ακόμη ενεργές αγγελίες (Пока нет активных объявлений)</p>' +
-            '<button onclick="showPostAd()" style="background:#00a046; color:#fff; border:none; padding:10px 20px; border-radius:20px; font-size:14px; font-weight:bold; cursor:pointer; box-shadow: 0 4px 6px rgba(0,160,70,0.15); white-space:nowrap;">+ Προσθήκη αγγελίας</button>';
+            <button onclick="showPostAd()" style="background:#00a046; color:#fff; border:none; padding:10px 20px; border-radius:20px; font-size:14px; font-weight:bold; cursor:pointer; box-shadow: 0 4px 6px rgba(0,160,70,0.15); white-space:nowrap;">+ Προσθήκη αγγελίας</button>';
                 } else {
           // Главный контейнер: левая часть 70%, правая часть 30%
           var html = '<div style="width:100%; display:flex; gap:20px; align-items:flex-start; text-align:left;">';
