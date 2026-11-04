@@ -439,7 +439,9 @@ function switchProfileTab(tab) {
           var html = '<div style="width:100%; display:flex; gap:20px; align-items:flex-start; text-align:left;">';
           
           // ЛЕВАЯ ШИРОКАЯ ЗΟΝΚΑ: Список вещей (70% ширины)
-          html += '<div style="flex: 2.3; display:flex; flex-direction:column; gap:10px;">';
+          // ЛЕВАЯ ШИРОКАЯ ЗΟΝΚΑ: Список вещей с плавным скроллом пальцем
+html += '<div style="flex: 2.3; display:flex; flex-direction:column; gap:10px; max-height: 65vh; overflow-y: auto; padding-right: 5px;">';
+
           for (var i = 0; i < myAds.length; i++) {
             var ad = myAds[i];
             html += '<div onclick="showAd(\'' + ad.id + '\')" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer;">' +
