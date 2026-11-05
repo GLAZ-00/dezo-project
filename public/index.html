@@ -105,18 +105,48 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
   <div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px;">
   <div style="width: 100%; min-height: inherit; background: #fff; padding: 16px; box-shadow: none; border-radius: 0; display: flex; flex-direction: column; justify-content: space-between;">
     <!-- Шапка -->
-    <!-- Зона для 3-х будущих фото товара и крестик закрытия -->
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; width:100%;">
-  <div id="profilePhotoPreviewZone" style="display:flex; gap:10px; flex:1;">
-    <span style="color:#aaa; font-size:13px; font-style:italic;">Здесь будут показываться 3 фото вашего товара...</span>
-  </div>
-  <span onclick="document.getElementById('profileModal').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden');" style="cursor:pointer; font-size:32px; font-weight:bold; color:#888; padding:0 10px; line-height:1;">&times;</span>
-</div>
-    <!-- Баланс и Слоты -->
-    <div style="display:flex; gap:12px; margin-bottom:16px;">
-      <div style="flex:1; background:#f5f5f5; padding:10px; border-radius:6px; font-weight:bold;">💳 Ευρώ: <span id="userBalance">0</span> € <span style="color:#00a046; cursor:pointer; margin-left:8px;">[+]</span></div>
-      <div style="flex:1; background:#f5f5f5; padding:10px; border-radius:6px; font-weight:bold;">📦 Σλοτ (Слоты): <span id="userSlots">2 / 2</span></div>
+ <!-- Зона для 3-х фото (70%) и пустота (30%) -->
+<div style="display: flex; gap: 15px; margin-bottom: 20px; align-items: flex-start; width: 100%;">
+  
+  <!-- Левая часть: 70% под фото -->
+  <div style="flex: 7; display: flex; gap: 10px;">
+    
+    <!-- Слот 1 (Главное) -->
+    <div onclick="document.getElementById('profileFile1').click()" style="flex: 1; aspect-ratio: 1; border: 2px dashed #00a046; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fff; min-height: 100px;">
+      <span style="font-size: 24px; color: #00a046; font-weight: bold;">+</span>
+      <span style="font-size: 11px; color: #666;">Главное</span>
+      <input type="file" id="profileFile1" accept="image/*" style="display: none;" onchange="console.log('Выбрано фото 1')">
     </div>
+
+    <!-- Слот 2 -->
+    <div onclick="document.getElementById('profileFile2').click()" style="flex: 1; aspect-ratio: 1; border: 1px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fff; min-height: 100px;">
+      <span style="font-size: 24px; color: #999;">+</span>
+      <span style="font-size: 11px; color: #666;">Фото 2</span>
+      <input type="file" id="profileFile2" accept="image/*" style="display: none;" onchange="console.log('Выбрано фото 2')">
+    </div>
+
+    <!-- Слот 3 -->
+    <div onclick="document.getElementById('profileFile3').click()" style="flex: 1; aspect-ratio: 1; border: 1px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fff; min-height: 100px;">
+      <span style="font-size: 24px; color: #999;">+</span>
+      <span style="font-size: 11px; color: #666;">Фото 3</span>
+      <input type="file" id="profileFile3" accept="image/*" style="display: none;" onchange="console.log('Выбрано фото 3')">
+    </div>
+
+  </div>
+
+  <!-- Правая часть: 30% пустоты и крестик закрытия кабинета -->
+  <div style="flex: 3; display: flex; justify-content: flex-end; align-items: flex-start; min-height: 100px;">
+    <span onclick="document.getElementById('profileModal').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden');" style="cursor: pointer; font-size: 32px; font-weight: bold; color: #888; line-height: 0.8; padding: 5px 10px;">&times;</span>
+  </div>
+
+</div>
+
+<!-- Блок Баланса и Слотов (оставляем под ними, как на макете) -->
+<div style="display: flex; gap: 12px; margin-bottom: 16px; width: 100%;">
+  <div style="flex: 1; background: #f5f5f5; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 14px;">💳 Ευρώ: <span id="userBalance">0</span> €</div>
+  <div style="flex: 1; background: #f5f5f5; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 14px;">📦 Σλοτ (Слоты): <span id="userSlots">2 / 2</span></div>
+</div>
+
     <!-- Вкладки навигации -->
     <div style="display:flex; gap:8px; border-bottom:2px solid #eee; padding-bottom:8px; margin-bottom:12px;">
       <button onclick="switchProfileTab('items')" style="flex:1; padding:8px; background:#00a046; color:#fff; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Τα πράγματά μου</button>
