@@ -166,6 +166,20 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 </div>
 
 <script>
+  function previewProfilePhoto(input, slotId) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const slot = document.getElementById(slotId).parentNode;
+      slot.style.backgroundImage = "url('" + e.target.result + "')";
+      slot.style.backgroundSize = "cover";
+      slot.style.backgroundPosition = "center";
+      Array.from(slot.children).forEach(ch => { if(ch.tagName !== 'INPUT') ch.style.display = 'none'; });
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
 const API = '';
 let lang = 'el';
 let token = localStorage.getItem('dezo_token');
