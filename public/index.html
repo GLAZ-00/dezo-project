@@ -115,21 +115,21 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <div onclick="document.getElementById('profileFile1').click()" style="flex: 1; aspect-ratio: 1; border: 2px dashed #00a046; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fff; min-height: 100px;">
       <span style="font-size: 24px; color: #00a046; font-weight: bold;">+</span>
       <span style="font-size: 11px; color: #666;">Главное</span>
-      <input type="file" id="profileFile1" accept="image/*" style="display: none;" onchange="console.log('Выбрано фото 1')">
+            <input type="file" id="profileFile1" accept="image/*" style="display: none;" onchange="previewProfilePhoto(this, 'profileFile1')">
     </div>
 
     <!-- Слот 2 -->
     <div onclick="document.getElementById('profileFile2').click()" style="flex: 1; aspect-ratio: 1; border: 1px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fff; min-height: 100px;">
       <span style="font-size: 24px; color: #999;">+</span>
       <span style="font-size: 11px; color: #666;">Фото 2</span>
-      <input type="file" id="profileFile2" accept="image/*" style="display: none;" onchange="console.log('Выбрано фото 2')">
+            <input type="file" id="profileFile2" accept="image/*" style="display: none;" onchange="previewProfilePhoto(this, 'profileFile2')">
     </div>
 
     <!-- Слот 3 -->
     <div onclick="document.getElementById('profileFile3').click()" style="flex: 1; aspect-ratio: 1; border: 1px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fff; min-height: 100px;">
       <span style="font-size: 24px; color: #999;">+</span>
       <span style="font-size: 11px; color: #666;">Фото 3</span>
-      <input type="file" id="profileFile3" accept="image/*" style="display: none;" onchange="console.log('Выбрано фото 3')">
+            <input type="file" id="profileFile3" accept="image/*" style="display: none;" onchange="previewProfilePhoto(this, 'profileFile3')">
     </div>
 
   </div>
