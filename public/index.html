@@ -328,7 +328,7 @@ async function loadAds(category) {
 function renderAds(list) {
   const main = document.getElementById('mainContent');
   if (!list.length) { main.innerHTML = '<p style="text-align:center;padding:40px;">Δεν βρέθηκαν αγγελίες</p>'; return; }
-  main.innerHTML = `<div class="ads-grid">${list.map(ad => `
+  main.innerHTML = `<div class="ads-grid">${currentAds.map(ad => 
     <div class="ad-card" onclick="showAd('${ad.id}')">
       ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
       ${Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;">${tr('new')}</div>` : ''}
