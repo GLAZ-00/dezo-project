@@ -1,4 +1,5 @@
 
+
 by<!DOCTYPE html>
 <html lang="el">
 <head>
@@ -108,37 +109,15 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <!-- Зона для 3-х будущих фото товара и крестик закрытия -->
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; width:100%;">
   <div id="profilePhotoPreviewZone" style="display:flex; gap:10px; flex:1;">
-    <div style="width: 100%; display: flex; gap: 20px; align-items: stretch; text-align: left; box-sizing: border-box;">
-  <!-- ЛЕВАЯ ЗОНА (70%): 3 Интерактивных квадрата под фото -->
-  <div style="flex: 2.3; display: flex; gap: 10px; min-width: 0;">
-    <label style="flex: 1; aspect-ratio: 1; border: 2px dashed var(--primary); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fafafa; position: relative;">
-      <input type="file" accept="image/*" style="display: none;">
-      <span style="font-size: 24px; color: var(--primary); font-weight: bold;">+</span>
-      <span style="font-size: 10px; color: #666; margin-top: 2px; font-weight: 500;">Главное</span>
-    </label>
-    <label style="flex: 1; aspect-ratio: 1; border: 2px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fafafa;">
-      <input type="file" accept="image/*" style="display: none;">
-      <span style="font-size: 24px; color: #999;">+</span>
-      <span style="font-size: 10px; color: #666; margin-top: 2px;">Фото 2</span>
-    </label>
-    <label style="flex: 1; aspect-ratio: 1; border: 2px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fafafa;">
-      <input type="file" accept="image/*" style="display: none;">
-      <span style="font-size: 24px; color: #999;">+</span>
-      <span style="font-size: 10px; color: #666; margin-top: 2px;">Фото 3</span>
-    </label>
-  </div>
-
-  <!-- ПРАВАЯ ЗОНА (30%): Задел под Кошелек, Баланс и VIP-кнопки -->
-  <div style="flex: 1; min-width: 140px; background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box;" id="profileMoneyZone">
-    <div style="font-size: 12px; font-weight: bold; color: #222;">💳 Κουμπαράς (Кошелек):</div>
-    <div style="font-size: 13px; color: #00a046; font-weight: bold; margin-top: 4px;">💳 Ευρώ: <span id="userBalance">0</span> € <span style="cursor:pointer; margin-left:4px;">[+]</span></div>
-<div style="font-size: 13px; color: #555; font-weight: bold;">📦 Σλοτ: <span id="userSlots">2 / 2</span></div>
-  </div>
-</div>
+    <span style="color:#aaa; font-size:13px; font-style:italic;">Здесь будут показываться 3 фото вашего товара...</span>
   </div>
   <span onclick="document.getElementById('profileModal').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden');" style="cursor:pointer; font-size:32px; font-weight:bold; color:#888; padding:0 10px; line-height:1;">&times;</span>
 </div>
-    
+    <!-- Баланс и Слоты -->
+    <div style="display:flex; gap:12px; margin-bottom:16px;">
+      <div style="flex:1; background:#f5f5f5; padding:10px; border-radius:6px; font-weight:bold;">💳 Ευρώ: <span id="userBalance">0</span> € <span style="color:#00a046; cursor:pointer; margin-left:8px;">[+]</span></div>
+      <div style="flex:1; background:#f5f5f5; padding:10px; border-radius:6px; font-weight:bold;">📦 Σλοτ (Слоты): <span id="userSlots">2 / 2</span></div>
+    </div>
     <!-- Вкладки навигации -->
     <div style="display:flex; gap:8px; border-bottom:2px solid #eee; padding-bottom:8px; margin-bottom:12px;">
       <button onclick="switchProfileTab('items')" style="flex:1; padding:8px; background:#00a046; color:#fff; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Τα πράγματά μου</button>
@@ -328,7 +307,7 @@ async function loadAds(category) {
 function renderAds(list) {
   const main = document.getElementById('mainContent');
   if (!list.length) { main.innerHTML = '<p style="text-align:center;padding:40px;">Δεν βρέθηκαν αγγελίες</p>'; return; }
-  main.innerHTML = `<div class="ads-grid">${currentAds.map(ad => 
+  main.innerHTML = `<div class="ads-grid">${list.map(ad => `
     <div class="ad-card" onclick="showAd('${ad.id}')">
       ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
       ${Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;">${tr('new')}</div>` : ''}
@@ -585,4 +564,3 @@ showHome();
 </script>
 </body>
 </html>
-
