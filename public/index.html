@@ -138,7 +138,8 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 </div>
 
 <script>
-const API = '';
+const API = 'https://onrender.com';
+
 let lang = 'el';
 let token = localStorage.getItem('dezo_token');
 let currentUser = JSON.parse(localStorage.getItem('dezo_user') || 'null');
@@ -352,7 +353,8 @@ async function showAd(id) {
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
   <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
-    <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+        <img src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+
   </div>
   <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
 <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
