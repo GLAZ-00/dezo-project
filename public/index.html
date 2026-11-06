@@ -498,21 +498,7 @@ async function sendMessage(adId) {
   input.value = '';
   loadMessages(adId);
 }
-  function changeAdPhoto(index) {
-  const ad = window.currentOpenedAd;
-  const mainImg = document.getElementById('mainAdImage');
-  if (!ad || !mainImg) return;
   
-  // 1. Проверяем, есть ли массив фотографий
-  if (ad.photos && Array.isArray(ad.photos) && ad.photos[index]) {
-    mainImg.src = ad.photos[index];
-  } 
-  // 2. Если это не массив, а отдельные строки photo1, photo2, photo3
-  else {
-    const fallbackPhoto = ad[`photo'+(index + 1] || ad.photos;
-    mainImg.src = fallbackPhoto || 'https://placehold.co';
-  }
-}
 function switchProfileTab(tab) {
   const contentArea = document.getElementById('profileTabContent');
   if (!contentArea) return;
