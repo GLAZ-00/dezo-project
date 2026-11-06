@@ -432,7 +432,7 @@ try {
     </p>
     <p style="margin-bottom:16px; white-space:pre-wrap; color:#333;">${ad.description || 'Нет описания'}</p>
     
-    <div style="border-top:1px solid #eee; padding-top:16px;">
+        <div style="border-top:1px solid #eee; padding-top:16px;">
         ${currentUser ? `
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; color:#222; font-weight:bold;">
             <h3>${tr('message')}</h3>
@@ -632,6 +632,21 @@ async function postAd() {
 updateUserMenu();
 loadCategories();
 showHome();
+function changeAdPhoto(index) {
+  const ad = window.currentOpenedAd;
+  const mainImg = document.getElementById('mainAdImage');
+  if (!ad || !mainImg) return;
+  
+  // 1. Проверяем, есть ли массив фотографий
+  if (ad.photos && Array.isArray(ad.photos) && ad.photos[index]) {
+    mainImg.src = ad.photos[index];
+  } 
+  // 2. Если это не массив, а отдельные строки photo1, photo2, photo3
+  else {
+    const fallbackPhoto = ad[`photo'+(index + 1] || ad.photos;
+    mainImg.src = fallbackPhoto || 'https://placehold.co';
+  }
+}
 </script>
 </body>
 </html>
