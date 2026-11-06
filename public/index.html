@@ -410,9 +410,18 @@ async function showAd(id) {
 
         <!-- Вертикальный блок цены и геолокации под картинкой -->
     <div style="font-size:20px; font-weight:700; color:var(--primary); margin-top:12px; margin-bottom:6px;">${ad.price} €</div>
-    <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-      <span>📍 ${ad.city}</span>
-      <span>👁 ${ad.views || 0}</span>
+        <!-- Строка: Город, Кнопки-Фотоаппараты и Просмотры -->
+    <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+      <span style="white-space:nowrap;">📍 ${ad.city}</span>
+      
+      <!-- Центр: Умные переключатели больших фотографий -->
+      <div style="display:flex; gap:6px;">
+        <button onclick="document.getElementById('mainAdImage').src='${ad.photos && ad.photos[0] ? ad.photos[0] : \'https://placehold.co\'}'" style="padding:2px 6px; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; cursor:pointer; font-size:12px; font-weight:bold;">📷 1</button>
+        <button onclick="document.getElementById('mainAdImage').src='${ad.photos && ad.photos[1] ? ad.photos[1] : \'https://placehold.co?text=No+Photo+2\'}'" style="padding:2px 6px; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; cursor:pointer; font-size:12px; font-weight:bold;">📷 2</button>
+        <button onclick="document.getElementById('mainAdImage').src='${ad.photos && ad.photos[2] ? ad.photos[2] : \'https://placehold.co?text=No+Photo+3\'}'" style="padding:2px 6px; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; cursor:pointer; font-size:12px; font-weight:bold;">📷 3</button>
+      </div>
+
+      <span style="white-space:nowrap;">👁 ${ad.views || 0}</span>
     </div>
 
     <!-- ТЕЛЕФОН И ОПИСАНИЕ ТЕПЕРЬ ТУТ И ВСЕГДА ВИДНЫ -->
