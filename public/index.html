@@ -397,16 +397,15 @@ async function showAd(id) {
       <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center; position:relative;">
       <img id="mainAdImage" src="${ad.photos && ad.photos.length > 0 ? ad.photos[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
       
-      <!-- Тот самый мини-светофор 1.5 на 0.5 см в самом углу -->
-      <div style="position:absolute; bottom:8px; left:8px; display:flex; align-items:center; gap:6px; background:rgba(0,0,0,0.4); padding:4px 6px; border-radius:4px;">
-        <div style="display:flex; flex-direction:column; gap:2px; background:#111; padding:3px 2px; border-radius:3px; width:6px; align-items:center;">
-          <div style="width:4px; height:4px; border-radius:50%; background:${ad.lightColor === 'green' ? '#00ff00; box-shadow:0 0 4px #00ff00;' : '#333'}"></div>
-          <div style="width:4px; height:4px; border-radius:50%; background:${ad.lightColor === 'yellow' ? '#ffcc00; box-shadow:0 0 4px #ffcc00;' : '#333'}"></div>
-          <div style="width:4px; height:4px; border-radius:50%; background:${ad.lightColor === 'red' ? '#ff0000; box-shadow:0 0 4px #ff0000;' : '#333'}"></div>
+            <!-- Реально крупный вертикальный светофор (увеличен в 5 раз) -->
+      <div style="position:absolute; bottom:16px; left:16px; display:flex; align-items:center; gap:12px; background:rgba(0,0,0,0.5); padding:10px 14px; border-radius:8px;">
+        <div style="display:flex; flex-direction:column; background:#111; padding:6px; border-radius:6px; width:30px; height:80px; justify-content:space-between; align-items:center; box-sizing:border-box;">
+          <div style="width:18px; height:18px; border-radius:50%; background:${ad.lightColor==='green'?'#00ff00; box-shadow:0 0 10px #00ff00;':'#222'};"></div>
+          <div style="width:18px; height:18px; border-radius:50%; background:${ad.lightColor==='yellow'?'#ffcc00; box-shadow:0 0 10px #ffcc00;':'#222'};"></div>
+          <div style="width:18px; height:18px; border-radius:50%; background:${ad.lightColor==='red'?'#ff0000; box-shadow:0 0 10px #ff0000;':'#222'};"></div>
         </div>
-        <span style="color:#fff; font-size:12px; font-weight:bold; opacity:0.85;">${ad.daysLeft || 5} дн.</span>
+        <span style="color:#fff; font-size:18px; font-weight:bold; opacity:0.95;">${ad.daysLeft || 5} дн.</span>
       </div>
-    </div>
   <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
 <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
   <span>📍 ${ad.city}</span>
