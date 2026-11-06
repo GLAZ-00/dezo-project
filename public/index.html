@@ -391,16 +391,13 @@ try {
     if (!detail) return;
     
     const isOwner = currentUser && currentUser.id === ad.userId;
-    
+    window.currentOpenedAd = ad;
     detail.innerHTML = `
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-    <h2>${ad.title}</h2>
-    <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
-  </div>
-      <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center; position:relative;">
-      <img id="mainAdImage" src="${ad.photos && ad.photos.length > 0 ? ad.photos[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+        <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center; position:relative;">
+      <img id="mainAdImage" src="${ad.photos && ad.photos.length > 0 ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
       
-                        <!-- Чистый светофор без серого фона вокруг -->
+      <!-- Тот самый мини-светофор 1.5 на 0.5 см -->
       <div style="position:absolute; bottom:12px; left:12px; display:flex; align-items:center; gap:6px;">
         <div style="display:flex; flex-direction:column; background:#111; padding:5px 4px; border-radius:5px; width:16px; height:42px; justify-content:space-between; align-items:center; box-sizing:border-box;">
           <div style="width:8px; height:8px; border-radius:50%; background:${ad.lightColor==='green'?'#00ff00':'#222'};"></div>
@@ -411,12 +408,13 @@ try {
       </div>
     </div>
 
-        <!-- Вертикальный блок цены и геолокации под картинкой -->
+    <!-- Вертикальный блок цены, геолокации и ФОТОАППАРАТОВ под картинкой -->
     <div style="font-size:20px; font-weight:700; color:var(--primary); margin-top:12px; margin-bottom:6px;">${ad.price} €</div>
-            <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+    
+    <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
       <span style="white-space:nowrap;">📍 ${ad.city}</span>
       
-      <!-- Безопасные кнопки-переключатели -->
+      <!-- Безопасные маленькие кнопочки-переключатели -->
       <div style="display:flex; gap:6px;">
         <button onclick="changeAdPhoto(0)" style="padding:2px 8px; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; cursor:pointer; font-size:12px; font-weight:bold;">📷 1</button>
         <button onclick="changeAdPhoto(1)" style="padding:2px 8px; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; cursor:pointer; font-size:12px; font-weight:bold;">📷 2</button>
@@ -426,12 +424,13 @@ try {
       <span style="white-space:nowrap;">👁 ${ad.views || 0}</span>
     </div>
 
-    <!-- ТЕЛЕФОН И ОПИСАНИЕ ТЕПЕРЬ ТУТ И ВСЕГДА ВИДНЫ -->
+    <!-- Телефон и описание товара -->
     <p style="margin-bottom:12px; color:#222;"><strong>${tr('phone')}:</strong> 
       <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
     </p>
     <p style="margin-bottom:16px; white-space:pre-wrap; color:#333;">${ad.description || 'Нет описания'}</p>
     
+    <!-- Блок чата и Лоры -->
         <div style="border-top:1px solid #eee; padding-top:16px;">
         ${currentUser ? `
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; color:#222; font-weight:bold;">
@@ -445,6 +444,8 @@ try {
           </div>
         ` : ''}
     </div>
+
+
 
     
 
