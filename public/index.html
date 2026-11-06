@@ -498,6 +498,16 @@ async function sendMessage(adId) {
   input.value = '';
   loadMessages(adId);
 }
+  function changeAdPhoto(index) {
+  const ad = window.currentOpenedAd;
+  const mainImg = document.getElementById('mainAdImage');
+  if (!ad || !mainImg) return;
+  if (ad.photos && ad.photos[index]) {
+    mainImg.src = ad.photos[index];
+  } else {
+    mainImg.src = ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placehold.co';
+  }
+}
 function switchProfileTab(tab) {
   const contentArea = document.getElementById('profileTabContent');
   if (!contentArea) return;
