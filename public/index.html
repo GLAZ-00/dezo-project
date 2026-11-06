@@ -400,7 +400,7 @@ async function showAd(id) {
   <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
 <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
   <span>📍 ${ad.city}</span>
-  <span>👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')} | 👁 ${ad.views || 0}</span>
+  <span>👁 ${ad.views || 0}</span>
 </div>
   <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
   <div style="border-top:1px solid #eee; padding-top:16px;">
@@ -409,7 +409,7 @@ async function showAd(id) {
     </p>
         
         ${currentUser ? `
-          <h3>${tr('message')}</h3>
+          <h3>${tr('message')} <span style="font-weight:normal; color:#777; font-size:14px;">| 👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')}</span></h3>
           <div class="chat-box" id="chatBox"></div>
           <div style="display:flex; gap:8px;">
             <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
