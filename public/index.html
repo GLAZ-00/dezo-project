@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -410,18 +411,9 @@ async function showAd(id) {
 
         <!-- Вертикальный блок цены и геолокации под картинкой -->
     <div style="font-size:20px; font-weight:700; color:var(--primary); margin-top:12px; margin-bottom:6px;">${ad.price} €</div>
-        <!-- Строка: Город, Кнопки-Фотоаппараты и Просмотры -->
-    <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
-      <span style="white-space:nowrap;">📍 ${ad.city}</span>
-      
-          <!-- Вкладки навигации (Мои вещи ушли направо, строго над формой подачи) -->
-    <div style="display:flex; gap:8px; border-bottom:2px solid #eee; padding-bottom:8px; margin-bottom:12px;">
-      <button onclick="switchProfileTab('archive')" style="flex:1; padding:8px; background:#f0f0f0; border:none; border-radius:4px; cursor:pointer;">Αρχείο</button>
-      <button onclick="switchProfileTab('messages')" style="flex:1; padding:8px; background:#f0f0f0; border:none; border-radius:4px; cursor:pointer;">Μηνύματα</button>
-      <button onclick="switchProfileTab('items')" style="flex:1; padding:8px; background:#00a046; color:#fff; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Τα πράγματά μου</button>
-    </div>
-
-      <span style="white-space:nowrap;">👁 ${ad.views || 0}</span>
+    <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span>📍 ${ad.city}</span>
+      <span>👁 ${ad.views || 0}</span>
     </div>
 
     <!-- ТЕЛЕФОН И ОПИСАНИЕ ТЕПЕРЬ ТУТ И ВСЕГДА ВИДНЫ -->
