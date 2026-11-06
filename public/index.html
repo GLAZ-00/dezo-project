@@ -502,10 +502,15 @@ async function sendMessage(adId) {
   const ad = window.currentOpenedAd;
   const mainImg = document.getElementById('mainAdImage');
   if (!ad || !mainImg) return;
-  if (ad.photos && ad.photos[index]) {
+  
+  // 1. Проверяем, есть ли массив фотографий
+  if (ad.photos && Array.isArray(ad.photos) && ad.photos[index]) {
     mainImg.src = ad.photos[index];
-  } else {
-    mainImg.src = ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placehold.co';
+  } 
+  // 2. Если это не массив, а отдельные строки photo1, photo2, photo3
+  else {
+    const fallbackPhoto = ad[`photo'+(index + 1] || ad.photos;
+    mainImg.src = fallbackPhoto || 'https://placehold.co';
   }
 }
 function switchProfileTab(tab) {
