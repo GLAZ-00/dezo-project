@@ -383,7 +383,7 @@ async function revealPhone(id, el) {
   }
 }
 async function showAd(id) {
-window.currentOpenedAd = currentAds.find(a => a.id === id);
+
 
 try {
     const ad = await api('/api/ads/' + id);
