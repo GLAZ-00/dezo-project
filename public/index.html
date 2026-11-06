@@ -412,18 +412,19 @@ async function showAd(id) {
         <!-- Вертикальный блок цены и геолокации под картинкой -->
     <div style="font-size:20px; font-weight:700; color:var(--primary); margin-top:12px; margin-bottom:6px;">${ad.price} €</div>
         <!-- Строка: Город, КРУПНЫЕ Фотоаппараты и Просмотры -->
-    <div style="color:#777; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <!-- Строка геолокации и просмотров -->
+    <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
       <span style="white-space:nowrap; font-size:14px;">📍 ${ad.city}</span>
-      
-      <!-- ТРИ БОЛЬШИХ ФОТОАППАРАТА (Увеличены в 3 раза, раздвинуты) -->
-      <div style="display:flex; gap:16px; justify-content:center; flex:1;">
-        <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=ad.photos && ad.photos.length > 0 ? ad.photos[0] : (ad.photo1 || img.src); }" style="width:55px; height:38px; background:#f5f5f5; border:1px solid #bbb; border-radius:6px; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.1);">📷</button>
-        <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=ad.photos && ad.photos.length > 0 ? ad.photos[1] : (ad.photo2 || img.src); }" style="width:55px; height:38px; background:#f5f5f5; border:1px solid #bbb; border-radius:6px; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.1);">📷</button>
-        <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=ad.photos && ad.photos.length > 0 ? ad.photos[2] : (ad.photo3 || img.src); }" style="width:55px; height:38px; background:#f5f5f5; border:1px solid #bbb; border-radius:6px; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.1);">📷</button>
-      </div>
-
       <span style="white-space:nowrap; font-size:14px;">👁 ${ad.views || 0}</span>
     </div>
+    
+    <!-- ТРИ БОЛЬШИХ ФОТОАППАРАТА (Приподняты к цене, значки увеличены, база ad.images) -->
+    <div style="display:flex; gap:16px; justify-content:center; margin-top:-42px; margin-bottom:24px; position:relative; z-index:5;">
+      <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=ad.images && ad.images[0] ? ad.images[0] : (ad.photo1 || img.src); }" style="width:50px; height:35px; background:#f5f5f5; border:1px solid #bbb; border-radius:6px; cursor:pointer; font-size:22px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.1);">📷</button>
+      <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=ad.images && ad.images[1] ? ad.images[1] : (ad.photo2 || img.src); }" style="width:50px; height:35px; background:#f5f5f5; border:1px solid #bbb; border-radius:6px; cursor:pointer; font-size:22px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.1);">📷</button>
+      <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=ad.images && ad.images[2] ? ad.images[2] : (ad.photo3 || img.src); }" style="width:50px; height:35px; background:#f5f5f5; border:1px solid #bbb; border-radius:6px; cursor:pointer; font-size:22px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.1);">📷</button>
+    </div>
+
 
 
     <!-- ТЕЛЕФОН И ОПИСАНИЕ ТЕПЕРЬ ТУТ И ВСЕГДА ВИДНЫ -->
