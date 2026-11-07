@@ -416,14 +416,11 @@ async function showAd(id) {
       <span style="white-space:nowrap; font-size:14px;">👁 ${ad.views || 0}</span>
     </div>
     
-        <!-- ТРИ БОЛЬШИХ ФОТОАППАРАТА (Супер-универсальный код, проверяет все имена полей) -->
-    <div style="display:flex; gap:16px; justify-content:center; margin-top:-42px; margin-bottom:24px; position:relative; z-index:5;">
-      <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=(ad.photos && ad.photos[0]) || (ad.images && ad.images[0]) || ad.photo1 || ad.photos || img.src; }" style="width:50px; height:35px; background:#f5f5f5; border:1px solid #bbb; border-radius:6px; cursor:pointer; font-size:22px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.1);">📷</button>
-      <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=(ad.photos && ad.photos[1]) || (ad.images && ad.images[1]) || ad.photo2 || img.src; }" style="width:50px; height:35px; background:#f5f5f5; border:1px solid #bbb; border-radius:6px; cursor:pointer; font-size:22px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.1);">📷</button>
-      <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=(ad.photos && ad.photos[2]) || (ad.images && ad.images[2]) || ad.photo3 || img.src; }" style="width:50px; height:35px; background:#f5f5f5; border:1px solid #bbb; border-radius:6px; cursor:pointer; font-size:22px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.1);">📷</button>
+            <!-- ДВА БОЛЬШИХ ФОТОАППАРАТА С ГОЛУБОЙ ПОДСВЕТКОЙ (Взлетели прямо на линию цены) -->
+    <div style="display:flex; gap:16px; justify-content:center; margin-top:-46px; margin-bottom:28px; position:relative; z-index:10;">
+      <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=(ad.photos && ad.photos) || (ad.images && ad.images) || ad.photo2 || img.src; }" style="width:52px; height:36px; background:#f9f9f9; border:1px solid #00a0a6; border-radius:6px; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 8px rgba(0, 160, 166, 0.4); outline:none; transition:0.2s;" onfocus="this.style.boxShadow='0 0 12px rgba(0, 160, 166, 0.8)'" onblur="this.style.boxShadow='0 0 8px rgba(0, 160, 166, 0.4)'">📷1</button>
+      <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=(ad.photos && ad.photos) || (ad.images && ad.images) || ad.photo3 || img.src; }" style="width:52px; height:36px; background:#f9f9f9; border:1px solid #00a0a6; border-radius:6px; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 8px rgba(0, 160, 166, 0.4); outline:none; transition:0.2s;" onfocus="this.style.boxShadow='0 0 12px rgba(0, 160, 166, 0.8)'" onblur="this.style.boxShadow='0 0 8px rgba(0, 160, 166, 0.4)'">📷2</button>
     </div>
-
-
 
 
     <!-- ТЕЛЕФОН И ОПИСАНИЕ ТЕПЕРЬ ТУТ И ВСЕГДА ВИДНЫ -->
