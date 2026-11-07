@@ -95,7 +95,6 @@ app.post('/api/upload', auth, upload.array('photos', 3), async (req, res) => {
 
 // Create ad
 app.post('/api/ads', auth, (req, res) => {
-  // 1. Добавили subcategory в список — достаём её из посылки фронтенда
   const { title, description, price, category, subcategory, photos, city, phoneVisible } = req.body;
   const ad = {
     id: uuidv4(),
@@ -105,7 +104,8 @@ app.post('/api/ads', auth, (req, res) => {
     price: Number(price),
     category,
     subcategory: subcategory || 'Άλλο',
-    photos: Array.isArray(photos) ? photos : (photos ? [photos] : []),
+    // Железно сохраняем весь прилетевший блок фотографий как единый массив
+    photos: Array.isArray(photos) ? photos : [],
     city: city || 'Αθήνα',
     phone: users.find(u => u.id === req.user.id)?.phone || '',
     phoneVisible: !!phoneVisible,
@@ -117,6 +117,7 @@ app.post('/api/ads', auth, (req, res) => {
   ads.push(ad);
   res.json(ad);
 });
+
 
 // Get ads
 app.get('/api/ads', (req, res) => {
