@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -132,8 +134,6 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     </div>
 
   </div>
-<div style="width: 100%; margin-top: 16px; clear: both; display: block;"><button type="button" onclick="alert('Фотографии зафиксированы!');" style="width: 100%; padding: 10px; font-weight: bold; background: #00a0a6; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Применить фотографии ракурсов</button></div>
-
 
   <!-- Правая часть: 30% пустоты и крестик закрытия кабинета -->
   <div style="flex: 3; display: flex; justify-content: flex-end; align-items: flex-start; min-height: 100px;">
@@ -395,56 +395,29 @@ async function showAd(id) {
     <h2>${ad.title}</h2>
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
-      <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center; position:relative;">
-      <img id="mainAdImage" src="${ad.photos && ad.photos.length > 0 ? ad.photos[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
-      
-                        <!-- Чистый светофор без серого фона вокруг -->
-      <div style="position:absolute; bottom:12px; left:12px; display:flex; align-items:center; gap:6px;">
-        <div style="display:flex; flex-direction:column; background:#111; padding:5px 4px; border-radius:5px; width:16px; height:42px; justify-content:space-between; align-items:center; box-sizing:border-box;">
-          <div style="width:8px; height:8px; border-radius:50%; background:${ad.lightColor==='green'?'#00ff00':'#222'};"></div>
-          <div style="width:8px; height:8px; border-radius:50%; background:${ad.lightColor==='yellow'?'#ffcc00':'#222'};"></div>
-          <div style="width:8px; height:8px; border-radius:50%; background:${ad.lightColor==='red'?'#ff0000':'#222'};"></div>
-        </div>
-        <span style="color:#fff; font-size:14px; font-weight:bold; text-shadow:1px 1px 2px #000;">${ad.daysLeft || 5} дн.</span>
-      </div>
-    </div>
-
-        <!-- Вертикальный блок цены и геолокации под картинкой -->
-    <div style="font-size:20px; font-weight:700; color:var(--primary); margin-top:12px; margin-bottom:6px;">${ad.price} €</div>
-        <!-- Строка: Город, КРУПНЫЕ Фотоаппараты и Просмотры -->
-        <!-- Строка геолокации и просмотров -->
-    <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-      <span style="white-space:nowrap; font-size:14px;">📍 ${ad.city}</span>
-      <span style="white-space:nowrap; font-size:14px;">👁 ${ad.views || 0}</span>
-    </div>
-    
-            <!-- ДВА БОЛЬШИХ ФОТОАППАРАТА С ГОЛУБОЙ ПОДСВЕТКОЙ (Взлетели прямо на линию цены) -->
-    <div style="display:flex; gap:16px; justify-content:center; margin-top:-46px; margin-bottom:28px; position:relative; z-index:10;">
-      <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=(ad.photos && ad.photos) || (ad.images && ad.images) || ad.photo2 || img.src; }" style="width:52px; height:36px; background:#f9f9f9; border:1px solid #00a0a6; border-radius:6px; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 8px rgba(0, 160, 166, 0.4); outline:none; transition:0.2s;" onfocus="this.style.boxShadow='0 0 12px rgba(0, 160, 166, 0.8)'" onblur="this.style.boxShadow='0 0 8px rgba(0, 160, 166, 0.4)'">📷1</button>
-      <button onclick="const img=document.getElementById('mainAdImage'); if(img){ img.src=(ad.photos && ad.photos) || (ad.images && ad.images) || ad.photo3 || img.src; }" style="width:52px; height:36px; background:#f9f9f9; border:1px solid #00a0a6; border-radius:6px; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 8px rgba(0, 160, 166, 0.4); outline:none; transition:0.2s;" onfocus="this.style.boxShadow='0 0 12px rgba(0, 160, 166, 0.8)'" onblur="this.style.boxShadow='0 0 8px rgba(0, 160, 166, 0.4)'">📷2</button>
-    </div>
-
-
-    <!-- ТЕЛЕФОН И ОПИСАНИЕ ТЕПЕРЬ ТУТ И ВСЕГДА ВИДНЫ -->
-    <p style="margin-bottom:12px; color:#222;"><strong>${tr('phone')}:</strong> 
+  <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
+    <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+  </div>
+  <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
+<div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
+  <span>📍 ${ad.city}</span>
+  <span>👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')} | 👁 ${ad.views || 0}</span>
+</div>
+  <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
+  <div style="border-top:1px solid #eee; padding-top:16px;">
+    <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
       <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
     </p>
-    <p style="margin-bottom:16px; white-space:pre-wrap; color:#333;">${ad.description || 'Нет описания'}</p>
-    
-    <div style="border-top:1px solid #eee; padding-top:16px;">
+        
         ${currentUser ? `
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; color:#222; font-weight:bold;">
-            <h3>${tr('message')}</h3>
-            <span style="color:#777; font-weight:normal;">| 👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')}</span>
-          </div>
+          <h3>${tr('message')}</h3>
           <div class="chat-box" id="chatBox"></div>
           <div style="display:flex; gap:8px;">
             <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
             <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', currentUser.id === '${ad.userId}' ? (currentAds.find(m => m.adId === '${ad.id}' && m.from !== currentUser.id)?.from || '${ad.userId}') : '${ad.userId}')">${tr('send')}</button>
           </div>
         ` : ''}
-    </div>
-
+      </div>
     `;
 
     document.getElementById('adModal').classList.add('open');
