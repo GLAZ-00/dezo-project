@@ -603,17 +603,28 @@ function logout() {
 }
 
 async function postAd() {
-  const fileInput = document.getElementById('adPhoto');
-  let photoUrl = '';
-  if (fileInput && fileInput.files && fileInput.files[0]) {
+  const files = [
+    document.getElementById('adPhoto')?.files[0],
+    document.getElementById('adPhoto2')?.files[0],
+    document.getElementById('adPhoto3')?.files[0]
+  ].filter(Boolean);
+
+  let photoUrls = [];
+  if (files.length > 0) {
     const form = new FormData();
-    form.append('photo', fileInput.files[0]); // Передаем строго ПЕРВЫЙ файл из списка
-    const res = await fetch('/api/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: form });
+    files.forEach(file => form.append('photos', file));
+    
+    const res = await fetch('/api/upload', { 
+      method: 'POST', 
+      headers: { Authorization: 'Bearer ' + token }, 
+      body: form 
+    });
     if (res.ok) {
       const data = await res.json();
-      photoUrl = data.url;
+      photoUrls = data.urls || [];
     }
   }
+
   const subCatSelect = document.getElementById('adSubCat');
   const subCategoryValue = subCatSelect ? subCatSelect.value : 'Άλλο';
   await api('/api/ads', { method: 'POST', body: JSON.stringify({
@@ -623,7 +634,7 @@ async function postAd() {
     price: document.getElementById('adPrice').value,
     city: document.getElementById('adCity').value,
     description: document.getElementById('adDesc').value,
-    photos: photoUrl ? [photoUrl] : []
+    photos: photoUrls 
   })});
   closeModal('postModal');
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
