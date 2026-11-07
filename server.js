@@ -75,15 +75,19 @@ app.post('/api/login', async (req, res) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-app.post('/api/upload', auth, upload.single('photo'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file' });
+app.post('/api/upload', auth, upload.array('photos', 3), async (req, res) => {
+  if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'No files' });
   try {
-    const filename = `${uuidv4()}.jpg`;
-    await sharp(req.file.buffer)
-      .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
-      .jpeg({ quality: 70 })
-      .toFile(path.join('uploads', filename));
-    res.json({ url: `/uploads/${filename}` });
+    const urls = [];
+    for (const file of req.files) {
+      const filename = `${uuidv4()}.jpg`;
+      await sharp(file.buffer)
+        .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+        .jpeg({ quality: 70 })
+        .toFile(path.join('uploads', filename));
+      urls.push(`/uploads/${filename}`);
+    }
+    res.json({ urls });
   } catch (err) {
     res.status(500).json({ error: 'Compression failed' });
   }
