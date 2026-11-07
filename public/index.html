@@ -400,7 +400,7 @@ async function showAd(id) {
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
       <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center; position:relative;">
-      <img id="mainAdImage" src="${ad.photo && ad.photo.length > 0 ? ad.photo[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+      <img id="mainAdImage" src="${ad.photo[0] && ad.photo[0].length > 0 ? ad.photo[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
       
                         <!-- Чистый светофор без серого фона вокруг -->
       <div style="position:absolute; bottom:12px; left:12px; display:flex; align-items:center; gap:6px;">
@@ -424,8 +424,8 @@ async function showAd(id) {
     
         <div style="display: flex; gap: 25px; justify-content: flex-start; margin-top: -42px; margin-bottom: 24px; position: relative; z-index: 5; padding-left: 140px;">
 
-  <button id="btnPhoto2" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photo && ad.photo[1]){ img.src=ad.photo[1]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷1</button>
-  <button id="btnPhoto3" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photo && ad.photo[2]){ img.src=ad.photo[2]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷2</button>
+  <button id="btnPhoto1" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photo[1] && ad.photo[1]){ img.src=ad.photo[1]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷1</button>
+  <button id="btnPhoto2" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photo[2] && ad.photo[2]){ img.src=ad.photo[2]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷2</button>
 </div>
 
 
