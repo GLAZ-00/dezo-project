@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -134,44 +132,6 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     </div>
 
   </div>
-      <!-- Кнопка Применить изменения как на OLX -->
-            <!-- Боевая синяя кнопка: жесткая привязка к базе данных -->
-      <div style="width:100%; margin-top:12px;">
-        <button class="primary" onclick="
-          const f1 = document.getElementById('profileFile1')?.files[0];
-          const f2 = document.getElementById('profileFile2')?.files[0];
-          const f3 = document.getElementById('profileFile3')?.files[0];
-          if (!window.currentAdData) window.currentAdData = {};
-          if (!window.currentAdData.images) window.currentAdData.images = [];
-          
-          let loadedCount = 0;
-          const totalFiles = [f1, f2, f3].filter(Boolean).length;
-          
-          if (totalFiles === 0) {
-            alert('Сначала выберите фотографии в квадратах!');
-            return;
-          }
-
-          const processFile = (file, index, keyName) => {
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const base64Data = e.target.result;
-              window.currentAdData.images[index] = base64Data;
-              window.currentAdData[keyName] = base64Data;
-              loadedCount++;
-              if (loadedCount === totalFiles) {
-                alert('ФОТОГРАФИИ ЗАКРЕПЛЕНЫ! Теперь жмите зеленую кнопку добавления объявления.');
-              }
-            };
-            reader.readAsDataURL(file);
-          };
-
-          processFile(f1, 0, 'photo1');
-          processFile(f2, 1, 'photo2');
-          processFile(f3, 2, 'photo3');
-        " style="width:100%; padding:12px; font-weight:bold; background:#00a0a6; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:14px;">Применить фото</button>
-      </div>
 
   <!-- Правая часть: 30% пустоты и крестик закрытия кабинета -->
   <div style="flex: 3; display: flex; justify-content: flex-end; align-items: flex-start; min-height: 100px;">
@@ -653,17 +613,15 @@ async function postAd() {
   }
   const subCatSelect = document.getElementById('adSubCat');
   const subCategoryValue = subCatSelect ? subCatSelect.value : 'Άλλο';
-        title: document.getElementById('adTitle').value,
-      category: document.getElementById('adCat').value,
-      subcategory: subCategoryValue,
-      price: document.getElementById('adPrice').value,
-      city: document.getElementById('adCity').value,
-      description: document.getElementById('adDesc').value,
-      photos: photoUrl ? [photoUrl] : [],
-      images: window.currentAdData?.images || []
-    })
-  });
-
+  await api('/api/ads', { method: 'POST', body: JSON.stringify({
+    title: document.getElementById('adTitle').value,
+    category: document.getElementById('adCat').value,
+    subcategory: subCategoryValue,
+    price: document.getElementById('adPrice').value,
+    city: document.getElementById('adCity').value,
+    description: document.getElementById('adDesc').value,
+    photos: photoUrl ? [photoUrl] : []
+  })});
   closeModal('postModal');
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
   showHome();
