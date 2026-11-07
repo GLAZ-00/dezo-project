@@ -419,7 +419,8 @@ async function showAd(id) {
       <span style="white-space:nowrap; font-size:14px;">👁 ${ad.views || 0}</span>
     </div>
     
-        <div style="display: flex; gap: 25px; justify-content: flex-start; margin-top: -42px; margin-bottom: 24px; position: relative; z-index: 5; padding-left: 10px;">
+        <div style="display: flex; gap: 25px; justify-content: flex-start; margin-top: -42px; margin-bottom: 24px; position: relative; z-index: 5; padding-left: 140px;">
+
   <button id="btnPhoto2" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photos && ad.photos[1]){ img.src=ad.photos[1]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷1</button>
   <button id="btnPhoto3" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photos && ad.photos[2]){ img.src=ad.photos[2]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷2</button>
 </div>
