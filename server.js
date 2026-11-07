@@ -75,7 +75,7 @@ app.post('/api/login', async (req, res) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-app.post('/api/upload', auth, upload.array('photos', 3), async (req, res) => {
+app.post('/api/upload', auth, upload.array('photo', 3), async (req, res) => {
   if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'No files' });
   try {
     const urls = [];
@@ -95,7 +95,7 @@ app.post('/api/upload', auth, upload.array('photos', 3), async (req, res) => {
 
 // Create ad
 app.post('/api/ads', auth, (req, res) => {
-  const { title, description, price, category, subcategory, photos, city, phoneVisible } = req.body;
+  const { title, description, price, category, subcategory, photo, city, phoneVisible } = req.body;
   const ad = {
     id: uuidv4(),
     userId: req.user.id,
@@ -105,7 +105,7 @@ app.post('/api/ads', auth, (req, res) => {
     category,
     subcategory: subcategory || 'Άλλο',
     // Железно сохраняем весь прилетевший блок фотографий как единый массив
-    photos: Array.isArray(photos) ? photos : [],
+    photo: Array.isArray(photo) ? photo : [],
     city: city || 'Αθήνα',
     phone: users.find(u => u.id === req.user.id)?.phone || '',
     phoneVisible: !!phoneVisible,
