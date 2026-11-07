@@ -633,9 +633,13 @@ loadCategories();
 showHome();
 </script>
 <style>
-  #profileModal button {
+  /* Двигаем строго синюю кнопку применения фото */
+  #profileModal button[style*="background: rgb(0, 160, 70)"],
+  #profileModal button[onclick*="apply"],
+  #profileModal .primary {
     position: absolute !important;
-    top: 135px !important;
+    top: 140px !important;
+    left: 16px !important;
     width: 65% !important;
   }
 </style>
