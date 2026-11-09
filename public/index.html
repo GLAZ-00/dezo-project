@@ -435,19 +435,19 @@ async function showAd(id) {
         ${currentUser ? `
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; color:#222; font-weight:bold;">
             <h3>${tr('message')}</h3>
-            <span style="color:#777; font-weight:normal;">| 👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')}</span>
-          </div>
-          <div class="chat-box" id="chatBox"></div>
-          <div style="display:flex; gap:8px;">
-            <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
-            <button class="primary" style="width:auto;" onclick="sendMessage('\( {ad.id}', currentUser.id === ' \){ad.userId}' ? (currentAds.find(m => m.adId === '\( {ad.id}' && m.from !== currentUser.id)?.from || ' \){ad.userId}') : '\( {ad.userId}')"> \){tr('send')}</button>
-          </div>
-        ` : ''}
-    </div>
+                    <span style="color:#777; font-weight:normal;">| 👤 ${currentUser && currentUser.username || ''}</span>
+      </div>
+      <div class="chat-box" id="chatBox"></div>
+      <div style="display:flex; gap:8px;">
+        <input id="msgInput" placeholder="Сообщение..." style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}')">Отправить</button>
+      </div>
+    ` : ''}
+  </div>
+  `;
 
-    `;
+  document.getElementById('adModal').classList.add('open');
 
-    document.getElementById('adModal').classList.add('open');
         if (currentUser) {
       loadMessages(ad.id);
       // Запускаем пульс: проверяем новые сообщения каждые 3 секунды намертво
