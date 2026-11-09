@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -101,13 +98,12 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <div class="form-group"><input id="adCity" placeholder="Πόλη" value="Αθήνα"></div>
     <div class="form-group"><textarea id="adDesc" placeholder="Περιγραφή" rows="4"></textarea></div>
     <div class="form-group"><input type="file" id="adPhoto" accept="image/*"></div>
-<div class="form-group"><input type="file" id="adPhoto2" accept="image/*"></div>
-<div class="form-group"><input type="file" id="adPhoto3" accept="image/*"></div>
-
+    <div class="form-group"><input type="file" id="adPhoto2" accept="image/*"></div>
+    <div class="form-group"><input type="file" id="adPhoto3" accept="image/*"></div>
     <button class="primary" onclick="postAd()">Δημοσίευση</button>
   </div>
 </div>
-  <div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px;">
+<div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px;">
   <div style="width: 100%; min-height: inherit; background: #fff; padding: 16px; box-shadow: none; border-radius: 0; display: flex; flex-direction: column; justify-content: space-between;">
     <!-- Шапка -->
  <!-- Зона для 3-х фото (70%) и пустота (30%) -->
@@ -317,7 +313,7 @@ const dezoCategories = [
 function loadCategories() {
   const mainSel = document.getElementById('adCat');
   if (mainSel) {
-    mainSel.innerHTML = dezoCategories.map(c => `<option value="${c.id}">${lang==='el' ? c.el : c.en}</option>`).join('');
+    mainSel.innerHTML = dezoCategories.map(c => `<option value="\( {c.id}"> \){lang==='el' ? c.el : c.en}</option>`).join('');
     let subSel = document.getElementById('adSubCat');
     if (!subSel) {
       const subGroup = document.createElement('div');
@@ -337,7 +333,7 @@ function updateSubDropdown(catId) {
   const targetCat = dezoCategories.find(c => c.id === catId);
   if (targetCat) {
     const list = lang === 'el' ? targetCat.subs.el : targetCat.subs.en;
-    subSel.innerHTML = list.map(sub => `<option value="${sub}">${sub}</option>`).join('');
+    subSel.innerHTML = list.map(sub => `<option value="\( {sub}"> \){sub}</option>`).join('');
   }
 }
 
@@ -358,8 +354,8 @@ function renderAds(list) {
   if (!list.length) { main.innerHTML = '<p style="text-align:center;padding:40px;">Δεν βρέθηκαν αγγελίες</p>'; return; }
   main.innerHTML = `<div class="ads-grid">${list.map(ad => `
     <div class="ad-card" onclick="showAd('${ad.id}')">
-      ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
-      ${Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;">${tr('new')}</div>` : ''}
+      \( {ad.vip ? `<div class="badge"> \){tr('vip')}</div>` : ''}
+      \( {Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;"> \){tr('new')}</div>` : ''}
       <img src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placeholder.com'}" alt="">
       <div class="info">
         <div style="font-weight:600;margin-bottom:4px;">${ad.title}</div>
@@ -400,7 +396,7 @@ async function showAd(id) {
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
       <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center; position:relative;">
-      <img id="mainAdImage" src="${ad.photo[0] && ad.photo[0].length > 0 ? ad.photo[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+      <img id="mainAdImage" src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
       
                         <!-- Чистый светофор без серого фона вокруг -->
       <div style="position:absolute; bottom:12px; left:12px; display:flex; align-items:center; gap:6px;">
@@ -424,14 +420,14 @@ async function showAd(id) {
     
         <div style="display: flex; gap: 25px; justify-content: flex-start; margin-top: -42px; margin-bottom: 24px; position: relative; z-index: 5; padding-left: 140px;">
 
-  <button id="btnPhoto1" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photo[1] && ad.photo[1]){ img.src=ad.photo[1]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷1</button>
-  <button id="btnPhoto2" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photo[2] && ad.photo[2]){ img.src=ad.photo[2]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷2</button>
+  <button id="btnPhoto1" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photos && ad.photos[1]){ img.src=ad.photos[1]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷1</button>
+  <button id="btnPhoto2" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photos && ad.photos[2]){ img.src=ad.photos[2]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷2</button>
 </div>
 
 
   <!-- ТЕЛЕФОН И ОПИСАНИЕ ТЕПЕРЬ ТУТ И ВСЕГДА ВИДНЫ -->
     <p style="margin-bottom:12px; color:#222;"><strong>${tr('phone')}:</strong> 
-      <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
+      <span class="phone" onclick="revealPhone('\( {ad.id}', this)"> \){ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
     </p>
     <p style="margin-bottom:16px; white-space:pre-wrap; color:#333;">${ad.description || 'Нет описания'}</p>
     
@@ -444,7 +440,7 @@ async function showAd(id) {
           <div class="chat-box" id="chatBox"></div>
           <div style="display:flex; gap:8px;">
             <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
-            <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', currentUser.id === '${ad.userId}' ? (currentAds.find(m => m.adId === '${ad.id}' && m.from !== currentUser.id)?.from || '${ad.userId}') : '${ad.userId}')">${tr('send')}</button>
+            <button class="primary" style="width:auto;" onclick="sendMessage('\( {ad.id}', currentUser.id === ' \){ad.userId}' ? (currentAds.find(m => m.adId === '\( {ad.id}' && m.from !== currentUser.id)?.from || ' \){ad.userId}') : '\( {ad.userId}')"> \){tr('send')}</button>
           </div>
         ` : ''}
     </div>
@@ -462,7 +458,6 @@ async function showAd(id) {
     alert('Σφάλμα φόρτωσης αγγελίας');
   }
 }
-
 async function promoteAd(id) {
   await api('/api/ads/' + id + '/promote', { method: 'POST' });
   alert(lang==='el' ? 'Προωθήθηκε ως VIP!' : 'Promoted to VIP!');
@@ -477,7 +472,7 @@ async function loadMessages(adId) {
   if (incoming) window.lastIncomingUserId = incoming.from;
 
   const box = document.getElementById('chatBox');
-  box.innerHTML = msgs.map(m => `<div class="msg ${m.from === currentUser.id ? 'me' : 'them'}">${m.text}</div>`).join('');
+  box.innerHTML = msgs.map(m => `<div class="msg \( {m.from === currentUser.id ? 'me' : 'them'}"> \){m.text}</div>`).join('');
   box.scrollTop = box.scrollHeight;
 }
 async function sendMessage(adId) {
