@@ -629,7 +629,7 @@ async function postAd() {
     price: document.getElementById('adPrice').value,
     city: document.getElementById('adCity').value,
     description: document.getElementById('adDesc').value,
-    photos: photoUrl 
+    photo: photoUrl 
   })});
   closeModal('postModal');
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
