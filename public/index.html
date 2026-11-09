@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+
+
+by<!DOCTYPE html>
 <html lang="el">
 <head>
 <meta charset="UTF-8">
@@ -98,70 +100,37 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <div class="form-group"><input id="adCity" placeholder="Πόλη" value="Αθήνα"></div>
     <div class="form-group"><textarea id="adDesc" placeholder="Περιγραφή" rows="4"></textarea></div>
     <div class="form-group"><input type="file" id="adPhoto" accept="image/*"></div>
-    <div class="form-group"><input type="file" id="adPhoto2" accept="image/*"></div>
-    <div class="form-group"><input type="file" id="adPhoto3" accept="image/*"></div>
     <button class="primary" onclick="postAd()">Δημοσίευση</button>
   </div>
-
-<div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px;">
+</div>
+  <div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px; overscroll-behavior: contain;">
   <div style="width: 100%; min-height: inherit; background: #fff; padding: 16px; box-shadow: none; border-radius: 0; display: flex; flex-direction: column; justify-content: space-between;">
     <!-- Шапка -->
- <!-- Зона для 3-х фото (70%) и пустота (30%) -->
-<div style="display: flex; gap: 15px; margin-bottom: 20px; align-items: flex-start; width: 100%;">
-  
-  <!-- Левая часть: 70% под фото -->
-  <div style="flex: 7; display: flex; gap: 10px;">
-    
-    <!-- Слот 1 (Главное) -->
-    <div onclick="document.getElementById('profileFile1').click()" style="flex: 1; aspect-ratio: 1; border: 2px dashed #00a046; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fff; min-height: 100px;">
-      <span style="font-size: 24px; color: #00a046; font-weight: bold;">+</span>
-      <span style="font-size: 11px; color: #666;">Главное</span>
-            <input type="file" id="profileFile1" accept="image/*" style="display: none;" onchange="previewProfilePhoto(this, 'profileFile1')">
-    </div>
-
-    <!-- Слот 2 -->
-    <div onclick="document.getElementById('profileFile2').click()" style="flex: 1; aspect-ratio: 1; border: 1px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fff; min-height: 100px;">
-      <span style="font-size: 24px; color: #999;">+</span>
-      <span style="font-size: 11px; color: #666;">Фото 2</span>
-            <input type="file" id="profileFile2" accept="image/*" style="display: none;" onchange="previewProfilePhoto(this, 'profileFile2')">
-    </div>
-
-    <!-- Слот 3 -->
-    <div onclick="document.getElementById('profileFile3').click()" style="flex: 1; aspect-ratio: 1; border: 1px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fff; min-height: 100px;">
-      <span style="font-size: 24px; color: #999;">+</span>
-      <span style="font-size: 11px; color: #666;">Фото 3</span>
-            <input type="file" id="profileFile3" accept="image/*" style="display: none;" onchange="previewProfilePhoto(this, 'profileFile3')">
-    </div>
-
+    <!-- Зона для 3-х будущих фото товара и крестик закрытия -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; width:100%;">
+  <div id="profilePhotoPreviewZone" style="display:flex; gap:10px; flex:1;">
+    <span style="color:#aaa; font-size:13px; font-style:italic;">Здесь будут показываться 3 фото вашего товара...</span>
   </div>
-
-  <!-- Правая часть: 30% пустоты и крестик закрытия кабинета -->
-  <div style="flex: 3; display: flex; justify-content: flex-end; align-items: flex-start; min-height: 100px;">
-    <span onclick="document.getElementById('profileModal').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden');" style="cursor: pointer; font-size: 32px; font-weight: bold; color: #888; line-height: 0.8; padding: 5px 10px;">&times;</span>
-  </div>
-
+  <span onclick="document.getElementById('profileModal').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden');" style="cursor:pointer; font-size:32px; font-weight:bold; color:#888; padding:0 10px; line-height:1;">&times;</span>
 </div>
-
-<!-- Блок Баланса и Слотов (оставляем под ними, как на макете) -->
-<div style="display: flex; gap: 12px; margin-bottom: 16px; width: 100%;">
-  <div style="flex: 1; background: #f5f5f5; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 14px;">💳 Ευρώ: <span id="userBalance">0</span> €</div>
-  <div style="flex: 1; background: #f5f5f5; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 14px;">📦 Σλοτ (Слоты): <span id="userSlots">2 / 2</span></div>
-</div>
-
+    <!-- Баланс и Слоты -->
+    <div style="display:flex; gap:12px; margin-bottom:16px;">
+      <div style="flex:1; background:#f5f5f5; padding:10px; border-radius:6px; font-weight:bold;">💳 Ευρώ: <span id="userBalance">0</span> € <span style="color:#00a046; cursor:pointer; margin-left:8px;">[+]</span></div>
+      <div style="flex:1; background:#f5f5f5; padding:10px; border-radius:6px; font-weight:bold;">📦 Σλοτ (Слоты): <span id="userSlots">2 / 2</span></div>
+    </div>
     <!-- Вкладки навигации -->
-        <!-- Вкладки навигации: Архив и Сообщения слева, Мои вещи узкая справа (30%) -->
     <div style="display:flex; gap:8px; border-bottom:2px solid #eee; padding-bottom:8px; margin-bottom:12px;">
-      <button onclick="switchProfileTab('archive')" style="flex: 2.3; padding:8px; background:#f0f0f0; border:none; border-radius:4px; cursor:pointer;">Αρχείο</button>
-      <button onclick="switchProfileTab('messages')" style="flex: 2.3; padding:8px; background:#f0f0f0; border:none; border-radius:4px; cursor:pointer;">Μηνύματα</button>
-      <button onclick="switchProfileTab('items')" style="flex: 1; padding:8px; background:#00a046; color:#fff; border:none; border-radius:4px; cursor:pointer; font-weight:bold; white-space:nowrap; font-size:12px;">Τα πράγματά μου</button>
+      <button onclick="switchProfileTab('items')" style="flex:1; padding:8px; background:#00a046; color:#fff; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Τα πράγματά μου</button>
+<button onclick="switchProfileTab('messages')" style="flex:1; padding:8px; background:#f0f0f0; border:none; border-radius:4px; cursor:pointer;">Μηνύματα</button>
+<button onclick="switchProfileTab('archive')" style="flex:1; padding:8px; background:#f0f0f0; border:none; border-radius:4px; cursor:pointer;">Αρχείο</button>
     </div>
-
     <!-- Область контента -->
     <div id="profileTabContent" style="min-height:150px; background:#fafafa; border:1px solid #eee; border-radius:6px; padding:12px; text-align:center; color:#888; font-style:italic; margin-bottom:16px;">
       Δεν υπάρχουν ακόμη ενεργές αγγελίες (Пока нет активных объявлений)
     </div>
     <!-- Кнопка Выхода -->
-    <button onclick="logout(); closeModal('profileModal');" style="width:100%; background:#d32f2f; color:#fff; border:none; padding:10px; border-radius:6px; cursor:pointer; font-weight:bold;">Έξοδος (Выйти)</button>
+    <!-- ИЩЕМ СТРОКУ: -->
+<div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px;">
   </div>
 </div>
 <div class="modal" id="adModal">
@@ -169,20 +138,6 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 </div>
 
 <script>
-  function previewProfilePhoto(input, slotId) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const slot = document.getElementById(slotId).parentNode;
-      slot.style.backgroundImage = "url('" + e.target.result + "')";
-      slot.style.backgroundSize = "cover";
-      slot.style.backgroundPosition = "center";
-      Array.from(slot.children).forEach(ch => { if(ch.tagName !== 'INPUT') ch.style.display = 'none'; });
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
 const API = '';
 let lang = 'el';
 let token = localStorage.getItem('dezo_token');
@@ -313,7 +268,7 @@ const dezoCategories = [
 function loadCategories() {
   const mainSel = document.getElementById('adCat');
   if (mainSel) {
-    mainSel.innerHTML = dezoCategories.map(c => `<option value="\( {c.id}"> \){lang==='el' ? c.el : c.en}</option>`).join('');
+    mainSel.innerHTML = dezoCategories.map(c => `<option value="${c.id}">${lang==='el' ? c.el : c.en}</option>`).join('');
     let subSel = document.getElementById('adSubCat');
     if (!subSel) {
       const subGroup = document.createElement('div');
@@ -333,7 +288,7 @@ function updateSubDropdown(catId) {
   const targetCat = dezoCategories.find(c => c.id === catId);
   if (targetCat) {
     const list = lang === 'el' ? targetCat.subs.el : targetCat.subs.en;
-    subSel.innerHTML = list.map(sub => `<option value="\( {sub}"> \){sub}</option>`).join('');
+    subSel.innerHTML = list.map(sub => `<option value="${sub}">${sub}</option>`).join('');
   }
 }
 
@@ -354,9 +309,9 @@ function renderAds(list) {
   if (!list.length) { main.innerHTML = '<p style="text-align:center;padding:40px;">Δεν βρέθηκαν αγγελίες</p>'; return; }
   main.innerHTML = `<div class="ads-grid">${list.map(ad => `
     <div class="ad-card" onclick="showAd('${ad.id}')">
-      \( {ad.vip ? `<div class="badge"> \){tr('vip')}</div>` : ''}
-      \( {Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;"> \){tr('new')}</div>` : ''}
-      <img src="${ad.photo && ad.photo[0] ? ad.photo[0] : 'https://placeholder.com'}" alt="">
+      ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
+      ${Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;">${tr('new')}</div>` : ''}
+      <img src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placeholder.com'}" alt="">
       <div class="info">
         <div style="font-weight:600;margin-bottom:4px;">${ad.title}</div>
         <div class="price">${ad.price} €</div>
@@ -395,59 +350,32 @@ async function showAd(id) {
     <h2>${ad.title}</h2>
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
-      <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center; position:relative;">
-      <img id="mainAdImage" src="${ad.photo && ad.photo[0] ? ad.photo[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
-      
-                        <!-- Чистый светофор без серого фона вокруг -->
-      <div style="position:absolute; bottom:12px; left:12px; display:flex; align-items:center; gap:6px;">
-        <div style="display:flex; flex-direction:column; background:#111; padding:5px 4px; border-radius:5px; width:16px; height:42px; justify-content:space-between; align-items:center; box-sizing:border-box;">
-          <div style="width:8px; height:8px; border-radius:50%; background:${ad.lightColor==='green'?'#00ff00':'#222'};"></div>
-          <div style="width:8px; height:8px; border-radius:50%; background:${ad.lightColor==='yellow'?'#ffcc00':'#222'};"></div>
-          <div style="width:8px; height:8px; border-radius:50%; background:${ad.lightColor==='red'?'#ff0000':'#222'};"></div>
-        </div>
-        <span style="color:#fff; font-size:14px; font-weight:bold; text-shadow:1px 1px 2px #000;">${ad.daysLeft || 5} дн.</span>
-      </div>
-    </div>
-
-        <!-- Вертикальный блок цены и геолокации под картинкой -->
-    <div style="font-size:20px; font-weight:700; color:var(--primary); margin-top:12px; margin-bottom:6px;">${ad.price} €</div>
-        <!-- Строка: Город, КРУПНЫЕ Фотоаппараты и Просмотры -->
-        <!-- Строка геолокации и просмотров -->
-    <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-      <span style="white-space:nowrap; font-size:14px;">📍 ${ad.city}</span>
-      <span style="white-space:nowrap; font-size:14px;">👁 ${ad.views || 0}</span>
-    </div>
-    
-        <div style="display: flex; gap: 25px; justify-content: flex-start; margin-top: -42px; margin-bottom: 24px; position: relative; z-index: 5; padding-left: 140px;">
-
-  <button id="btnPhoto1" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photos && ad.photos[1]){ img.src=ad.photos[1]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷1</button>
-  <button id="btnPhoto2" onclick="const img=document.getElementById('mainAdImage'); if(img && ad.photos && ad.photos[2]){ img.src=ad.photos[2]; } this.style.boxShadow='0 0 15px #007bff, inset 0 0 10px #007bff'; setTimeout(()=>this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)', 300);" style="width: 55px; height: 38px; background: #f5f5f5; border: 1px solid #007bff; border-radius: 6px; cursor: pointer; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">📷2</button>
-</div>
-
-
-  <!-- ТЕЛЕФОН И ОПИСАНИЕ ТЕПЕРЬ ТУТ И ВСЕГДА ВИДНЫ -->
-    <p style="margin-bottom:12px; color:#222;"><strong>${tr('phone')}:</strong> 
-      <span class="phone" onclick="revealPhone('\( {ad.id}', this)"> \){ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
-    </p>
-    <p style="margin-bottom:16px; white-space:pre-wrap; color:#333;">${ad.description || 'Нет описания'}</p>
-    
-    <div style="border-top:1px solid #eee; padding-top:16px;">
-        ${currentUser ? `
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; color:#222; font-weight:bold;">
-            <h3>${tr('message')}</h3>
-                    <span style="color:#777; font-weight:normal;">| 👤 ${currentUser && currentUser.username || ''}</span>
-      </div>
-      <div class="chat-box" id="chatBox"></div>
-      <div style="display:flex; gap:8px;">
-        <input id="msgInput" placeholder="Сообщение..." style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;">
-        <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}')">Отправить</button>
-      </div>
-    ` : ''}
+  <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
+    <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
   </div>
-  `;
+  <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
+<div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
+  <span>📍 ${ad.city}</span>
+  <span>👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')} | 👁 ${ad.views || 0}</span>
+</div>
+  <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
+  <div style="border-top:1px solid #eee; padding-top:16px;">
+    <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
+      <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
+    </p>
+        
+        ${currentUser ? `
+          <h3>${tr('message')}</h3>
+          <div class="chat-box" id="chatBox"></div>
+          <div style="display:flex; gap:8px;">
+            <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
+            <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', currentUser.id === '${ad.userId}' ? (currentAds.find(m => m.adId === '${ad.id}' && m.from !== currentUser.id)?.from || '${ad.userId}') : '${ad.userId}')">${tr('send')}</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
 
-  document.getElementById('adModal').classList.add('open');
-
+    document.getElementById('adModal').classList.add('open');
         if (currentUser) {
       loadMessages(ad.id);
       // Запускаем пульс: проверяем новые сообщения каждые 3 секунды намертво
@@ -458,6 +386,7 @@ async function showAd(id) {
     alert('Σφάλμα φόρτωσης αγγελίας');
   }
 }
+
 async function promoteAd(id) {
   await api('/api/ads/' + id + '/promote', { method: 'POST' });
   alert(lang==='el' ? 'Προωθήθηκε ως VIP!' : 'Promoted to VIP!');
@@ -472,7 +401,7 @@ async function loadMessages(adId) {
   if (incoming) window.lastIncomingUserId = incoming.from;
 
   const box = document.getElementById('chatBox');
-  box.innerHTML = msgs.map(m => `<div class="msg \( {m.from === currentUser.id ? 'me' : 'them'}"> \){m.text}</div>`).join('');
+  box.innerHTML = msgs.map(m => `<div class="msg ${m.from === currentUser.id ? 'me' : 'them'}">${m.text}</div>`).join('');
   box.scrollTop = box.scrollHeight;
 }
 async function sendMessage(adId) {
@@ -513,7 +442,10 @@ function switchProfileTab(tab) {
           var html = '<div style="width:100%; display:flex; gap:20px; align-items:flex-start; text-align:left;">';
           
           // ЛЕВАЯ ШИРОКАЯ ЗΟΝΚΑ: Список вещей (70% ширины)
-          html += '<div style="flex: 2.3; display:flex; flex-direction:column; gap:10px;">';
+          // ЛЕВАЯ ШИРОКАЯ ЗΟΝΚΑ: Список вещей с плавным скроллом пальцем
+       
+html += '<div style="flex: 2.3; display: block; max-height: 240px; overflow-y: auto; padding-right: 5px;">';
+
           for (var i = 0; i < myAds.length; i++) {
             var ad = myAds[i];
             html += '<div onclick="showAd(\'' + ad.id + '\')" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer;">' +
@@ -598,28 +530,17 @@ function logout() {
 }
 
 async function postAd() {
-  const files = [
-    document.getElementById('adPhoto')?.files[0],
-    document.getElementById('adPhoto2')?.files[0],
-    document.getElementById('adPhoto3')?.files[0]
-  ].filter(Boolean);
-
-  let photoUrl = [];
-  if (files.length > 0) {
+  const fileInput = document.getElementById('adPhoto');
+  let photoUrl = '';
+  if (fileInput && fileInput.files && fileInput.files[0]) {
     const form = new FormData();
-    files.forEach(file => form.append('photo', file));
-    
-    const res = await fetch('/api/upload', { 
-      method: 'POST', 
-      headers: { Authorization: 'Bearer ' + token }, 
-      body: form 
-    });
+    form.append('photo', fileInput.files[0]); // Передаем строго ПЕРВЫЙ файл из списка
+    const res = await fetch('/api/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: form });
     if (res.ok) {
       const data = await res.json();
-      photoUrl = data.urls || [];
+      photoUrl = data.url;
     }
   }
-
   const subCatSelect = document.getElementById('adSubCat');
   const subCategoryValue = subCatSelect ? subCatSelect.value : 'Άλλο';
   await api('/api/ads', { method: 'POST', body: JSON.stringify({
@@ -629,7 +550,7 @@ async function postAd() {
     price: document.getElementById('adPrice').value,
     city: document.getElementById('adCity').value,
     description: document.getElementById('adDesc').value,
-    photo: photoUrl 
+    photos: photoUrl ? [photoUrl] : []
   })});
   closeModal('postModal');
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
