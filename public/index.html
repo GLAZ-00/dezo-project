@@ -98,7 +98,30 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <div class="form-group"><input id="adPrice" type="number" placeholder="Τιμή (€)"></div>
     <div class="form-group"><input id="adCity" placeholder="Πόλη" value="Αθήνα"></div>
     <div class="form-group"><textarea id="adDesc" placeholder="Περιγραφή" rows="4"></textarea></div>
-    <div class="form-group"><input type="file" id="adPhoto" accept="image/*"></div>
+    <div class="form-group" style="margin-bottom: 16px;">
+  <div style="display: flex; gap: 12px; justify-content: space-between;">
+    
+    <!-- Box 1 -->
+    <div onclick="document.getElementById('file_photo_1').click()" id="box_photo_1" style="flex: 1; height: 90px; border: 2px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; background-size: cover; background-position: center;">
+      <span id="plus_photo_1" style="font-size: 28px; color: #888; font-weight: bold;">+</span>
+      <input type="file" id="file_photo_1" accept="image/*" style="display: none;" onchange="handlePreview(1)">
+    </div>
+
+    <!-- Box 2 -->
+    <div onclick="document.getElementById('file_photo_2').click()" id="box_photo_2" style="flex: 1; height: 90px; border: 2px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; background-size: cover; background-position: center;">
+      <span id="plus_photo_2" style="font-size: 28px; color: #888; font-weight: bold;">+</span>
+      <input type="file" id="file_photo_2" accept="image/*" style="display: none;" onchange="handlePreview(2)">
+    </div>
+
+    <!-- Box 3 -->
+    <div onclick="document.getElementById('file_photo_3').click()" id="box_photo_3" style="flex: 1; height: 90px; border: 2px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; background-size: cover; background-position: center;">
+      <span id="plus_photo_3" style="font-size: 28px; color: #888; font-weight: bold;">+</span>
+      <input type="file" id="file_photo_3" accept="image/*" style="display: none;" onchange="handlePreview(3)">
+    </div>
+
+  </div>
+</div>
+
     <button class="primary" onclick="postAd()">Δημοσίευση</button>
   </div>
 </div>
