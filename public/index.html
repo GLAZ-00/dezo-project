@@ -604,10 +604,10 @@ async function postAd() {
     document.getElementById('adPhoto3')?.files[0]
   ].filter(Boolean);
 
-  let photoUrls = [];
+  let photoUrl = [];
   if (files.length > 0) {
     const form = new FormData();
-    files.forEach(file => form.append('photos', file));
+    files.forEach(file => form.append('photo', file));
     
     const res = await fetch('/api/upload', { 
       method: 'POST', 
@@ -616,7 +616,7 @@ async function postAd() {
     });
     if (res.ok) {
       const data = await res.json();
-      photoUrls = data.urls || [];
+      photoUrl = data.urls || [];
     }
   }
 
@@ -629,7 +629,7 @@ async function postAd() {
     price: document.getElementById('adPrice').value,
     city: document.getElementById('adCity').value,
     description: document.getElementById('adDesc').value,
-    photos: photoUrls 
+    photos: photoUrl 
   })});
   closeModal('postModal');
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
