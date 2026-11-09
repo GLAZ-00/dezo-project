@@ -1,3 +1,4 @@
+
 const express = require('express');
 const multer = require('multer');
 const sharp = require('sharp');
@@ -75,19 +76,15 @@ app.post('/api/login', async (req, res) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-app.post('/api/upload', auth, upload.array('photo', 3), async (req, res) => {
-  if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'No files' });
+app.post('/api/upload', auth, upload.single('photo'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file' });
   try {
-    const urls = [];
-    for (const file of req.files) {
-      const filename = `${uuidv4()}.jpg`;
-      await sharp(file.buffer)
-        .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
-        .jpeg({ quality: 70 })
-        .toFile(path.join('uploads', filename));
-      urls.push(`/uploads/${filename}`);
-    }
-    res.json({ urls });
+    const filename = `${uuidv4()}.jpg`;
+    await sharp(req.file.buffer)
+      .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 70 })
+      .toFile(path.join('uploads', filename));
+    res.json({ url: `/uploads/${filename}` });
   } catch (err) {
     res.status(500).json({ error: 'Compression failed' });
   }
@@ -95,17 +92,11 @@ app.post('/api/upload', auth, upload.array('photo', 3), async (req, res) => {
 
 // Create ad
 app.post('/api/ads', auth, (req, res) => {
-  const { title, description, price, category, subcategory, photo, city, phoneVisible } = req.body;
+  const { title, description, price, category, photos, city, phoneVisible } = req.body;
   const ad = {
     id: uuidv4(),
     userId: req.user.id,
-    title,
-    description,
-    price: Number(price),
-    category,
-    subcategory: subcategory || 'Άλλο',
-    // Железно сохраняем весь прилетевший блок фотографий как единый массив
-    photo: Array.isArray(photo) ? photo : [],
+    title, description, price: Number(price), category, photos: photos || [],
     city: city || 'Αθήνα',
     phone: users.find(u => u.id === req.user.id)?.phone || '',
     phoneVisible: !!phoneVisible,
@@ -118,7 +109,6 @@ app.post('/api/ads', auth, (req, res) => {
   res.json(ad);
 });
 
-
 // Get ads
 app.get('/api/ads', (req, res) => {
   const { category, q, vip } = req.query;
@@ -127,13 +117,6 @@ app.get('/api/ads', (req, res) => {
   if (q) result = result.filter(a => a.title.toLowerCase().includes(q.toLowerCase()) || a.description.toLowerCase().includes(q.toLowerCase()));
   if (vip === '1') result = result.filter(a => a.vip);
   res.json(result);
-});
-
-app.get('/api/ads/:id/phone', (req, res) => {
-  const ad = ads.find(a => a.id === req.params.id);
-  if (!ad) return res.status(404).json({ error: 'Ad not found' });
-  const owner = users.find(u => u.id === ad.userId);
-  res.json({ phone: owner ? owner.phone : ad.phone || 'Нет номера' });
 });
 
 // Get single ad
