@@ -356,7 +356,7 @@ function renderAds(list) {
     <div class="ad-card" onclick="showAd('${ad.id}')">
       \( {ad.vip ? `<div class="badge"> \){tr('vip')}</div>` : ''}
       \( {Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;"> \){tr('new')}</div>` : ''}
-      <img src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placeholder.com'}" alt="">
+      <img src="${ad.photo && ad.photo[0] ? ad.photo[0] : 'https://placeholder.com'}" alt="">
       <div class="info">
         <div style="font-weight:600;margin-bottom:4px;">${ad.title}</div>
         <div class="price">${ad.price} €</div>
@@ -396,7 +396,7 @@ async function showAd(id) {
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
       <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center; position:relative;">
-      <img id="mainAdImage" src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+      <img id="mainAdImage" src="${ad.photo && ad.photo[0] ? ad.photo[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
       
                         <!-- Чистый светофор без серого фона вокруг -->
       <div style="position:absolute; bottom:12px; left:12px; display:flex; align-items:center; gap:6px;">
