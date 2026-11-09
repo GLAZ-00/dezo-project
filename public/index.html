@@ -508,6 +508,21 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open'); 
   if (id === 'adModal' && window.chatInterval) clearInterval(window.chatInterval);
 }
+function handlePreview(num) {
+  const input = document.getElementById('file_photo_' + num);
+  const box = document.getElementById('box_photo_' + num);
+  const plus = document.getElementById('plus_photo_' + num);
+  
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      box.style.backgroundImage = "url('" + e.target.result + "')";
+      box.style.border = "1px solid var(--primary)";
+      if (plus) plus.style.display = "none";
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
 
 async function login() {
   try {
