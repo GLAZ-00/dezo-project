@@ -92,11 +92,17 @@ app.post('/api/upload', auth, upload.single('photo'), async (req, res) => {
 
 // Create ad
 app.post('/api/ads', auth, (req, res) => {
-  const { title, description, price, category, photos, city, phoneVisible } = req.body;
+  // 1. Добавили subcategory в список — достаём её из посылки фронтенда
+  const { title, description, price, category, subcategory, photos, city, phoneVisible } = req.body;
   const ad = {
     id: uuidv4(),
     userId: req.user.id,
-    title, description, price: Number(price), category, photos: photos || [],
+    title,
+    description,
+    price: Number(price),
+    category,
+    subcategory: subcategory || 'Άλλο',
+    photos: Array.isArray(photos) ? photos : (photos ? [photos] : []),
     city: city || 'Αθήνα',
     phone: users.find(u => u.id === req.user.id)?.phone || '',
     phoneVisible: !!phoneVisible,
@@ -117,6 +123,13 @@ app.get('/api/ads', (req, res) => {
   if (q) result = result.filter(a => a.title.toLowerCase().includes(q.toLowerCase()) || a.description.toLowerCase().includes(q.toLowerCase()));
   if (vip === '1') result = result.filter(a => a.vip);
   res.json(result);
+});
+
+app.get('/api/ads/:id/phone', (req, res) => {
+  const ad = ads.find(a => a.id === req.params.id);
+  if (!ad) return res.status(404).json({ error: 'Ad not found' });
+  const owner = users.find(u => u.id === ad.userId);
+  res.json({ phone: owner ? owner.phone : ad.phone || 'Нет номера' });
 });
 
 // Get single ad
