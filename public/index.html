@@ -1,6 +1,5 @@
 
-
-by<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="el">
 <head>
 <meta charset="UTF-8">
@@ -103,7 +102,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <button class="primary" onclick="postAd()">Δημοσίευση</button>
   </div>
 </div>
-  <div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px; overscroll-behavior: contain;">
+  <div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px;">
   <div style="width: 100%; min-height: inherit; background: #fff; padding: 16px; box-shadow: none; border-radius: 0; display: flex; flex-direction: column; justify-content: space-between;">
     <!-- Шапка -->
     <!-- Зона для 3-х будущих фото товара и крестик закрытия -->
@@ -129,8 +128,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
       Δεν υπάρχουν ακόμη ενεργές αγγελίες (Пока нет активных объявлений)
     </div>
     <!-- Кнопка Выхода -->
-    <!-- ИЩЕМ СТРОКУ: -->
-<div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px;">
+    <button onclick="logout(); closeModal('profileModal');" style="width:100%; background:#d32f2f; color:#fff; border:none; padding:10px; border-radius:6px; cursor:pointer; font-weight:bold;">Έξοδος (Выйти)</button>
   </div>
 </div>
 <div class="modal" id="adModal">
@@ -442,10 +440,7 @@ function switchProfileTab(tab) {
           var html = '<div style="width:100%; display:flex; gap:20px; align-items:flex-start; text-align:left;">';
           
           // ЛЕВАЯ ШИРОКАЯ ЗΟΝΚΑ: Список вещей (70% ширины)
-          // ЛЕВАЯ ШИРОКАЯ ЗΟΝΚΑ: Список вещей с плавным скроллом пальцем
-       
-html += '<div style="flex: 2.3; display: block; max-height: 240px; overflow-y: auto; padding-right: 5px;">';
-
+          html += '<div style="flex: 2.3; display:flex; flex-direction:column; gap:10px;">';
           for (var i = 0; i < myAds.length; i++) {
             var ad = myAds[i];
             html += '<div onclick="showAd(\'' + ad.id + '\')" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer;">' +
