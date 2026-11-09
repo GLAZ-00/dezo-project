@@ -371,7 +371,7 @@ async function showAd(id) {
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
   <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
-    <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+    <img src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
   </div>
     <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
   
@@ -402,6 +402,12 @@ async function showAd(id) {
         ` : ''}
       </div>
     `;
+    if (ad.photos && ad.photos[1]) {
+      document.getElementById('sub_view_1').style.backgroundImage = "url('" + ad.photos[1] + "')";
+    }
+    if (ad.photos && ad.photos[2]) {
+      document.getElementById('sub_view_2').style.backgroundImage = "url('" + ad.photos[2] + "')";
+    }
 
     document.getElementById('adModal').classList.add('open');
         if (currentUser) {
