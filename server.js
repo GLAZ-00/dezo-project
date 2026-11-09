@@ -74,7 +74,7 @@ app.post('/api/login', async (req, res) => {
 
 // Upload middleware with compression
 const storage = multer.memoryStorage();
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+const upload = multer({ storage, limits: { fileSize: 25 * 1024 * 1024 } });
 
 app.post('/api/upload', auth, upload.array('photo', 3), async (req, res) => {
   if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'No files uploaded' });
