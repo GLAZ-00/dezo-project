@@ -536,7 +536,12 @@ function handlePreview(num) {
     reader.readAsDataURL(input.files[0]);
   }
 }
-
+function changeMainAdImage(url) {
+  const mainImg = document.getElementById('mainAdImage');
+  if (mainImg) {
+    mainImg.src = url;
+  }
+}
 async function login() {
   try {
     const data = await api('/api/login', { method: 'POST', body: JSON.stringify({
