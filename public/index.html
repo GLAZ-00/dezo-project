@@ -523,7 +523,6 @@ function handlePreview(num) {
     reader.readAsDataURL(input.files[0]);
   }
 }
-
 async function login() {
   try {
     const data = await api('/api/login', { method: 'POST', body: JSON.stringify({
