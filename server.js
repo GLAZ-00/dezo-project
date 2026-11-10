@@ -1,4 +1,5 @@
 
+
 const express = require('express');
 const multer = require('multer');
 const sharp = require('sharp');
@@ -74,7 +75,7 @@ app.post('/api/login', async (req, res) => {
 
 // Upload middleware with compression
 const storage = multer.memoryStorage();
-const upload = multer({ storage, limits: { fileSize: 25 * 1024 * 1024 } });
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
 app.post('/api/upload', auth, upload.array('photo', 3), async (req, res) => {
   if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'No files uploaded' });
@@ -142,8 +143,7 @@ app.get('/api/ads/:id', (req, res) => {
   if (!ad) return res.status(404).json({ error: 'Not found' });
   ad.views++;
   // Hide full phone unless revealed flag (client handles click)
-    const safe = { ...ad, photos: [...ad.photos], phone: ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****' };
-
+  const safe = { ...ad, phone: ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****' };
   res.json(safe);
 });
 
