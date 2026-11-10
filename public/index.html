@@ -542,12 +542,22 @@ function handlePreview(num) {
 function changeMainAdImage(clickedBox) {
   const mainImg = document.getElementById('mainAdImage');
   if (!mainImg || !clickedBox) return;
-  const clickedBg = clickedBox.style.backgroundImage;
-  if (!clickedBg || clickedBg === 'none') return;
-  const clickedUrl = clickedBg.slice(5, -2);
-  const mainUrl = mainImg.src;
-  mainImg.src = clickedUrl;
-  clickedBox.style.backgroundImage = "url('" + mainUrl + "')";
+
+  if (typeof ad !== 'undefined' && ad.photos) {
+    const mainUrl = mainImg.src;
+    let clickedUrl = '';
+    
+    if (clickedBox.id === 'sub_view_1') clickedUrl = ad.photos[1];
+    if (clickedBox.id === 'sub_view_2') clickedUrl = ad.photos[2];
+    
+    if (!clickedUrl) return;
+
+    mainImg.src = clickedUrl;
+    clickedBox.style.backgroundImage = "url('" + mainUrl + "')";
+    
+    if (clickedBox.id === 'sub_view_1') ad.photos[1] = mainUrl;
+    if (clickedBox.id === 'sub_view_2') ad.photos[2] = mainUrl;
+  }
 }
 
 async function login() {
