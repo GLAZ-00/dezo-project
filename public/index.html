@@ -387,9 +387,12 @@ async function showAd(id) {
   </div>
 
   <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
-  <div style="border-top:1px solid #eee; padding-top:16px;">
+    <div style="border-top:1px solid #eee; padding-top:16px;">
     <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
       <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
+    </p>
+    <p style="margin-bottom:12px; color:#555;">
+      <strong>👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')}</strong>
     </p>
         
         ${currentUser ? `
