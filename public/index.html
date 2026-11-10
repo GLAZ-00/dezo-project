@@ -359,54 +359,44 @@ async function revealPhone(id, el) {
   }
 }
 async function showAd(id) {
-  const ad = await api('/api/ads/' + id);
-  if (!ad) return;
-
-  const photosArray = Array.isArray(ad.photos) ? ad.photos : (ad.photos ? [ad.photos] : []);
-
-  const detail = document.getElementById('adDetail');
-  detail.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h2>${ad.title}</h2>
-      <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
-    </div>
-
-    <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
-      <img id="mainAdImage" src="${photosArray.length > 0 ? photosArray[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
-    </div>
-
-    <div id="subPhotosZone" style="display: flex; gap: 8px; margin-bottom: 16px; justify-content: flex-start; flex-wrap: wrap;">
-      ${photosArray.map(pUrl => `
-        <img src="${pUrl}" onclick="document.getElementById('mainAdImage').src = this.src" style="width: 65px; height: 65px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; cursor: pointer;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='#ddd'">
-      `).join('')}
-    </div>
-
-    <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
-    <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
-      <span>📍 ${ad.city}</span>
-    </div>
-
-    <div style="white-space:pre-wrap; margin-bottom:20px; font-size:15px; line-height:1.5; color:#333;">${ad.description}</div>
-
-    <div style="border-top:1px solid #eee; padding-top:16px;">
-      <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
-        <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
-      </p>
-      <p style="margin-bottom:12px; color:#555;">
-        <strong>👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')}</strong>
-      </p>
-    </div>
-
-    ${currentUser ? `
-      <h3>${tr('message')}</h3>
-      <div class="chat-box" id="chatBox"></div>
-      <div style="display:flex; gap:8px;">
-        <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;">
-        <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', document.getElementById('msgInput').value); document.getElementById('msgInput').value=''">></button>
+  try {
+    const ad = await api('/api/ads/' + id);
+    const detail = document.getElementById('adDetail');
+    if (!detail) return;
+    
+    const isOwner = currentUser && currentUser.id === ad.userId;
+    
+    detail.innerHTML = `
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <h2>${ad.title}</h2>
+    <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
+  </div>
+  <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
+    <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+  </div>
+  <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
+<div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
+  <span>📍 ${ad.city}</span>
+  <span>👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')} | 👁 ${ad.views || 0}</span>
+</div>
+  <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
+  <div style="border-top:1px solid #eee; padding-top:16px;">
+    <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
+      <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
+    </p>
+        
+        ${currentUser ? `
+          <h3>${tr('message')}</h3>
+          <div class="chat-box" id="chatBox"></div>
+          <div style="display:flex; gap:8px;">
+            <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
+            <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', currentUser.id === '${ad.userId}' ? (currentAds.find(m => m.adId === '${ad.id}' && m.from !== currentUser.id)?.from || '${ad.userId}') : '${ad.userId}')">${tr('send')}</button>
+          </div>
+        ` : ''}
       </div>
-    ` : ''}
-  `;
-  document.getElementById('adModal').classList.add('open');
+    `;
+
+    document.getElementById('adModal').classList.add('open');
         if (currentUser) {
       loadMessages(ad.id);
       // Запускаем пульс: проверяем новые сообщения каждые 3 секунды намертво
