@@ -121,7 +121,8 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 
   </div>
 </div>
-  <button class="primary" onclick="postAd()">Δημοσίευση</button>
+
+    <button class="primary" onclick="postAd()">Δημοσίευση</button>
   </div>
 </div>
   <div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px;">
@@ -371,28 +372,17 @@ async function showAd(id) {
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
   <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
-    <img id="mainAdImage" onclick="changeMainAdImage(this)" src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain; cursor:pointer;">
+    <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
   </div>
-    <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
-  
-  <!-- Место под 2 дополнительные фотографии -->
-  <div id="subPhotosZone" style="display: flex; gap: 10px; margin-bottom: 16px;">
-    <div id="sub_view_1" onclick="changeMainAdImage(this)" style="width: 70px; height: 70px; border: 1px dashed #ccc; border-radius: 6px; background-size: cover; background-position: center; cursor: pointer;"></div>
-    <div id="sub_view_2" onclick="changeMainAdImage(this)" style="width: 70px; height: 70px; border: 1px dashed #ccc; border-radius: 6px; background-size: cover; background-position: center; cursor: pointer;"></div>
-  </div>
-
-  <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
-    <span>📍 ${ad.city}</span>
-    <span>👁 ${ad.views || 0}</span>
-  </div>
-
+  <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
+<div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
+  <span>📍 ${ad.city}</span>
+  <span>👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')} | 👁 ${ad.views || 0}</span>
+</div>
   <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
-    <div style="border-top:1px solid #eee; padding-top:16px;">
+  <div style="border-top:1px solid #eee; padding-top:16px;">
     <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
       <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
-    </p>
-    <p style="margin-bottom:12px; color:#555;">
-      <strong>👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')}</strong>
     </p>
         
         ${currentUser ? `
@@ -405,12 +395,6 @@ async function showAd(id) {
         ` : ''}
       </div>
     `;
-    if (ad.photos && ad.photos[1]) {
-      document.getElementById('sub_view_1').style.backgroundImage = "url('" + ad.photos[1] + "')";
-    }
-    if (ad.photos && ad.photos[2]) {
-      document.getElementById('sub_view_2').style.backgroundImage = "url('" + ad.photos[2] + "')";
-    }
 
     document.getElementById('adModal').classList.add('open');
         if (currentUser) {
@@ -539,26 +523,6 @@ function handlePreview(num) {
     reader.readAsDataURL(input.files[0]);
   }
 }
-function changeMainAdImage(clickedBox) {
-  const mainImg = document.getElementById('mainAdImage');
-  if (!mainImg || !clickedBox) return;
-
-  if (typeof ad !== 'undefined' && ad.photos) {
-    const mainUrl = mainImg.src;
-    let clickedUrl = '';
-    
-    if (clickedBox.id === 'sub_view_1') clickedUrl = ad.photos[1];
-    if (clickedBox.id === 'sub_view_2') clickedUrl = ad.photos[2];
-    
-    if (!clickedUrl) return;
-
-    mainImg.src = clickedUrl;
-    clickedBox.style.backgroundImage = "url('" + mainUrl + "')";
-    
-    if (clickedBox.id === 'sub_view_1') ad.photos[1] = mainUrl;
-    if (clickedBox.id === 'sub_view_2') ad.photos[2] = mainUrl;
-  }
-}
 
 async function login() {
   try {
@@ -597,25 +561,19 @@ function logout() {
   updateUserMenu();
   showHome();
 }
+
 async function postAd() {
-  const form = new FormData();
-  let hasFiles = false;
-  for (let i = 1; i <= 3; i++) {
-    const fileInput = document.getElementById('file_photo_' + i);
-    if (fileInput && fileInput.files && fileInput.files[0]) {
-      form.append('photo', fileInput.files[0]);
-      hasFiles = true;
-    }
-  }
-  let uploadedUrls = [];
-  if (hasFiles) {
+  const fileInput = document.getElementById('adPhoto');
+  let photoUrl = '';
+  if (fileInput && fileInput.files && fileInput.files[0]) {
+    const form = new FormData();
+    form.append('photo', fileInput.files[0]); // Передаем строго ПЕРВЫЙ файл из списка
     const res = await fetch('/api/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: form });
     if (res.ok) {
       const data = await res.json();
-      uploadedUrls = data.urls || [];
+      photoUrl = data.url;
     }
   }
-
   const subCatSelect = document.getElementById('adSubCat');
   const subCategoryValue = subCatSelect ? subCatSelect.value : 'Άλλο';
   await api('/api/ads', { method: 'POST', body: JSON.stringify({
@@ -625,7 +583,7 @@ async function postAd() {
     price: document.getElementById('adPrice').value,
     city: document.getElementById('adCity').value,
     description: document.getElementById('adDesc').value,
-    photos: uploadedUrls
+    photos: photoUrl ? [photoUrl] : []
   })});
   closeModal('postModal');
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
