@@ -377,8 +377,8 @@ async function showAd(id) {
   
   <!-- Место под 2 дополнительные фотографии -->
   <div id="subPhotosZone" style="display: flex; gap: 10px; margin-bottom: 16px;">
-    <div id="sub_view_1" style="width: 70px; height: 70px; border: 1px dashed #ccc; border-radius: 6px; background-size: cover; background-position: center;"></div>
-    <div id="sub_view_2" style="width: 70px; height: 70px; border: 1px dashed #ccc; border-radius: 6px; background-size: cover; background-position: center;"></div>
+    <div id="sub_view_1" onclick="changeMainAdImage(this)" style="width: 70px; height: 70px; border: 1px dashed #ccc; border-radius: 6px; background-size: cover; background-position: center; cursor: pointer;"></div>
+    <div id="sub_view_2" onclick="changeMainAdImage(this)" style="width: 70px; height: 70px; border: 1px dashed #ccc; border-radius: 6px; background-size: cover; background-position: center; cursor: pointer;"></div>
   </div>
 
   <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
@@ -535,6 +535,16 @@ function handlePreview(num) {
     };
     reader.readAsDataURL(input.files[0]);
   }
+}
+function changeMainAdImage(clickedBox) {
+  const mainImg = document.getElementById('mainAdImage');
+  if (!mainImg || !clickedBox) return;
+  const clickedBg = clickedBox.style.backgroundImage;
+  if (!clickedBg || clickedBg === 'none') return;
+  const clickedUrl = clickedBg.slice(5, -2);
+  const mainUrl = mainImg.src;
+  mainImg.src = clickedUrl;
+  clickedBox.style.backgroundImage = "url('" + mainUrl + "')";
 }
 
 async function login() {
