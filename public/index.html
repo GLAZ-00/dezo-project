@@ -372,7 +372,7 @@ async function showAd(id) {
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
   <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
-    <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+    <img id="mainAdImage" onclick="changeMainAdImageByClick()" src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain; cursor:pointer;">
   </div>
   <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
 <div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
@@ -537,7 +537,14 @@ async function login() {
     updateUserMenu();
   } catch { alert('Σφάλμα σύνδεσης'); }
 }
-
+let currentAdPhotoIndex = 0;
+function changeMainAdImageByClick() {
+  const mainImg = document.getElementById('mainAdImage');
+  if (mainImg && typeof ad !== 'undefined' && ad.photos && ad.photos.length > 0) {
+    currentAdPhotoIndex = (currentAdPhotoIndex + 1) % ad.photos.length;
+    mainImg.src = ad.photos[currentAdPhotoIndex];
+  }
+}
 async function register() {
   try {
     const data = await api('/api/register', { method: 'POST', body: JSON.stringify({
