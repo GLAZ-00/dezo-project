@@ -1,5 +1,4 @@
 
-
 const express = require('express');
 const multer = require('multer');
 const sharp = require('sharp');
@@ -107,7 +106,7 @@ app.post('/api/ads', auth, (req, res) => {
     price: Number(price),
     category,
     subcategory: subcategory || 'Άλλο',
-    photos: req.body.photos || [],
+    photos: Array.isArray(photos) ? photos : (photos ? [photos] : []),
     city: city || 'Αθήνα',
     phone: users.find(u => u.id === req.user.id)?.phone || '',
     phoneVisible: !!phoneVisible,
