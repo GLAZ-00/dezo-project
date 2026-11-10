@@ -106,7 +106,7 @@ app.post('/api/ads', auth, (req, res) => {
     price: Number(price),
     category,
     subcategory: subcategory || 'Άλλο',
-    photos: Array.isArray(photos) ? photos : (photos ? [photos] : []),
+   photos: req.body.photos || [],
     city: city || 'Αθήνα',
     phone: users.find(u => u.id === req.user.id)?.phone || '',
     phoneVisible: !!phoneVisible,
