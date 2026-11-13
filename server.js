@@ -76,19 +76,15 @@ app.post('/api/login', async (req, res) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-app.post('/api/upload', auth, upload.array('photo', 3), async (req, res) => {
-  if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'No files uploaded' });
+app.post('/api/upload', auth, upload.single('photo'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file' });
   try {
-    const urls = [];
-    for (const file of req.files) {
-      const filename = `${uuidv4()}.jpg`;
-      await sharp(file.buffer)
-        .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
-        .jpeg({ quality: 70 })
-        .toFile(path.join('uploads', filename));
-      urls.push(`/uploads/${filename}`);
-    }
-    res.json({ urls: urls });
+    const filename = `${uuidv4()}.jpg`;
+    await sharp(req.file.buffer)
+      .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 70 })
+      .toFile(path.join('uploads', filename));
+    res.json({ url: `/uploads/${filename}` });
   } catch (err) {
     res.status(500).json({ error: 'Compression failed' });
   }
@@ -106,7 +102,7 @@ app.post('/api/ads', auth, (req, res) => {
     price: Number(price),
     category,
     subcategory: subcategory || 'Άλλο',
-   photos: req.body.photos || [],
+    photos: Array.isArray(photos) ? photos : (photos ? [photos] : []),
     city: city || 'Αθήνα',
     phone: users.find(u => u.id === req.user.id)?.phone || '',
     phoneVisible: !!phoneVisible,
