@@ -291,14 +291,31 @@ async function showAd(id) {
     
     const isOwner = currentUser && currentUser.id === ad.userId;
     
+        window._adPhotos = (ad.photos && ad.photos.length) ? ad.photos : ['https://placehold.co'];
+    window._adIdx = 0;
+    window._setAdPhoto = (i) => {
+      window._adIdx = (i + window._adPhotos.length) % window._adPhotos.length;
+      document.getElementById('dezoMainImg').src = window._adPhotos[window._adIdx];
+      document.querySelectorAll('.dezo-thumb').forEach((t, idx) => t.style.borderColor = idx === window._adIdx ? 'var(--primary)' : 'transparent');
+    };
+
     detail.innerHTML = `
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
     <h2>${ad.title}</h2>
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
-  <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
-    <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
+  <div style="position:relative; width:100%; height:320px; border-radius:8px; margin-bottom:8px; overflow:hidden; background:#111; display:flex; align-items:center; justify-content:center;">
+    <img id="dezoMainImg" src="${window._adPhotos[0]}" style="width:100%; height:100%; object-fit:contain;">
+    ${window._adPhotos.length > 1 ? `
+      <button onclick="window._setAdPhoto(window._adIdx - 1)" style="position:absolute; left:8px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.5); color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:20px; cursor:pointer;">‹</button>
+      <button onclick="window._setAdPhoto(window._adIdx + 1)" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.5); color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:20px; cursor:pointer;">›</button>
+    ` : ''}
   </div>
+  ${window._adPhotos.length > 1 ? `
+    <div style="display:flex; gap:8px; overflow-x:auto; margin-bottom:12px; padding-bottom:4px;">
+      ${window._adPhotos.map((p, idx) => `<img class="dezo-thumb" src="${p}" onclick="window._setAdPhoto(${idx})" style="width:64px; height:48px; object-fit:cover; border-radius:4px; cursor:pointer; border:2px solid ${idx === 0 ? 'var(--primary)' : 'transparent'};">`).join('')}
+    </div>
+  ` : ''}
   <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
   <div style="color:#666; margin-bottom:12px;">${ad.city}</div>
   <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
