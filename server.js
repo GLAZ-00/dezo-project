@@ -75,7 +75,7 @@ app.post('/api/login', async (req, res) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-app.post('/api/upload', auth, upload.array('photos', 5), async (req, res) => {
+app.post('/api/upload', auth, upload.array('photos', 6), async (req, res) => {
   if (!req.files || !req.files.length) return res.status(400).json({ error: 'No files' });
   try {
     const urls = [];
