@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -12,7 +13,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 header { background: #fff; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,.1); position: sticky; top: 0; z-index: 100; }
 .logo { font-size: 28px; font-weight: 800; color: var(--primary); cursor: pointer; }
 .logo span { font-size: 12px; display: block; font-weight: 400; color: #666; }
-.search { max-width: 55%; margin: 0 auto 0 15px; display: flex; flex: 1; }
+.search { flex: 1; margin: 0 20px; display: flex; }
 .search input { flex: 1; padding: 10px 16px; border: 2px solid #ddd; border-radius: 24px 0 0 24px; outline: none; }
 .search button { background: var(--primary); color: #fff; border: none; padding: 0 20px; border-radius: 0 24px 24px 0; cursor: pointer; }
 .lang { cursor: pointer; font-weight: 600; color: #555; }
@@ -43,16 +44,19 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 </style>
 </head>
 <body>
-
-<header style="background: #fff; padding: 12px 20px; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,.1); position: sticky; top: 0; z-index: 100;">
-  <div class="logo" onclick="showHome()">ΔΕΖΩ.gr<span id="tagline" style="font-size: 10px; line-height: 1.1; margin-top: 2px;">Μια ΔΕύτερη ΖΩή<br>για τα πράγματά σας</span></div>
-  <div class="search" style="max-width: 55%; margin: 0 15px 0 15px; display: flex; flex: 1;">
-    <input id="searchInput" placeholder="Αναζήτηση..." onkeypress="if(event.key==='Enter') searchAds()" style="flex: 1; padding: 10px 16px; border: 2px solid #ddd; border-radius: 24px 0 0 24px; outline: none;">
-    <button onclick="searchAds()" style="background: var(--primary); color: #fff; border: none; padding: 0 20px; border-radius: 0 24px 24px 0; cursor: pointer;">🔍</button>
+<header>
+  <div class="logo" onclick="showHome()">ΔΕΖΩ.gr<span id="tagline">Μια ΔΕύτερη ΖΩή για τα πράγματά σας</span></div>
+  <div class="search">
+    <input id="searchInput" placeholder="Αναζήτηση..." onkeypress="if(event.key==='Enter') searchAds()">
+    <button onclick="searchAds()">🔍</button>
   </div>
-  <span class="lang" onclick="toggleLang()" id="langToggle" style="cursor: pointer; font-weight: 600; color: #555; margin-right: 25px; padding: 5px; white-space: nowrap;">EN</span>
-  <span id="userMenu" style="cursor: pointer; white-space: nowrap;" onclick="showLogin()">Σύνδεση</span>
+  <div>
+    <span class="lang" onclick="toggleLang()" id="langToggle">EN</span>
+    <span id="userMenu" style="margin-left:16px; cursor:pointer;" onclick="showLogin()">Σύνδεση</span>
+    <button id="addBtn" class="hidden" onclick="showPostAd()" style="margin-left:12px; background:var(--primary); color:#fff; border:none; padding:8px 16px; border-radius:20px; cursor:pointer;">+ Προσθήκη</button>
+  </div>
 </header>
+
 <!-- Фиксированная чистая шапка категорий, независимая от капризов старого сервера -->
 <nav id="categories">
   <div class="cat-btn active" onclick="loadAds()">Όλα</div>
@@ -92,66 +96,14 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 </div>
 <div class="modal" id="postModal">
   <div class="modal-content">
-    <div style="display:flex; justify-content:space-between; align-items:center;"><h2>Νέα αγγελία</h2><span onclick="closeModal('postModal')" style="cursor:pointer; font-size:28px; font-weight:bold; color:#888;">&times;</span></div>
+    <h2>Νέα αγγελία</h2>
     <div class="form-group"><input id="adTitle" placeholder="Τίτλος"></div>
     <div class="form-group"><select id="adCat"></select></div>
     <div class="form-group"><input id="adPrice" type="number" placeholder="Τιμή (€)"></div>
     <div class="form-group"><input id="adCity" placeholder="Πόλη" value="Αθήνα"></div>
     <div class="form-group"><textarea id="adDesc" placeholder="Περιγραφή" rows="4"></textarea></div>
-    <div class="form-group" style="margin-bottom: 16px;">
-  <div style="display: flex; gap: 12px; justify-content: space-between;">
-    
-    <!-- Box 1 -->
-    <div onclick="document.getElementById('file_photo_1').click()" id="box_photo_1" style="flex: 1; height: 90px; border: 2px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; background-size: cover; background-position: center;">
-      <span id="plus_photo_1" style="font-size: 28px; color: #888; font-weight: bold;">+</span>
-      <input type="file" id="file_photo_1" accept="image/*" style="display: none;" onchange="handlePreview(1)">
-    </div>
-
-    <!-- Box 2 -->
-    <div onclick="document.getElementById('file_photo_2').click()" id="box_photo_2" style="flex: 1; height: 90px; border: 2px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; background-size: cover; background-position: center;">
-      <span id="plus_photo_2" style="font-size: 28px; color: #888; font-weight: bold;">+</span>
-      <input type="file" id="file_photo_2" accept="image/*" style="display: none;" onchange="handlePreview(2)">
-    </div>
-
-    <!-- Box 3 -->
-    <div onclick="document.getElementById('file_photo_3').click()" id="box_photo_3" style="flex: 1; height: 90px; border: 2px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; background-size: cover; background-position: center;">
-      <span id="plus_photo_3" style="font-size: 28px; color: #888; font-weight: bold;">+</span>
-      <input type="file" id="file_photo_3" accept="image/*" style="display: none;" onchange="handlePreview(3)">
-    </div>
-
-  </div>
-</div>
-
+    <div class="form-group"><input type="file" id="adPhoto" accept="image/*"></div>
     <button class="primary" onclick="postAd()">Δημοσίευση</button>
-  </div>
-</div>
-  <div id="profileModal" class="hidden" style="position: absolute; left: 0; right: 0; width: 100vw; top: 360px; min-height: calc(100vh - 420px); background: var(--bg); padding: 16px; box-shadow: none; z-index: 90; margin-bottom: 60px;">
-  <div style="width: 100%; min-height: inherit; background: #fff; padding: 16px; box-shadow: none; border-radius: 0; display: flex; flex-direction: column; justify-content: space-between;">
-    <!-- Шапка -->
-    <!-- Зона для 3-х будущих фото товара и крестик закрытия -->
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; width:100%;">
-  <div id="profilePhotoPreviewZone" style="display:flex; gap:10px; flex:1;">
-    <span style="color:#aaa; font-size:13px; font-style:italic;">Здесь будут показываться 3 фото вашего товара...</span>
-  </div>
-  <span onclick="document.getElementById('profileModal').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden');" style="cursor:pointer; font-size:32px; font-weight:bold; color:#888; padding:0 10px; line-height:1;">&times;</span>
-</div>
-    <!-- Баланс и Слоты -->
-    <div style="display:flex; gap:12px; margin-bottom:16px;">
-      <div style="flex:1; background:#f5f5f5; padding:10px; border-radius:6px; font-weight:bold;">💳 Ευρώ: <span id="userBalance">0</span> € <span style="color:#00a046; cursor:pointer; margin-left:8px;">[+]</span></div>
-      <div style="flex:1; background:#f5f5f5; padding:10px; border-radius:6px; font-weight:bold;">📦 Σλοτ (Слоты): <span id="userSlots">2 / 2</span></div>
-    </div>
-    <!-- Вкладки навигации -->
-    <div style="display:flex; gap:8px; border-bottom:2px solid #eee; padding-bottom:8px; margin-bottom:12px;">
-      <button onclick="switchProfileTab('items')" style="flex:1; padding:8px; background:#00a046; color:#fff; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Τα πράγματά μου</button>
-<button onclick="switchProfileTab('messages')" style="flex:1; padding:8px; background:#f0f0f0; border:none; border-radius:4px; cursor:pointer;">Μηνύματα</button>
-<button onclick="switchProfileTab('archive')" style="flex:1; padding:8px; background:#f0f0f0; border:none; border-radius:4px; cursor:pointer;">Αρχείο</button>
-    </div>
-    <!-- Область контента -->
-    <div id="profileTabContent" style="min-height:150px; background:#fafafa; border:1px solid #eee; border-radius:6px; padding:12px; text-align:center; color:#888; font-style:italic; margin-bottom:16px;">
-      Δεν υπάρχουν ακόμη ενεργές αγγελίες (Пока нет активных объявлений)
-    </div>
-    <!-- Кнопка Выхода -->
-    <button onclick="logout(); closeModal('profileModal');" style="width:100%; background:#d32f2f; color:#fff; border:none; padding:10px; border-radius:6px; cursor:pointer; font-weight:bold;">Έξοδος (Выйти)</button>
   </div>
 </div>
 <div class="modal" id="adModal">
@@ -229,33 +181,8 @@ function updateUserMenu() {
   const menu = document.getElementById('userMenu');
   const addBtn = document.getElementById('addBtn');
   if (currentUser) {
-                menu.onclick = null;
-            menu.onclick = null;
-      // Увеличили размер шрифта выхода до 14px и добавили отступ margin-top: 6px
-      menu.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; line-height: 1.2;">
-          <span id="goToProfile" style="font-weight: bold; color: var(--primary); font-size: 16px; cursor: pointer;">${currentUser.name}</span>
-          <span id="quickLogout" style="font-size: 14px; color: #d32f2f; cursor: pointer; text-decoration: underline; margin-top: 6px; font-weight: 500;">${tr('logout')}</span>
-        </div>
-      `;
-      
-      document.getElementById('goToProfile').onclick = (e) => {
-  e.stopPropagation();
-  // Скрываем главную ленту объявлений
-  document.getElementById('mainContent').classList.add('hidden');
-  // Показываем просторный личный кабинет
-  document.getElementById('profileModal').classList.remove('hidden');
-  
-  const balEl = document.getElementById('userBalance');
-  if (balEl) balEl.textContent = currentUser.balance || 0;
-};
-      
-      document.getElementById('quickLogout').onclick = (e) => {
-        e.stopPropagation();
-        logout();
-      };
-
-
+    menu.textContent = currentUser.name || tr('logout');
+    menu.onclick = logout;
     addBtn.classList.remove('hidden');
     addBtn.textContent = tr('add');
   } else {
@@ -332,7 +259,7 @@ function renderAds(list) {
     <div class="ad-card" onclick="showAd('${ad.id}')">
       ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
       ${Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;">${tr('new')}</div>` : ''}
-      <img src="${ad.photos && ad.photos.length > 0 ? ad.photos[0] : 'https://placehold.co'}" style="width:100%; height:200px; object-fit:cover;">
+      <img src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placeholder.com'}" alt="">
       <div class="info">
         <div style="font-weight:600;margin-bottom:4px;">${ad.title}</div>
         <div class="price">${ad.price} €</div>
@@ -372,37 +299,29 @@ async function showAd(id) {
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
   <div style="width:100%; height:350px; border-radius:8px; margin-bottom:12px; overflow:hidden; background:#fafafa; display:flex; align-items:center; justify-content:center;">
-    <img id="mainAdImage" onclick="changeMainAdImageByClick()" src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain; cursor:pointer;">
+    <img src="${ad.photos && ad.photos ? ad.photos : 'https://placehold.co'}" style="width:100%; height:100%; object-fit:contain;">
   </div>
   <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
-<div style="color:#777; margin-bottom:12px; display:flex; justify-content:space-between;">
-  <span>📍 ${ad.city}</span>
-  <span>👤 ${currentUser && currentUser.id === ad.userId ? currentUser.name : (ad.ownerName || 'OLEG')} | 👁 ${ad.views || 0}</span>
-</div>
+  <div style="color:#666; margin-bottom:12px;">${ad.city}</div>
   <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
   <div style="border-top:1px solid #eee; padding-top:16px;">
     <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
       <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
     </p>
         
-        ${currentUser ? `
+        ${currentUser && !isOwner ? `
           <h3>${tr('message')}</h3>
           <div class="chat-box" id="chatBox"></div>
           <div style="display:flex; gap:8px;">
             <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
-            <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', currentUser.id === '${ad.userId}' ? (currentAds.find(m => m.adId === '${ad.id}' && m.from !== currentUser.id)?.from || '${ad.userId}') : '${ad.userId}')">${tr('send')}</button>
+            <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', '${ad.userId}')">${tr('send')}</button>
           </div>
         ` : ''}
       </div>
     `;
 
     document.getElementById('adModal').classList.add('open');
-        if (currentUser) {
-      loadMessages(ad.id);
-      // Запускаем пульс: проверяем новые сообщения каждые 3 секунды намертво
-      if (window.chatInterval) clearInterval(window.chatInterval);
-      window.chatInterval = setInterval(() => loadMessages(ad.id), 3000);
-    }
+    if (currentUser && !isOwner) loadMessages(ad.id);
   } catch (err) {
     alert('Σφάλμα φόρτωσης αγγελίας');
   }
@@ -417,112 +336,25 @@ async function promoteAd(id) {
 
 async function loadMessages(adId) {
   const msgs = await api('/api/messages/' + adId);
-  // Запоминаем, кто прислал последнее сообщение (для ответа хозяина)
-  const incoming = msgs.find(m => m.from !== currentUser.id);
-  if (incoming) window.lastIncomingUserId = incoming.from;
-
   const box = document.getElementById('chatBox');
   box.innerHTML = msgs.map(m => `<div class="msg ${m.from === currentUser.id ? 'me' : 'them'}">${m.text}</div>`).join('');
   box.scrollTop = box.scrollHeight;
 }
-async function sendMessage(adId) {
+
+async function sendMessage(adId, toUserId) {
   const input = document.getElementById('msgInput');
   const text = input.value.trim();
   if (!text) return;
-
-  // Находим текущее открытое объявление в системе
-  const currentAd = typeof currentAds !== 'undefined' ? currentAds.find(a => a.id === adId) : null;
-  let toUserId = currentAd ? currentAd.userId : null;
-
-  // Если пишет сам хозяин товара, нам нужно найти ID покупателя
-  if (currentUser && currentAd && currentUser.id === currentAd.userId) {
-    // Берём контейнер чата, чтобы вытащить историю
-    const box = document.getElementById('chatBox');
-    // Ищем на сервере или в разметке последнее сообщение, которое пришло НЕ от нас
-    toUserId = window.lastIncomingUserId || toUserId;
-  }
-
-  await api('/api/messages', { method: 'POST', body: JSON.stringify({ adId, text, toUserId: toUserId }) });
+  await api('/api/messages', { method: 'POST', body: JSON.stringify({ adId, text, toUserId }) });
   input.value = '';
   loadMessages(adId);
 }
-function switchProfileTab(tab) {
-  const contentArea = document.getElementById('profileTabContent');
-  if (!contentArea) return;
 
-  if (tab === 'items') {
-    contentArea.innerHTML = '<p style="color:#888; font-style:italic;">Загрузка ваших вещей...</p>';
-    
-    api('/api/my-ads')
-      .then(function(myAds) {
-        if (!myAds || myAds.length === 0) {
-          contentArea.innerHTML = '<p style="color:#888; font-style:italic; margin-bottom:16px;">Δεν υπάρχουν ακόμη ενεργές αγγελίες (Пока нет активных объявлений)</p>' +
-            '<button onclick="showPostAd()" style="background:#00a046; color:#fff; border:none; padding:10px 20px; border-radius:20px; font-size:14px; font-weight:bold; cursor:pointer; box-shadow: 0 4px 6px rgba(0,160,70,0.15); white-space:nowrap;">+ Προσθήκη αγγελίας</button>';
-                } else {
-          // Главный контейнер: левая часть 70%, правая часть 30%
-          var html = '<div style="width:100%; display:flex; gap:20px; align-items:flex-start; text-align:left;">';
-          
-          // ЛЕВАЯ ШИРОКАЯ ЗΟΝΚΑ: Список вещей (70% ширины)
-          html += '<div style="flex: 2.3; display:flex; flex-direction:column; gap:10px;">';
-          for (var i = 0; i < myAds.length; i++) {
-            var ad = myAds[i];
-            html += '<div onclick="showAd(\'' + ad.id + '\')" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer;">' +
-              '<div style="display:flex; align-items:center; gap:10px;">' +
-                '<div style="width:10px; height:10px; background:#00a046; border-radius:50%;"></div>' +
-                '<strong style="color:#222;">' + ad.title + '</strong>' +
-              '</div>' +
-              '<span style="color:var(--primary); font-weight:bold;">' + ad.price + ' €</span>' +
-            '</div>';
-          }
-          html += '</div>';
-          
-          // ПΡΑΒΑЯ УЗΚΑЯ ЗΟΝΚΑ: Пульт управления и кнопки (30% ширины)
-          html += '<div style="flex: 1; background:#f9f9f9; border:1px dashed #00a046; border-radius:8px; padding:16px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">' +
-            '<p style="font-size:13px; color:#555; font-weight:600;">Θέλετε να προσθέσετε κάτι;</p>' +
-            '<button onclick="showPostAd()" style="width:100%; background:#00a046; color:#fff; border:none; padding:10px 15px; border-radius:20px; font-size:14px; font-weight:bold; cursor:pointer; box-shadow: 0 4px 6px rgba(0,160,70,0.15);">+ Προσθήκη αγγελίας</button>' +
-          '</div>';
-          
-          html += '</div>';
-          contentArea.innerHTML = html;
-        }
-      })
-      .catch(function() {
-        contentArea.innerHTML = '<p style="color:#d32f2f; font-size:14px;">Ошибка загрузки данных с сервера</p>';
-      });
-  } else if (tab === 'messages') {
-    contentArea.innerHTML = '<p style="color:#888; font-style:italic;">Δεν υπάρχουν μηνύματα (Нет сообщений)</p>';
-  } else if (tab === 'archive') {
-    contentArea.innerHTML = '<p style="color:#888; font-style:italic;">Το αρχείο είναι άδειο (Архив пуст)</p>';
-  }
-}
-  
 function showLogin() { document.getElementById('loginModal').classList.add('open'); document.getElementById('registerModal').classList.remove('open'); }
 function showRegister() { document.getElementById('registerModal').classList.add('open'); document.getElementById('loginModal').classList.remove('open'); }
-function showPostAd() { 
-  if (!currentUser) return showLogin(); 
-  // Принудительно наполняем списки категорий и подкатегорий перед открытием
-  loadCategories(); 
-  document.getElementById('postModal').classList.add('open'); 
-}
-function closeModal(id) { 
-  document.getElementById(id).classList.remove('open'); 
-  if (id === 'adModal' && window.chatInterval) clearInterval(window.chatInterval);
-}
-function handlePreview(num) {
-  const input = document.getElementById('file_photo_' + num);
-  const box = document.getElementById('box_photo_' + num);
-  const plus = document.getElementById('plus_photo_' + num);
-  
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      box.style.backgroundImage = "url('" + e.target.result + "')";
-      box.style.border = "1px solid var(--primary)";
-      if (plus) plus.style.display = "none";
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
+function showPostAd() { if (!currentUser) return showLogin(); document.getElementById('postModal').classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
 async function login() {
   try {
     const data = await api('/api/login', { method: 'POST', body: JSON.stringify({
@@ -536,14 +368,7 @@ async function login() {
     updateUserMenu();
   } catch { alert('Σφάλμα σύνδεσης'); }
 }
-let currentAdPhotoIndex = 0;
-function changeMainAdImageByClick() {
-  const mainImg = document.getElementById('mainAdImage');
-  if (mainImg && typeof ad !== 'undefined' && ad.photos && ad.photos.length > 0) {
-    currentAdPhotoIndex = (currentAdPhotoIndex + 1) % ad.photos.length;
-    mainImg.src = ad.photos[currentAdPhotoIndex];
-  }
-}
+
 async function register() {
   try {
     const data = await api('/api/register', { method: 'POST', body: JSON.stringify({
