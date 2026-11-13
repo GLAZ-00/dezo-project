@@ -413,7 +413,7 @@ async function postAd() {
   let photoUrls = [];
   if (fileInput && fileInput.files && fileInput.files.length > 0) {
     const form = new FormData();
-    Array.from(fileInput.files).slice(0, 5).forEach(file => form.append('photos', file));
+    Array.from(fileInput.files).slice(0, 6).forEach(file => form.append('photos', file));
     const res = await fetch('/api/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: form });
     if (res.ok) {
       const data = await res.json();
