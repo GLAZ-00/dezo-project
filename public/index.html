@@ -442,7 +442,29 @@ async function postAd() {
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
   showHome();
 }
-
+async function showCabinet() {
+  if (!currentUser) return showLogin();
+  const myAds = await api('/api/my-ads');
+  document.getElementById('mainContent').innerHTML = `
+    <div style="background:#fff; border:1px dashed #ccc; border-radius:10px; padding:18px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; color:#888;">
+      <span>Χώρος διαφήμισης (Διαφήμιση)</span>
+      <span onclick="this.parentElement.style.display='none'" style="cursor:pointer; font-size:20px;">&times;</span>
+    </div>
+    <div style="display:flex; gap:8px; margin-bottom:16px;">
+      <button class="primary" style="flex:1;" onclick="showCabinet()">Τα πράγματά μου</button>
+      <button style="flex:1; padding:12px; border:1px solid #ddd; border-radius:8px; background:#fff; cursor:pointer;" onclick="alert('Μηνύματα προς διαχειριστή - Σύντομα')">Μηνύματα</button>
+    </div>
+    <div style="display:grid; grid-template-columns:7fr 3fr; gap:16px; align-items:start;">
+      <div style="background:#fff; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.06);">
+        ${myAds.length ? myAds.map(a => `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid #eee; cursor:pointer;"><span><span style="color:var(--primary); margin-right:8px;">●</span>${a.title}</span><strong style="color:var(--primary);">${a.price} €</strong></div>`).join('') : '<p style="color:#888; text-align:center; padding:20px;">Δεν έχετε αγγελίες ακόμα</p>'}
+      </div>
+      <div style="background:#fff; border:1px dashed #ddd; border-radius:12px; padding:16px; text-align:center;">
+        <p style="font-size:13px; color:#666; margin-bottom:12px;">Θέλετε να προσθέσετε κάτι;</p>
+        <button class="primary" onclick="showPostAd()">+ Προσθήκη αγγελίας</button>
+      </div>
+    </div>
+  `;
+}
 // Init
 updateUserMenu();
 loadCategories();
