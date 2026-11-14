@@ -44,7 +44,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 </head>
 <body>
 <header>
-  <div class="logo" onclick="showHome()">ΔΕΖΩ.gr<span id="tagline">Μια ΔΕύτερη ΖΩή για τα πράγματά σας</span></div>
+    <div class="logo" onclick="showHome()">ΔΕΖΩ.gr<span id="tagline" style="line-height:1.25;">Μια ΔΕύτερη ΖΩή<br>για τα πράγματά σας</span></div>
   <div class="search">
     <input id="searchInput" placeholder="Αναζήτηση..." onkeypress="if(event.key==='Enter') searchAds()">
     <button onclick="searchAds()">🔍</button>
@@ -119,7 +119,7 @@ let currentAds = [];
 
 const t = {
   el: {
-    tagline: 'Μια Δεύτερη Ζωή για τα πράγματά σας',
+    tagline: 'Μια Δεύτερη Ζωή<br>για τα πράγματά σας',
     search: 'Αναζήτηση...',
     login: 'Σύνδεση',
     logout: 'Αποσύνδεση',
