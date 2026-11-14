@@ -141,7 +141,7 @@ app.get('/api/ads/:id', (req, res) => {
   if (!ad) return res.status(404).json({ error: 'Not found' });
   ad.views++;
   // Hide full phone unless revealed flag (client handles click)
-  const safe = { ...ad, phone: ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****' };
+    const safe = { ...ad, ownerName: users.find(u => u.id === ad.userId)?.name || '', phone: ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****' };
   res.json(safe);
 });
 
