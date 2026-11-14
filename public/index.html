@@ -178,10 +178,11 @@ function toggleLang() {
 function updateUserMenu() {
   const menu = document.getElementById('userMenu');
   const addBtn = document.getElementById('addBtn');
-  if (currentUser) {
-    menu.textContent = currentUser.name || tr('logout');
-    menu.onclick = logout;
+    if (currentUser) {
+    menu.onclick = null;
+    menu.innerHTML = `<span style="display:inline-flex; flex-direction:column; align-items:center; line-height:1.2; vertical-align:middle;"><span onclick="showCabinet()" style="font-weight:600; cursor:pointer;">${currentUser.name || 'Λογαριασμός'}</span><span onclick="logout()" style="color:#e53935; font-size:11px; cursor:pointer;">Αποσύνδεση</span></span>`;
     addBtn.classList.remove('hidden');
+    addBtn.textContent = tr('add');
     addBtn.textContent = tr('add');
   } else {
     menu.textContent = tr('login');
