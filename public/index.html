@@ -453,12 +453,13 @@ async function showCabinet() {
     <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
       <span onclick="showHome()" title="Κλείσιμο" style="cursor:pointer; font-size:26px; line-height:1; color:#555; padding:0 6px;">&times;</span>
     </div>
-        <div style="min-height:280px; margin-bottom:20px;"></div>
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:24px;">
+            <div style="min-height:150px; margin-bottom:16px;"></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:16px;">
       <button class="primary" style="padding:12px;" onclick="showCabinet()">Τα πράγματά μου</button>
       <div>${isAdmin ? `<button style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="alert('Μηνύματα διαχειριστή')">Μηνύματα</button>` : ''}</div>
       <button style="padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="alert('Αρχείο')">Αρχείο</button>
     </div>
+    <div id="modChatZone" style="min-height:130px; margin-bottom:16px;"></div>
     <div style="background:#fff; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.06); display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start;">
             <div style="max-height:230px; overflow-y:auto; padding-right:4px;">
         ${myAds.length ? myAds.map(a => `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer;"><span><span style="color:var(--primary); margin-right:8px;">●</span>${a.title}</span><strong style="color:var(--primary);">${a.price} €</strong></div>`).join('') : '<p style="color:#888; text-align:center; padding:24px;">Δεν έχετε αγγελίες ακόμα</p>'}
