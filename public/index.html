@@ -480,9 +480,22 @@ updateUserMenu();
 loadCategories();
 showHome();
 </script>
+    async function openSupportChat() {
+  if (!currentUser) return showLogin();
+  const box = document.getElementById('modChatZone');
+  const all = await api('/api/admin-messages');
+  const mine = all.filter(m => m.fromId === currentUser.id || m.toUserId === currentUser.id);
+  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>Μήνυμα προς διαχειριστή</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer;">&times;</span></div><div style="max-height:110px; overflow-y:auto; margin-bottom:8px; font-size:13px;">${mine.length ? mine.map(m => `<div style="margin:4px 0;"><b>${m.fromName}:</b> ${m.text}</div>`).join('') : '<span style="color:#888;">Γράψτε το μήνυμά σας...</span>'}</div><div style="display:flex; gap:8px;"><input id="supInput" placeholder="Γράψτε εδώ..." style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px;"><button class="primary" style="width:auto; padding:8px 14px;" onclick="sendSupport()">Αποστολή</button></div></div>`;
+}
+async function sendSupport() {
+  const inp = document.getElementById('supInput');
+  if (!inp.value.trim()) return;
+  await api('/api/admin-messages', { method: 'POST', body: JSON.stringify({ text: inp.value.trim() }) });
+  openSupportChat();
+}
 <footer id="cabinetFooter" style="display:none; max-width:1200px; margin:24px auto 12px; padding:16px 20px; background:#fff; border-radius:12px; border-top:1px solid #eee; font-size:13px; color:#666; flex-wrap:wrap; justify-content:space-between; gap:12px;">
   <div><strong>ΔΕΖΩ.gr</strong> — Μια Δεύτερη Ζωή για τα πράγματά σας • Αθήνα, Ελλάδα</div>
-  <div>Επικοινωνία &amp; Αναφορές: <a href="mailto:support@dezo.gr" style="color:var(--primary); text-decoration:none;">support@dezo.gr</a> • Όροι Χρήσης</div>
+    <div><span onclick="openSupportChat()" style="color:var(--primary); font-weight:600; cursor:pointer; text-decoration:underline;">Επικοινωνία με διαχειριστή / Αναφορά</span> • Όροι Χρήσης</div>
 </footer>
 </body>
 </html>
