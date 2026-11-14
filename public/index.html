@@ -329,7 +329,8 @@ async function showAd(id) {
           <div class="chat-box" id="chatBox"></div>
           <div style="display:flex; gap:8px;">
             <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
-            <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', '${ad.userId}')">${tr('send')}</button>
+             <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', window._chatPartnerId || '${ad.userId}')">${tr('send')}</button>
+
           </div>
         ` : ''}
       </div>
@@ -351,6 +352,7 @@ async function promoteAd(id) {
 
 async function loadMessages(adId) {
   const msgs = await api('/api/messages/' + adId);
+  window._chatPartnerId = msgs.find(m => m.from !== currentUser.id)?.from || null;
   const box = document.getElementById('chatBox');
   box.innerHTML = msgs.map(m => `<div class="msg ${m.from === currentUser.id ? 'me' : 'them'}">${m.text}</div>`).join('');
   box.scrollTop = box.scrollHeight;
