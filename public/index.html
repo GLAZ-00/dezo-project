@@ -362,7 +362,8 @@ async function sendMessage(adId, toUserId) {
   const input = document.getElementById('msgInput');
   const text = input.value.trim();
   if (!text) return;
-  await api('/api/messages', { method: 'POST', body: JSON.stringify({ adId, text, toUserId }) });
+  const realTo = (toUserId === currentUser.id && window._chatPartnerId) ? window._chatPartnerId : toUserId;
+  await api('/api/messages', { method: 'POST', body: JSON.stringify({ adId, text, toUserId: realTo }) });
   input.value = '';
   loadMessages(adId);
 }
@@ -436,7 +437,8 @@ async function postAd() {
     description: document.getElementById('adDesc').value,
     photos: photoUrls
   })});
-  ;closeModal('postModal')
+    btn.disabled = false; btn.textContent = 'Δημοσίευση';
+  closeModal('postModal');
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
   showHome();
 }
