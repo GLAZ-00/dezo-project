@@ -266,7 +266,7 @@ function renderAds(list) {
     </div>`).join('')}</div>`;
 }
 
-function showHome() { loadAds(); }
+function showHome() { document.getElementById('cabinetFooter').style.display = 'none'; loadAds(); }
 function searchAds() { loadAds(); }
 
 async function revealPhone(id, el) {
@@ -444,6 +444,7 @@ async function postAd() {
 }
 async function showCabinet() {
   if (!currentUser) return showLogin();
+  document.getElementById('cabinetFooter').style.display = 'flex';
   const myAds = await api('/api/my-ads');
   const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.toUpperCase() === 'OLEG';
   document.getElementById('mainContent').innerHTML = `
