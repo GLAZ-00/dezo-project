@@ -474,13 +474,7 @@ async function showCabinet() {
     </div>
   `;
 }
-
-// Init
-updateUserMenu();
-loadCategories();
-showHome();
-</script>
-    async function openSupportChat() {
+async function openSupportChat() {
   if (!currentUser) return showLogin();
   const box = document.getElementById('modChatZone');
   const all = await api('/api/admin-messages');
@@ -493,6 +487,11 @@ async function sendSupport() {
   await api('/api/admin-messages', { method: 'POST', body: JSON.stringify({ text: inp.value.trim() }) });
   openSupportChat();
 }
+// Init
+updateUserMenu();
+loadCategories();
+showHome();
+</script>    
 <footer id="cabinetFooter" style="display:none; max-width:1200px; margin:24px auto 12px; padding:16px 20px; background:#fff; border-radius:12px; border-top:1px solid #eee; font-size:13px; color:#666; flex-wrap:wrap; justify-content:space-between; gap:12px;">
   <div><strong>ΔΕΖΩ.gr</strong> — Μια Δεύτερη Ζωή για τα πράγματά σας • Αθήνα, Ελλάδα</div>
     <div><span onclick="openSupportChat()" style="color:var(--primary); font-weight:600; cursor:pointer; text-decoration:underline;">Επικοινωνία με διαχειριστή / Αναφορά</span> • Όροι Χρήσης</div>
