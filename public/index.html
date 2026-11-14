@@ -93,8 +93,8 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
   </div>
 </div>
 <div class="modal" id="postModal">
-  <div class="modal-content">
-    <h2>Νέα αγγελία</h2>
+    <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><h2>Νέα αγγελία</h2><span onclick="closeModal('postModal')" style="cursor:pointer; font-size:26px;">&times;</span></div>
     <div class="form-group"><input id="adTitle" placeholder="Τίτλος"></div>
     <div class="form-group"><select id="adCat"></select></div>
     <div class="form-group"><input id="adPrice" type="number" placeholder="Τιμή (€)"></div>
@@ -337,7 +337,7 @@ async function showAd(id) {
     `;
 
     document.getElementById('adModal').classList.add('open');
-    if (currentUser) loadMessages(ad.id);
+        if (currentUser) { loadMessages(ad.id); clearInterval(window._chatTimer); window._chatTimer = setInterval(() => loadMessages(ad.id), 3000); }
   } catch (err) {
     alert('Σφάλμα φόρτωσης αγγελίας');
   }
@@ -371,7 +371,7 @@ async function sendMessage(adId, toUserId) {
 function showLogin() { document.getElementById('loginModal').classList.add('open'); document.getElementById('registerModal').classList.remove('open'); }
 function showRegister() { document.getElementById('registerModal').classList.add('open'); document.getElementById('loginModal').classList.remove('open'); }
 function showPostAd() { if (!currentUser) return showLogin(); document.getElementById('postModal').classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); if (id === 'adModal') clearInterval(window._chatTimer); }
 
 async function login() {
   try {
