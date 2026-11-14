@@ -179,11 +179,10 @@ function toggleLang() {
 function updateUserMenu() {
   const menu = document.getElementById('userMenu');
   const addBtn = document.getElementById('addBtn');
-  if (currentUser) {
-    menu.textContent = currentUser.name || tr('logout');
-    menu.onclick = logout;
-    addBtn.classList.remove('hidden');
-    addBtn.textContent = tr('add');
+    if (currentUser) {
+    menu.onclick = null;
+    menu.innerHTML = `<span style="display:inline-flex; flex-direction:column; align-items:center; line-height:1.2; vertical-align:middle;"><span onclick="showCabinet()" style="font-weight:600; cursor:pointer;">${currentUser.name || 'Λογαριασμός'}</span><span onclick="logout()" style="color:#e53935; font-size:11px; cursor:pointer;">Αποσύνδεση</span></span>`;
+    addBtn.classList.add('hidden');
   } else {
     menu.textContent = tr('login');
     menu.onclick = showLogin;
@@ -442,6 +441,34 @@ async function postAd() {
   closeModal('postModal');
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
   showHome();
+}
+async function showCabinet() {
+  if (!currentUser) return showLogin();
+  const myAds = await api('/api/my-ads');
+  const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.toUpperCase() === 'OLEG';
+  document.getElementById('mainContent').innerHTML = `
+    <div style="background:#fff; border:1px solid #eee; border-radius:12px; height:220px; padding:16px; margin-bottom:16px; position:relative;">
+      <span onclick="this.parentElement.style.visibility='hidden'" style="position:absolute; top:12px; right:16px; cursor:pointer; font-size:22px; color:#666;">&times;</span>
+    </div>
+    <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+      <span onclick="showHome()" title="Κλείσιμο" style="cursor:pointer; font-size:26px; line-height:1; color:#555; padding:0 6px;">&times;</span>
+    </div>
+    <div style="min-height:140px; margin-bottom:20px;"></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:24px;">
+      <button class="primary" style="padding:12px;" onclick="showCabinet()">Τα πράγματά μου</button>
+      <div>${isAdmin ? `<button style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="alert('Μηνύματα διαχειριστή')">Μηνύματα</button>` : ''}</div>
+      <button style="padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="alert('Αρχείο')">Αρχείο</button>
+    </div>
+    <div style="background:#fff; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.06); display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start;">
+      <div>
+        ${myAds.length ? myAds.map(a => `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer;"><span><span style="color:var(--primary); margin-right:8px;">●</span>${a.title}</span><strong style="color:var(--primary);">${a.price} €</strong></div>`).join('') : '<p style="color:#888; text-align:center; padding:24px;">Δεν έχετε αγγελίες ακόμα</p>'}
+      </div>
+      <div style="border:1px dashed #ccc; border-radius:10px; padding:16px; text-align:center;">
+        <p style="font-size:13px; color:#666; margin-bottom:12px;">Θέλετε να προσθέσετε κάτι;</p>
+        <button class="primary" onclick="showPostAd()">+ Προσθήκη αγγελίας</button>
+      </div>
+    </div>
+  `;
 }
 
 // Init
