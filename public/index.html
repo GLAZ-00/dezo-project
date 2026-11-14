@@ -157,7 +157,7 @@ function tr(key) { return t[lang][key] || key; }
 function toggleLang() {
   lang = lang === 'el' ? 'en' : 'el';
   document.getElementById('langToggle').textContent = lang === 'el' ? 'EN' : 'ΕΛ';
-  document.getElementById('tagline').textContent = tr('tagline');
+  document.getElementById('tagline').innerHTML = tr('tagline');
   document.getElementById('searchInput').placeholder = tr('search');
   updateUserMenu();
   
