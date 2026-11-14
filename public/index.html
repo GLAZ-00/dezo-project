@@ -327,8 +327,8 @@ async function showAd(id) {
     </p>
         
         ${currentUser ? `
-          <h3>${tr('message')}</h3>
-          <div class="chat-box" id="chatBox"></div>
+       <h3 style="display:flex; align-items:center; gap:14px;"><span>${tr('message')}</span>${ad.ownerName ? `<span style="font-size:15px; font-weight:600; color:#444;">👤 ${ad.ownerName}</span>` : ''}</h3>
+        <div class="chat-box" id="chatBox"></div>
           <div style="display:flex; gap:8px;">
             <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
              <button class="primary" style="width:auto;" onclick="sendMessage('${ad.id}', window._chatPartnerId || '${ad.userId}')">${tr('send')}</button>
