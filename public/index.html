@@ -181,7 +181,7 @@ function updateUserMenu() {
   const addBtn = document.getElementById('addBtn');
     if (currentUser) {
     menu.onclick = null;
-    menu.innerHTML = `<span style="display:inline-flex; flex-direction:column; align-items:center; line-height:1.2; vertical-align:middle;"><span onclick="showCabinet()" style="font-weight:600; cursor:pointer;">${currentUser.name || 'Λογαριασμός'}</span><span onclick="logout()" style="color:#e53935; font-size:11px; cursor:pointer;">Αποσύνδεση</span></span>`;
+     menu.innerHTML = `<span style="display:inline-flex; flex-direction:column; align-items:center; gap:6px; line-height:1.2; vertical-align:middle;"><span onclick="showCabinet()" style="font-weight:600; cursor:pointer; padding:2px 4px;">${currentUser.name || 'Λογαριασμός'}</span><span onclick="logout()" style="color:#e53935; font-size:11px; cursor:pointer; padding:2px 4px;">Αποσύνδεση</span></span>`;
     addBtn.classList.add('hidden');
   } else {
     menu.textContent = tr('login');
