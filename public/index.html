@@ -411,6 +411,9 @@ function logout() {
 }
 
 async function postAd() {
+  const btn = document.querySelector('#postModal button.primary');
+  if (btn.disabled) return;
+  btn.disabled = true; btn.textContent = 'Φόρτωση...';
   const fileInput = document.getElementById('adPhoto');
   let photoUrls = [];
   if (fileInput && fileInput.files && fileInput.files.length > 0) {
@@ -433,7 +436,7 @@ async function postAd() {
     description: document.getElementById('adDesc').value,
     photos: photoUrls
   })});
-  closeModal('postModal');
+  ;closeModal('postModal')
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
   showHome();
 }
