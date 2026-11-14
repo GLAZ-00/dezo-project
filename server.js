@@ -186,6 +186,19 @@ app.get('/api/categories', (req, res) => res.json(categories));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+let adminMessages = [];
+
+app.post('/api/admin-messages', auth, (req, res) => {
+  const { toUserId, text } = req.body;
+  if (!text) return res.status(400).json({ error: 'Empty' });
+  const msg = { id: Date.now().toString(), fromId: req.user.id, fromName: req.user.name, toUserId: toUserId || 'ADMIN', text, createdAt: new Date() };
+  adminMessages.push(msg);
+  res.json(msg);
+});
+
+app.get('/api/admin-messages', auth, (req, res) => {
+  res.json(adminMessages);
+});
 
 app.listen(PORT, () => {
   console.log(`ΔΕΖΟ server running on http://localhost:${PORT}`);
