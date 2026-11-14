@@ -448,7 +448,7 @@ async function showCabinet() {
   if (!currentUser) return showLogin();
   document.getElementById('cabinetFooter').style.display = 'flex';
   const myAds = await api('/api/my-ads');
-  const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.toUpperCase() === 'ALEX';
+    const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX';
   document.getElementById('mainContent').innerHTML = `
     <div style="background:#fff; border:1px solid #eee; border-radius:12px; height:220px; padding:16px; margin-bottom:16px; position:relative;">
       <span onclick="this.parentElement.style.visibility='hidden'" style="position:absolute; top:12px; right:16px; cursor:pointer; font-size:22px; color:#666;">&times;</span>
