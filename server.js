@@ -122,7 +122,7 @@ app.post('/api/ads', auth, (req, res) => {
 // Get ads
 app.get('/api/ads', (req, res) => {
   const { category, q, vip } = req.query;
-  ads.forEach(a => { if ((!a.status || a.status === 'active') && Date.now() - a.created >= 30 * 86400000) a.status = 'expired'; });
+    ads.forEach(a => { if ((!a.status || a.status === 'active') && Date.now() - a.created >= 60000) a.status = 'expired'; });
   let result = ads.filter(a => !a.status || a.status === 'active').sort((a, b) => b.created - a.created);
   if (category) result = result.filter(a => a.category === category);
   if (q) result = result.filter(a => a.title.toLowerCase().includes(q.toLowerCase()) || a.description.toLowerCase().includes(q.toLowerCase()));
