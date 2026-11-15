@@ -545,9 +545,33 @@ async function openArchive() {
 }
 
 // Init
+window._unreadAdIds = [];
+window._unreadAdmin = 0;
+async function checkUnread() {
+  const badge = document.getElementById('msgBadge');
+  if (!currentUser || !badge) { if (badge) badge.style.display = 'none'; return; }
+  try {
+    const data = await api('/api/unread');
+    window._unreadAdIds = data.adIds || [];
+    window._unreadAdmin = data.adminCount || 0;
+    if (data.total > 0) { badge.textContent = data.total; badge.style.display = 'inline-block'; }
+    else { badge.style.display = 'none'; }
+  } catch (e) {}
+}
+async function handleBellClick() {
+  if (!currentUser) return showLogin();
+  await showCabinet();
+  if (window._unreadAdmin > 0) {
+    const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX';
+    if (isAdmin) openAdminInbox(); else openSupportChat();
+  }
+}
+// Init
 updateUserMenu();
 loadCategories();
 showHome();
+checkUnread();
+setInterval(checkUnread, 4000);
 </script>    
 <footer id="cabinetFooter" style="display:none; max-width:1200px; margin:24px auto 12px; padding:16px 20px; background:#fff; border-radius:12px; border-top:1px solid #eee; font-size:13px; color:#666; flex-wrap:wrap; justify-content:space-between; gap:12px;">
   <div><strong>ΔΕΖΩ.gr</strong> — Μια Δεύτερη Ζωή για τα πράγματά σας • Αθήνα, Ελλάδα</div>
