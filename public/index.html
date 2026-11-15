@@ -52,7 +52,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
   </div>
     <div style="display:flex; align-items:center; gap:14px;">
     <span onclick="alert('Το καλάθι σας είναι άδειο')" title="Καλάθι" style="cursor:pointer; font-size:20px; position:relative;">🛒</span>
-    <span id="msgBell" onclick="alert('Δεν υπάρχουν νέα μηνύματα')" title="Μηνύματα" style="cursor:pointer; font-size:20px; position:relative;">✉️<span id="msgBadge" style="display:none; position:absolute; top:-4px; right:-6px; background:#e53935; color:#fff; font-size:10px; font-weight:700; border-radius:50%; padding:1px 5px;"></span></span>
+    <span id="msgBell" onclick="handleBellClick()" title="Μηνύματα" style="cursor:pointer; font-size:20px; position:relative;">✉️<span id="msgBadge" style="display:none; position:absolute; top:-4px; right:-6px; background:#e53935; color:#fff; font-size:10px; font-weight:700; border-radius:50%; padding:1px 5px;"></span></span>
     <span class="lang" onclick="toggleLang()" id="langToggle">EN</span>
     <span id="userMenu" style="cursor:pointer;" onclick="showLogin()">Σύνδεση</span>
 <button id="addBtn" class="hidden" onclick="showPostAd()" style="margin-left:12px; background:var(--primary); color:#fff; border:none; padding:8px 16px; border-radius:20px; cursor:pointer;">+ Προσθήκη</button>
