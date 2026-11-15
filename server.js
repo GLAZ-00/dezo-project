@@ -183,6 +183,7 @@ app.delete('/api/ads/:id', auth, (req, res) => {
 });
 
 // Messages
+// Messages
 app.post('/api/messages', auth, (req, res) => {
   const { adId, text, toUserId } = req.body;
   const msg = {
@@ -191,6 +192,7 @@ app.post('/api/messages', auth, (req, res) => {
     from: req.user.id,
     to: toUserId,
     text,
+    read: false,
     created: Date.now()
   };
   messages.push(msg);
@@ -199,6 +201,7 @@ app.post('/api/messages', auth, (req, res) => {
 
 app.get('/api/messages/:adId', auth, (req, res) => {
   const adMessages = messages.filter(m => m.adId === req.params.adId && (m.from === req.user.id || m.to === req.user.id));
+  adMessages.forEach(m => { if (m.to === req.user.id) m.read = true; });
   res.json(adMessages);
 });
 
@@ -209,15 +212,31 @@ let adminMessages = [];
 app.post('/api/admin-messages', auth, (req, res) => {
   const { toUserId, text } = req.body;
   if (!text) return res.status(400).json({ error: 'Empty' });
-    const sender = users.find(u => u.id === req.user.id);
-  const msg = { id: Date.now().toString(), fromId: req.user.id, fromName: toUserId ? 'Διαχειριστής (ALEX)' : (sender?.name || 'Χρήστης'), toUserId: toUserId || 'ADMIN', text, createdAt: new Date() };
+  const sender = users.find(u => u.id === req.user.id);
+  const msg = { id: Date.now().toString(), fromId: req.user.id, fromName: toUserId ? 'Διαχειριστής (ALEX)' : (sender?.name || 'Χρήστης'), toUserId: toUserId || 'ADMIN', text, read: false, createdAt: new Date() };
   adminMessages.push(msg);
   res.json(msg);
 });
 
 app.get('/api/admin-messages', auth, (req, res) => {
+  const user = users.find(u => u.id === req.user.id);
+  const isAdmin = user?.email === 'admin@dezo.gr' || user?.name?.trim().toUpperCase() === 'ALEX';
+  adminMessages.forEach(m => {
+    if (isAdmin && m.toUserId === 'ADMIN') m.read = true;
+    if (!isAdmin && m.toUserId === req.user.id) m.read = true;
+  });
   res.json(adminMessages);
 });
+
+app.get('/api/unread', auth, (req, res) => {
+  const user = users.find(u => u.id === req.user.id);
+  const isAdmin = user?.email === 'admin@dezo.gr' || user?.name?.trim().toUpperCase() === 'ALEX';
+  const unreadAdMsgs = messages.filter(m => m.to === req.user.id && !m.read);
+  const adIds = [...new Set(unreadAdMsgs.map(m => m.adId))];
+  const unreadAdmin = adminMessages.filter(m => !m.read && ((isAdmin && m.toUserId === 'ADMIN') || (!isAdmin && m.toUserId === req.user.id)));
+  res.json({ total: unreadAdMsgs.length + unreadAdmin.length, adIds, adminCount: unreadAdmin.length });
+});
+
 // Serve index.html from public
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
