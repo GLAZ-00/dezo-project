@@ -323,11 +323,12 @@ async function showAd(id) {
   <div style="color:#666; margin-bottom:12px;">${ad.city}</div>
   <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
   <div style="border-top:1px solid #eee; padding-top:16px;">
-    <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
+        <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
       <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
     </p>
-        
-        ${currentUser ? `
+    ${(currentUser && (!ad.status || ad.status === 'active')) ? `<div style="display:flex; gap:8px; margin-bottom:12px;">${isOwner ? `<button onclick="changeAdStatus('${ad.id}','sold')" style="flex:1; padding:8px; border:1px solid var(--primary); color:var(--primary); background:#fff; border-radius:8px; cursor:pointer; font-weight:600;">✅ Πουλήθηκε / Στο αρχείο</button>` : ''}${(currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX') ? `<button onclick="changeAdStatus('${ad.id}','rejected')" style="flex:1; padding:8px; border:1px solid #e53935; color:#e53935; background:#fff; border-radius:8px; cursor:pointer; font-weight:600;">⚠️ Απόρριψη</button>` : ''}</div>` : ''}
+
+      ${currentUser ? `
        <h3 style="display:flex; align-items:center; gap:14px;"><span>${tr('message')}</span>${ad.ownerName ? `<span style="font-size:15px; font-weight:600; color:#444;">👤 ${ad.ownerName}</span>` : ''}</h3>
         <div class="chat-box" id="chatBox"></div>
           <div style="display:flex; gap:8px;">
