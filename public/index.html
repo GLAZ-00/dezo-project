@@ -306,8 +306,9 @@ async function showAd(id) {
     <h2>${ad.title}</h2>
     <span onclick="closeModal('adModal')" style="cursor:pointer; font-size:24px;">&times;</span>
   </div>
-  <div style="position:relative; width:100%; height:320px; border-radius:8px; margin-bottom:8px; overflow:hidden; background:#111; display:flex; align-items:center; justify-content:center;">
+    <div style="position:relative; width:100%; height:320px; border-radius:8px; margin-bottom:8px; overflow:hidden; background:#111; display:flex; align-items:center; justify-content:center;">
     <img id="dezoMainImg" src="${window._adPhotos[0]}" style="width:100%; height:100%; object-fit:contain;">
+    ${(() => { const d = Math.max(0, 30 - Math.floor((Date.now() - ad.created) / 86400000)); const st = d > 25 ? 'g' : (d > 5 ? 'y' : 'r'); return `<div style="position:absolute; left:10px; bottom:10px; background:rgba(40,44,52,0.88); border:1.5px solid rgba(255,255,255,0.45); border-radius:14px; padding:6px 5px; display:flex; flex-direction:column; gap:5px; box-shadow:0 2px 8px rgba(0,0,0,0.45); z-index:5;"><span style="width:14px; height:14px; border-radius:50%; background:${st==='g'?'#00e676':'#555'}; box-shadow:${st==='g'?'0 0 8px #00e676':'none'};"></span><span style="width:14px; height:14px; border-radius:50%; background:${st==='y'?'#ffea00':'#555'}; box-shadow:${st==='y'?'0 0 8px #ffea00':'none'};"></span><span style="width:14px; height:14px; border-radius:50%; background:${st==='r'?'#ff1744':'#555'}; box-shadow:${st==='r'?'0 0 8px #ff1744':'none'};"></span></div>`; })()}
     ${window._adPhotos.length > 1 ? `
       <button onclick="window._setAdPhoto(window._adIdx - 1)" style="position:absolute; left:8px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.5); color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:20px; cursor:pointer;">‹</button>
       <button onclick="window._setAdPhoto(window._adIdx + 1)" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.5); color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:20px; cursor:pointer;">›</button>
