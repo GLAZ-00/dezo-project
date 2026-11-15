@@ -109,7 +109,8 @@ app.post('/api/ads', auth, (req, res) => {
     city: city || 'Αθήνα',
     phone: users.find(u => u.id === req.user.id)?.phone || '',
     phoneVisible: !!phoneVisible,
-    created: Date.now(),
+        created: Date.now(),
+    status: 'active',
     vip: false,
     promoted: false,
     views: 0
@@ -121,7 +122,8 @@ app.post('/api/ads', auth, (req, res) => {
 // Get ads
 app.get('/api/ads', (req, res) => {
   const { category, q, vip } = req.query;
-  let result = [...ads].sort((a, b) => b.created - a.created);
+  ads.forEach(a => { if ((!a.status || a.status === 'active') && Date.now() - a.created >= 30 * 86400000) a.status = 'expired'; });
+  let result = ads.filter(a => !a.status || a.status === 'active').sort((a, b) => b.created - a.created);
   if (category) result = result.filter(a => a.category === category);
   if (q) result = result.filter(a => a.title.toLowerCase().includes(q.toLowerCase()) || a.description.toLowerCase().includes(q.toLowerCase()));
   if (vip === '1') result = result.filter(a => a.vip);
@@ -156,7 +158,27 @@ app.post('/api/ads/:id/promote', auth, (req, res) => {
 
 // My ads
 app.get('/api/my-ads', auth, (req, res) => {
+  ads.forEach(a => { if ((!a.status || a.status === 'active') && Date.now() - a.created >= 30 * 86400000) a.status = 'expired'; });
   res.json(ads.filter(a => a.userId === req.user.id));
+});
+
+app.post('/api/ads/:id/status', auth, (req, res) => {
+  const ad = ads.find(a => a.id === req.params.id);
+  const user = users.find(u => u.id === req.user.id);
+  const isAdmin = user?.email === 'admin@dezo.gr' || user?.name?.trim().toUpperCase() === 'ALEX';
+  if (!ad || (ad.userId !== req.user.id && !isAdmin)) return res.status(403).json({ error: 'Forbidden' });
+  ad.status = req.body.status;
+  if (req.body.status === 'active') ad.created = Date.now();
+  res.json(ad);
+});
+
+app.delete('/api/ads/:id', auth, (req, res) => {
+  const idx = ads.findIndex(a => a.id === req.params.id);
+  const user = users.find(u => u.id === req.user.id);
+  const isAdmin = user?.email === 'admin@dezo.gr' || user?.name?.trim().toUpperCase() === 'ALEX';
+  if (idx === -1 || (ads[idx].userId !== req.user.id && !isAdmin)) return res.status(403).json({ error: 'Forbidden' });
+  ads.splice(idx, 1);
+  res.json({ ok: true });
 });
 
 // Messages
