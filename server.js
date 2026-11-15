@@ -181,11 +181,6 @@ app.get('/api/messages/:adId', auth, (req, res) => {
 
 // Categories
 app.get('/api/categories', (req, res) => res.json(categories));
-
-// Serve index.html from public
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
 let adminMessages = [];
 
 app.post('/api/admin-messages', auth, (req, res) => {
@@ -198,6 +193,10 @@ app.post('/api/admin-messages', auth, (req, res) => {
 
 app.get('/api/admin-messages', auth, (req, res) => {
   res.json(adminMessages);
+});
+// Serve index.html from public
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(PORT, () => {
