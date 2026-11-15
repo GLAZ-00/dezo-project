@@ -158,7 +158,7 @@ app.post('/api/ads/:id/promote', auth, (req, res) => {
 
 // My ads
 app.get('/api/my-ads', auth, (req, res) => {
-  ads.forEach(a => { if ((!a.status || a.status === 'active') && Date.now() - a.created >= 30 * 86400000) a.status = 'expired'; });
+    ads.forEach(a => { if ((!a.status || a.status === 'active') && Date.now() - a.created >= 60000) a.status = 'expired'; });
   res.json(ads.filter(a => a.userId === req.user.id));
 });
 
