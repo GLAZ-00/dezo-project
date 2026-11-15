@@ -474,35 +474,47 @@ async function showCabinet() {
     </div>
   `;
 }
+let modPoll = null;
 async function openSupportChat() {
   if (!currentUser) return showLogin();
+  if (modPoll) clearInterval(modPoll);
   const box = document.getElementById('modChatZone');
-  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>Μήνυμα προς διαχειριστή</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:18px;">&times;</span></div><div id="supList" style="max-height:110px; overflow-y:auto; margin-bottom:8px; font-size:13px;"><span style="color:#888;">Γράψτε το μήνυμά σας...</span></div><div style="display:flex; gap:8px;"><input id="supInput" placeholder="Γράψτε εδώ..." style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px;"><button class="primary" style="width:auto; padding:8px 14px;" onclick="sendSupport()">Αποστολή</button></div></div>`;
-  try {
-    const all = await api('/api/admin-messages');
-    const mine = all.filter(m => m.fromId === currentUser.id || m.toUserId === currentUser.id);
-    if (mine.length) document.getElementById('supList').innerHTML = mine.map(m => `<div style="margin:4px 0;"><b>${m.fromName}:</b> ${m.text}</div>`).join('');
-  } catch (e) {}
+  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>Μήνυμα προς διαχειριστή</strong><span onclick="clearInterval(modPoll); document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:18px;">&times;</span></div><div id="supList" style="max-height:110px; overflow-y:auto; margin-bottom:8px; font-size:13px;"><span style="color:#888;">Γράψτε το μήνυμά σας...</span></div><div style="display:flex; gap:8px;"><input id="supInput" placeholder="Γράψτε εδώ..." style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px;"><button class="primary" style="width:auto; padding:8px 14px;" onclick="sendSupport()">Αποστολή</button></div></div>`;
+  const load = async () => {
+    if (!document.getElementById('supList')) return clearInterval(modPoll);
+    try {
+      const all = await api('/api/admin-messages');
+      const mine = all.filter(m => m.fromId === currentUser.id || m.toUserId === currentUser.id);
+      if (mine.length) document.getElementById('supList').innerHTML = mine.map(m => `<div style="margin:4px 0;"><b>${m.fromName}:</b> ${m.text}</div>`).join('');
+    } catch (e) {}
+  };
+  load();
+  modPoll = setInterval(load, 3000);
 }
 async function sendSupport() {
   const inp = document.getElementById('supInput');
   if (!inp.value.trim()) return;
   await api('/api/admin-messages', { method: 'POST', body: JSON.stringify({ text: inp.value.trim() }) });
-  openSupportChat();
+  inp.value = '';
 }
 async function openAdminInbox() {
+  if (modPoll) clearInterval(modPoll);
   const box = document.getElementById('modChatZone');
-  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>Μηνύματα χρηστών (Διαχειριστής)</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:18px;">&times;</span></div><div id="admList" style="max-height:140px; overflow-y:auto; font-size:13px;">Φόρτωση...</div></div>`;
-  try {
-    const all = await api('/api/admin-messages');
-    document.getElementById('admList').innerHTML = all.length ? all.map(m => `<div style="padding:6px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; gap:8px;"><span><b>${m.fromName}:</b> ${m.text}</span>${m.fromId !== currentUser.id ? `<button onclick="replyAdmin('${m.fromId}','${m.fromName}')" style="padding:4px 10px; border:1px solid var(--primary); color:var(--primary); background:#fff; border-radius:6px; cursor:pointer; font-size:12px;">Απάντηση</button>` : ''}</div>`).join('') : '<span style="color:#888;">Δεν υπάρχουν μηνύματα ακόμα.</span>';
-  } catch (e) {}
+  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>Μηνύματα χρηστών (Διαχειριστής)</strong><span onclick="clearInterval(modPoll); document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:18px;">&times;</span></div><div id="admList" style="max-height:140px; overflow-y:auto; font-size:13px;">Φόρτωση...</div></div>`;
+  const load = async () => {
+    if (!document.getElementById('admList')) return clearInterval(modPoll);
+    try {
+      const all = await api('/api/admin-messages');
+      document.getElementById('admList').innerHTML = all.length ? all.map(m => `<div style="padding:6px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; gap:8px;"><span><b>${m.fromName}:</b> ${m.text}</span>${m.fromId !== currentUser.id ? `<button onclick="replyAdmin('${m.fromId}','${m.fromName}')" style="padding:4px 10px; border:1px solid var(--primary); color:var(--primary); background:#fff; border-radius:6px; cursor:pointer; font-size:12px;">Απάντηση</button>` : ''}</div>`).join('') : '<span style="color:#888;">Δεν υπάρχουν μηνύματα ακόμα.</span>';
+    } catch (e) {}
+  };
+  load();
+  modPoll = setInterval(load, 3000);
 }
 async function replyAdmin(toUserId, name) {
   const text = prompt('Απάντηση προς ' + name + ':');
   if (!text || !text.trim()) return;
   await api('/api/admin-messages', { method: 'POST', body: JSON.stringify({ toUserId, text: text.trim() }) });
-  openAdminInbox();
 }
 // Init
 updateUserMenu();
