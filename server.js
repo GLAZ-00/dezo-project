@@ -186,7 +186,8 @@ let adminMessages = [];
 app.post('/api/admin-messages', auth, (req, res) => {
   const { toUserId, text } = req.body;
   if (!text) return res.status(400).json({ error: 'Empty' });
-  const msg = { id: Date.now().toString(), fromId: req.user.id, fromName: req.user.name, toUserId: toUserId || 'ADMIN', text, createdAt: new Date() };
+    const sender = users.find(u => u.id === req.user.id);
+  const msg = { id: Date.now().toString(), fromId: req.user.id, fromName: toUserId ? 'Διαχειριστής (ALEX)' : (sender?.name || 'Χρήστης'), toUserId: toUserId || 'ADMIN', text, createdAt: new Date() };
   adminMessages.push(msg);
   res.json(msg);
 });
