@@ -287,6 +287,7 @@ async function revealPhone(id, el) {
   }
 }
 async function showAd(id) {
+  window._chatPartnerId = null;
   try {
     const ad = await api('/api/ads/' + id);
     const detail = document.getElementById('adDetail');
@@ -449,6 +450,7 @@ async function postAd() {
 }
 async function showCabinet() {
   if (!currentUser) return showLogin();
+  await checkUnread();
   document.getElementById('cabinetFooter').style.display = 'flex';
     const allMyAds = await api('/api/my-ads');
   const myAds = allMyAds.filter(a => !a.status || a.status === 'active');
