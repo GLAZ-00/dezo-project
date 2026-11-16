@@ -242,6 +242,7 @@ function updateSubDropdown(catId) {
 }
 
 async function loadAds(category) {
+  checkUnread();
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
   if (category) document.querySelector(`[data-id="${category}"]`)?.classList.add('active');
   else document.querySelector('.cat-btn')?.classList.add('active');
