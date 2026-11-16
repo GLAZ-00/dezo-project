@@ -388,8 +388,9 @@ async function login() {
     token = data.token; currentUser = data.user;
     localStorage.setItem('dezo_token', token);
     localStorage.setItem('dezo_user', JSON.stringify(currentUser));
-    closeModal('loginModal');
+        closeModal('loginModal');
     updateUserMenu();
+    checkUnread();
   } catch { alert('Σφάλμα σύνδεσης'); }
 }
 
@@ -406,6 +407,7 @@ async function register() {
     localStorage.setItem('dezo_user', JSON.stringify(currentUser));
     closeModal('registerModal');
     updateUserMenu();
+      checkUnread();
   } catch { alert('Σφάλμα εγγραφής'); }
 }
 
