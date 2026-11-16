@@ -52,7 +52,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
   </div>
     <div style="display:flex; align-items:center; gap:14px;">
     <span onclick="alert('Το καλάθι σας είναι άδειο')" title="Καλάθι" style="cursor:pointer; font-size:20px; position:relative;">🛒</span>
-    <span id="msgBell" onclick="handleBellClick()" title="Μηνύματα" style="cursor:pointer; font-size:20px; position:relative;">✉️<span id="msgBadge" style="display:none; position:absolute; top:-4px; right:-6px; background:#e53935; color:#fff; font-size:10px; font-weight:700; border-radius:50%; padding:1px 5px;"></span></span>
+    <span id="msgBell" onclick="alert('Δεν υπάρχουν νέα μηνύματα')" title="Μηνύματα" style="cursor:pointer; font-size:20px; position:relative;">✉️<span id="msgBadge" style="display:none; position:absolute; top:-4px; right:-6px; background:#e53935; color:#fff; font-size:10px; font-weight:700; border-radius:50%; padding:1px 5px;"></span></span>
     <span class="lang" onclick="toggleLang()" id="langToggle">EN</span>
     <span id="userMenu" style="cursor:pointer;" onclick="showLogin()">Σύνδεση</span>
 <button id="addBtn" class="hidden" onclick="showPostAd()" style="margin-left:12px; background:var(--primary); color:#fff; border:none; padding:8px 16px; border-radius:20px; cursor:pointer;">+ Προσθήκη</button>
@@ -287,7 +287,6 @@ async function revealPhone(id, el) {
   }
 }
 async function showAd(id) {
-  window._chatPartnerId = null;
   try {
     const ad = await api('/api/ads/' + id);
     const detail = document.getElementById('adDetail');
@@ -362,7 +361,6 @@ async function loadMessages(adId) {
   const box = document.getElementById('chatBox');
   box.innerHTML = msgs.map(m => `<div class="msg ${m.from === currentUser.id ? 'me' : 'them'}">${m.text}</div>`).join('');
   box.scrollTop = box.scrollHeight;
-  checkUnread();
 }
 
 async function sendMessage(adId, toUserId) {
@@ -378,7 +376,7 @@ async function sendMessage(adId, toUserId) {
 function showLogin() { document.getElementById('loginModal').classList.add('open'); document.getElementById('registerModal').classList.remove('open'); }
 function showRegister() { document.getElementById('registerModal').classList.add('open'); document.getElementById('loginModal').classList.remove('open'); }
 function showPostAd() { if (!currentUser) return showLogin(); document.getElementById('postModal').classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); if (id === 'adModal') { clearInterval(window._chatTimer); if (document.getElementById('modChatZone')) showCabinet(); } }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); if (id === 'adModal') clearInterval(window._chatTimer); }
 
 async function login() {
   try {
@@ -451,7 +449,6 @@ async function postAd() {
 }
 async function showCabinet() {
   if (!currentUser) return showLogin();
-  await checkUnread();
   document.getElementById('cabinetFooter').style.display = 'flex';
     const allMyAds = await api('/api/my-ads');
   const myAds = allMyAds.filter(a => !a.status || a.status === 'active');
@@ -472,7 +469,7 @@ async function showCabinet() {
     <div id="modChatZone" style="min-height:130px; margin-bottom:16px;"></div>
     <div style="background:#fff; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.06); display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start;">
             <div style="max-height:230px; overflow-y:auto; padding-right:4px;">
-            ${myAds.length ? myAds.map(a => { const d = Math.max(0, 30 - Math.floor((Date.now() - a.created) / 86400000)); const dotColor = d > 25 ? '#00a046' : (d > 5 ? '#f59e0b' : '#e53935'); const hasMsg = (window._unreadAdIds || []).includes(a.id); return `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer;"><span><span style="color:${dotColor}; margin-right:8px; font-size:16px;">●</span>${hasMsg ? '<span style="margin-right:6px; font-size:16px;">📩</span>' : ''}${a.title}</span><strong style="color:var(--primary);">${a.price} €</strong></div>`; }).join('') : '<p style="color:#888; text-align:center; padding:24px;">Δεν έχετε αγγελίες ακόμα</p>'}
+        ${myAds.length ? myAds.map(a => `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer;"><span><span style="color:var(--primary); margin-right:8px;">●</span>${a.title}</span><strong style="color:var(--primary);">${a.price} €</strong></div>`).join('') : '<p style="color:#888; text-align:center; padding:24px;">Δεν έχετε αγγελίες ακόμα</p>'}
       </div>
       <div style="border:1px dashed #ccc; border-radius:10px; padding:16px; text-align:center;">
         <p style="font-size:13px; color:#666; margin-bottom:12px;">Θέλετε να προσθέσετε κάτι;</p>
@@ -492,8 +489,7 @@ async function openSupportChat() {
     try {
       const all = await api('/api/admin-messages');
       const mine = all.filter(m => m.fromId === currentUser.id || m.toUserId === currentUser.id);
-     checkUnread();
-    if (mine.length) document.getElementById('supList').innerHTML = mine.map(m => `<div style="margin:4px 0;"><b>${m.fromName}:</b> ${m.text}</div>`).join('');
+      if (mine.length) document.getElementById('supList').innerHTML = mine.map(m => `<div style="margin:4px 0;"><b>${m.fromName}:</b> ${m.text}</div>`).join('');
     } catch (e) {}
   };
   load();
@@ -549,34 +545,9 @@ async function openArchive() {
 }
 
 // Init
-window._unreadAdIds = [];
-window._unreadAdmin = 0;
-async function checkUnread() {
-  const badge = document.getElementById('msgBadge');
-  if (!currentUser || !badge) { if (badge) badge.style.display = 'none'; return; }
-  try {
-    const data = await api('/api/unread');
-    window._unreadAdIds = data.adIds || [];
-    window._unreadAdmin = data.adminCount || 0;
-    if (data.total > 0) { badge.textContent = data.total; badge.style.display = 'inline-block'; }
-    else { badge.style.display = 'none'; }
-  } catch (e) {}
-}
-async function handleBellClick() {
-  if (!currentUser) return showLogin();
-  await showCabinet();
-  if (window._unreadAdmin > 0) {
-    const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX';
-    if (isAdmin) openAdminInbox(); else openSupportChat();
-  }
-}
-// Init
 updateUserMenu();
 loadCategories();
 showHome();
-checkUnread();
-setTimeout(checkUnread, 1000);
-setInterval(checkUnread, 2000);
 </script>    
 <footer id="cabinetFooter" style="display:none; max-width:1200px; margin:24px auto 12px; padding:16px 20px; background:#fff; border-radius:12px; border-top:1px solid #eee; font-size:13px; color:#666; flex-wrap:wrap; justify-content:space-between; gap:12px;">
   <div><strong>ΔΕΖΩ.gr</strong> — Μια Δεύτερη Ζωή για τα πράγματά σας • Αθήνα, Ελλάδα</div>
