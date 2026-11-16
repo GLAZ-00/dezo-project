@@ -362,6 +362,7 @@ async function loadMessages(adId) {
   const box = document.getElementById('chatBox');
   box.innerHTML = msgs.map(m => `<div class="msg ${m.from === currentUser.id ? 'me' : 'them'}">${m.text}</div>`).join('');
   box.scrollTop = box.scrollHeight;
+  checkUnread();
 }
 
 async function sendMessage(adId, toUserId) {
@@ -377,7 +378,7 @@ async function sendMessage(adId, toUserId) {
 function showLogin() { document.getElementById('loginModal').classList.add('open'); document.getElementById('registerModal').classList.remove('open'); }
 function showRegister() { document.getElementById('registerModal').classList.add('open'); document.getElementById('loginModal').classList.remove('open'); }
 function showPostAd() { if (!currentUser) return showLogin(); document.getElementById('postModal').classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); if (id === 'adModal') clearInterval(window._chatTimer); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); if (id === 'adModal') { clearInterval(window._chatTimer); if (document.getElementById('modChatZone')) showCabinet(); } }
 
 async function login() {
   try {
@@ -491,7 +492,8 @@ async function openSupportChat() {
     try {
       const all = await api('/api/admin-messages');
       const mine = all.filter(m => m.fromId === currentUser.id || m.toUserId === currentUser.id);
-      if (mine.length) document.getElementById('supList').innerHTML = mine.map(m => `<div style="margin:4px 0;"><b>${m.fromName}:</b> ${m.text}</div>`).join('');
+     checkUnread();
+    if (mine.length) document.getElementById('supList').innerHTML = mine.map(m => `<div style="margin:4px 0;"><b>${m.fromName}:</b> ${m.text}</div>`).join('');
     } catch (e) {}
   };
   load();
