@@ -51,7 +51,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <button onclick="searchAds()">🔍</button>
   </div>
     <div style="display:flex; align-items:center; gap:14px;">
-    <span onclick="alert('Το καλάθι σας είναι άδειο')" title="Καλάθι" style="cursor:pointer; font-size:20px; position:relative;">🛒</span>
+     <span id="cartBell" onclick="handleCartClick()" title="Καλάθι" style="cursor:pointer; font-size:20px; position:relative;">🛒<span id="cartBadge" style="display:none; position:absolute; top:-4px; right:-6px; background:var(--primary); color:#fff; font-size:10px; font-weight:700; border-radius:50%; padding:1px 5px;"></span></span>
      <span id="msgBell" onclick="handleBellClick()" title="Μηνύματα" style="cursor:pointer; font-size:20px; position:relative;">✉️<span id="msgBadge" style="display:none; position:absolute; top:-4px; right:-6px; background:#e53935; color:#fff; font-size:10px; font-weight:700; border-radius:50%; padding:1px 5px;"></span></span>
     <span class="lang" onclick="toggleLang()" id="langToggle">EN</span>
     <span id="userMenu" style="cursor:pointer;" onclick="showLogin()">Σύνδεση</span>
@@ -325,10 +325,16 @@ async function showAd(id) {
   <div style="font-size:20px; font-weight:700; color:var(--primary); margin-bottom:12px;">${ad.price} €</div>
   <div style="color:#666; margin-bottom:12px;">${ad.city}</div>
   <p style="margin-bottom:16px; white-space:pre-wrap;">${ad.description}</p>
-  <div style="border-top:1px solid #eee; padding-top:16px;">
-        <p style="margin-bottom:8px;"><strong>${tr('phone')}:</strong> 
-      <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
-    </p>
+    <div style="border-top:1px solid #eee; padding-top:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;">
+      <p style="margin:0;"><strong>${tr('phone')}:</strong> 
+        <span class="phone" onclick="revealPhone('${ad.id}', this)">${ad.phoneVisible ? ad.phone : ad.phone.slice(0, 4) + '****'}</span>
+      </p>
+      <div style="display:flex; align-items:center; gap:16px; padding-right:8px;">
+        <span title="Προβολές" style="font-size:15px; color:#555; font-weight:600; display:inline-flex; align-items:center; gap:4px;">👁️ ${ad.views || 1}</span>
+        ${!isOwner ? `<button id="adCartBtn" onclick="toggleCart('${ad.id}')" title="Στο καλάθι" style="padding:5px 12px; border:1px solid ${isInCart(ad.id) ? 'var(--primary)' : '#ccc'}; background:${isInCart(ad.id) ? '#e8f5e9' : '#fff'}; color:${isInCart(ad.id) ? 'var(--primary)' : '#333'}; border-radius:8px; cursor:pointer; font-size:16px; font-weight:700;">🛒${isInCart(ad.id) ? ' ✓' : ''}</button>` : ''}
+      </div>
+    </div>
     ${(currentUser && (!ad.status || ad.status === 'active')) ? `<div style="display:flex; gap:8px; margin-bottom:12px;">${isOwner ? `<button onclick="changeAdStatus('${ad.id}','sold')" style="flex:1; padding:8px; border:1px solid var(--primary); color:var(--primary); background:#fff; border-radius:8px; cursor:pointer; font-weight:600;">✅ Πουλήθηκε / Στο αρχείο</button>` : ''}${(currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX') ? `<button onclick="changeAdStatus('${ad.id}','rejected')" style="flex:1; padding:8px; border:1px solid #e53935; color:#e53935; background:#fff; border-radius:8px; cursor:pointer; font-weight:600;">⚠️ Απόρριψη</button>` : ''}</div>` : ''}
 
       ${currentUser ? `
@@ -572,8 +578,46 @@ async function handleBellClick() {
     if (isAdmin) openAdminInbox(); else openSupportChat();
   }
 }
+function getCart() { try { return JSON.parse(localStorage.getItem('dezo_cart') || '[]'); } catch { return []; } }
+function saveCart(list) { localStorage.setItem('dezo_cart', JSON.stringify(list)); updateCartBadge(); }
+function isInCart(id) { return getCart().includes(id); }
+function updateCartBadge() {
+  const b = document.getElementById('cartBadge');
+  if (!b) return;
+  const n = getCart().length;
+  if (n > 0) { b.textContent = n; b.style.display = 'inline-block'; } else { b.style.display = 'none'; }
+}
+function toggleCart(id) {
+  let list = getCart();
+  if (list.includes(id)) list = list.filter(x => x !== id); else list.push(id);
+  saveCart(list);
+  const btn = document.getElementById('adCartBtn');
+  if (btn) {
+    const added = list.includes(id);
+    btn.style.borderColor = added ? 'var(--primary)' : '#ccc';
+    btn.style.background = added ? '#e8f5e9' : '#fff';
+    btn.style.color = added ? 'var(--primary)' : '#333';
+    btn.textContent = added ? '🛒 ✓' : '🛒';
+  }
+}
+async function handleCartClick() {
+  if (!currentUser) return showLogin();
+  await showCabinet();
+  openCart();
+}
+async function openCart() {
+  if (modPoll) clearInterval(modPoll);
+  const box = document.getElementById('modChatZone');
+  box.innerHTML = `<div style="background:#f9f9f9; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><strong>🛒 Το καλάθι μου</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:20px; line-height:1; color:#666;">&times;</span></div><div id="cartList" style="max-height:135px; overflow-y:auto; font-size:14px;">Φόρτωση...</div></div>`;
+  const ids = getCart();
+  if (!ids.length) { document.getElementById('cartList').innerHTML = '<p style="color:#888; text-align:center; padding:16px 0;">Το καλάθι σας είναι άδειο</p>'; return; }
+  const all = await api('/api/ads');
+  const items = all.filter(a => ids.includes(a.id));
+  document.getElementById('cartList').innerHTML = items.length ? items.map(a => `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#fff; border:1px solid #eee; border-radius:8px; margin-bottom:6px; gap:8px;"><div onclick="showAd('${a.id}')" style="display:flex; align-items:center; gap:8px; cursor:pointer; overflow:hidden; flex:1;"><span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.title}</span></div><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;"><strong style="color:var(--primary);">${a.price} €</strong><span onclick="toggleCart('${a.id}'); openCart();" title="Αφαίρεση" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`).join('') : '<p style="color:#888; text-align:center; padding:16px 0;">Το καλάθι σας είναι άδειο</p>';
+}
 // Init
 updateUserMenu();
+updateCartBadge();
 loadCategories();
 showHome();
 checkUnread();
