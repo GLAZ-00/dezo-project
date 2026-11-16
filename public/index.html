@@ -453,6 +453,7 @@ async function postAd() {
 }
 async function showCabinet() {
   if (!currentUser) return showLogin();
+  await checkUnread();
   document.getElementById('cabinetFooter').style.display = 'flex';
     const allMyAds = await api('/api/my-ads');
   const myAds = allMyAds.filter(a => !a.status || a.status === 'active');
@@ -554,8 +555,8 @@ window._unreadAdmin = 0;
 async function checkUnread() {
   const badge = document.getElementById('msgBadge');
   if (!currentUser || !badge) { if (badge) badge.style.display = 'none'; return; }
-  try {
-    const data = await api('/api/unread');
+    try {
+    const data = await api('/api/unread?t=' + Date.now());
     window._unreadAdIds = data.adIds || [];
     window._unreadAdmin = data.adminCount || 0;
     if (data.total > 0) { badge.textContent = data.total; badge.style.display = 'inline-block'; }
