@@ -41,6 +41,17 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 .msg { margin: 8px 0; padding: 8px 12px; border-radius: 12px; max-width: 80%; }
 .msg.me { background: #dcf8c6; margin-left: auto; }
 .msg.them { background: #fff; border: 1px solid #eee; }
+@media (max-width: 600px) {
+  html, body { max-width: 100%; overflow-x: hidden; }
+  header { flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
+  .logo { font-size: 22px; }
+  .search { order: 3; flex: 1 1 100%; max-width: 100%; margin: 4px 0 0; }
+  nav { padding: 8px 12px; gap: 8px; }
+  .container { padding: 0 10px; margin: 12px auto; }
+  .ads-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .ad-card img { height: 140px; }
+  #mainContent > div > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; gap: 10px !important; }
+}
 </style>
 </head>
 <body>
