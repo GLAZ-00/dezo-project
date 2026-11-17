@@ -42,8 +42,9 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 .msg.me { background: #dcf8c6; margin-left: auto; }
 .msg.them { background: #fff; border: 1px solid #eee; }
 @media (max-width: 600px) {
-  html, body { max-width: 100%; overflow-x: hidden; }
-  header { flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
+  html, body { max-width: 100%; overflow-x: clip; }
+  #mainContent > div:first-child { top: 0 !important; }
+  header { position: static; flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
   .logo { font-size: 22px; }
   .search { order: 3; flex: 1 1 100%; max-width: 100%; margin: 4px 0 0; }
   nav { padding: 8px 12px; gap: 8px; }
