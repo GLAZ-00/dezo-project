@@ -267,7 +267,7 @@ async function loadAds(category) {
 
 function renderAds(list) {
   const main = document.getElementById('mainContent');
-  const bannerHtml = `<div style="background:#fff; border:1px solid #eee; border-radius:12px; height:220px; padding:16px; margin-bottom:12px; position:relative;"><span onclick="this.parentElement.style.visibility='hidden'" style="position:absolute; top:10px; right:14px; cursor:pointer; font-size:20px; color:#888; line-height:1;">&times;</span></div>`;
+    const bannerHtml = `<div style="background:#fff; border:1px solid #eee; border-radius:12px; height:165px; padding:16px; margin-bottom:12px; position:sticky; top:135px; z-index:90; box-shadow:0 4px 10px rgba(0,0,0,.06);"><span onclick="this.parentElement.style.display='none'" style="position:absolute; top:10px; right:14px; cursor:pointer; font-size:20px; color:#888; line-height:1;">&times;</span></div>`;
   if (!list.length) { main.innerHTML = bannerHtml + `<p style="text-align:center;padding:40px;">Δεν βρέθηκαν αγγελίες</p>`; return; }
   main.innerHTML = bannerHtml + `<div class="ads-grid">${list.map(ad => `
     <div class="ad-card" onclick="showAd('${ad.id}')">
@@ -478,8 +478,8 @@ async function showCabinet() {
   const myAds = allMyAds.filter(a => !a.status || a.status === 'active');
     const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX';
   document.getElementById('mainContent').innerHTML = `
-    <div style="background:#fff; border:1px solid #eee; border-radius:12px; height:220px; padding:16px; margin-bottom:16px; position:relative;">
-      <span onclick="this.parentElement.style.visibility='hidden'" style="position:absolute; top:12px; right:16px; cursor:pointer; font-size:22px; color:#666;">&times;</span>
+        <div style="background:#fff; border:1px solid #eee; border-radius:12px; height:165px; padding:16px; margin-bottom:12px; position:relative;">
+      <span onclick="this.parentElement.style.display='none'" style="position:absolute; top:10px; right:14px; cursor:pointer; font-size:20px; color:#888; line-height:1;">&times;</span>
     </div>
     <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
       <span onclick="showHome()" title="Κλείσιμο" style="cursor:pointer; font-size:26px; line-height:1; color:#555; padding:0 6px;">&times;</span>
