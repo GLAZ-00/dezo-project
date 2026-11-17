@@ -225,6 +225,11 @@ app.get('/api/admin-messages', auth, (req, res) => {
   res.json(adminMessages);
 });
 
+app.delete('/api/admin-messages/:id', auth, (req, res) => {
+  adminMessages = adminMessages.filter(m => m.id !== req.params.id);
+  res.json({ ok: true });
+});
+
 app.get('/api/unread', auth, (req, res) => {
   const user = users.find(u => u.id === req.user.id);
   const isAdmin = user?.email === 'admin@dezo.gr' || user?.name?.trim().toUpperCase() === 'ALEX' || req.user.email === 'admin@dezo.gr';
