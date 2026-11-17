@@ -534,7 +534,7 @@ async function openAdminInbox() {
     try {
       const all = await api('/api/admin-messages');
       checkUnread();
-      document.getElementById('admList').innerHTML = all.length ? all.map(m => `<div style="padding:6px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; gap:8px;"><span><b>${m.fromName}:</b> ${m.text}</span>${m.fromId !== currentUser.id ? `<button onclick="replyAdmin('${m.fromId}','${m.fromName}')" style="padding:4px 10px; border:1px solid var(--primary); color:var(--primary); background:#fff; border-radius:6px; cursor:pointer; font-size:12px;">Απάντηση</button>` : ''}</div>`).join('') : '<span style="color:#888;">Δεν υπάρχουν μηνύματα ακόμα.</span>';
+            document.getElementById('admList').innerHTML = all.length ? all.map(m => `<div style="padding:6px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; gap:8px;"><span><b>${m.fromName}:</b> ${m.text}</span><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">${m.fromId !== currentUser.id ? `<button onclick="replyAdmin('${m.fromId}','${m.fromName}')" style="padding:4px 10px; border:1px solid var(--primary); color:var(--primary); background:#fff; border-radius:6px; cursor:pointer; font-size:12px;">Απάντηση</button>` : ''}<span onclick="deleteAdminMsg('${m.id}')" title="Διαγραφή" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`).join('') : '<span style="color:#888;">Δεν υπάρχουν μηνύματα ακόμα.</span>';
     } catch (e) {}
   };
   load();
@@ -545,10 +545,10 @@ async function replyAdmin(toUserId, name) {
   if (!text || !text.trim()) return;
   await api('/api/admin-messages', { method: 'POST', body: JSON.stringify({ toUserId, text: text.trim() }) });
 }
-async function changeAdStatus(id, status) {
-  await api('/api/ads/' + id + '/status', { method: 'POST', body: JSON.stringify({ status }) });
-  closeModal('adModal');
-  showCabinet();
+async function deleteAdminMsg(id) {
+  await api('/api/admin-messages/' + id, { method: 'DELETE' });
+  checkUnread();
+  openAdminInbox();
 }
 async function deleteAdForever(id) {
   if (!confirm(lang === 'el' ? 'Διαγραφή οριστικά;' : 'Delete permanently?')) return;
