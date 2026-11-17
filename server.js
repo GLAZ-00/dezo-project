@@ -82,7 +82,8 @@ app.post('/api/upload', auth, upload.array('photos', 6), async (req, res) => {
     const urls = [];
     for (const file of req.files) {
       const filename = `${uuidv4()}.jpg`;
-      await sharp(file.buffer)
+            await sharp(file.buffer)
+        .rotate()
         .resize(600, 600, { fit: 'inside', withoutEnlargement: true })
         .jpeg({ quality: 55 })
         .toFile(path.join('uploads', filename));
