@@ -52,6 +52,10 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
   .ads-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .ad-card img { height: 140px; }
   #mainContent > div > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; gap: 10px !important; }
+  div[style*="border:1px dashed"] { padding: 6px !important; }
+  div[style*="border:1px dashed"] p { margin: 0 0 4px 0 !important; font-size: 11px !important; line-height: 1.15 !important; }
+  div[style*="border:1px dashed"] button.primary { font-size: 0 !important; padding: 6px 4px !important; line-height: 1.15 !important; }
+  div[style*="border:1px dashed"] button.primary::after { content: "Προσθήκη αγγελίας"; font-size: 12px !important; }
 }
 </style>
 </head>
