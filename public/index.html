@@ -502,9 +502,9 @@ async function showCabinet() {
             <div style="max-height:112px; overflow-y:auto; padding-right:4px;">
                 ${myAds.length ? myAds.map(a => { const d = Math.max(0, 30 - Math.floor((Date.now() - a.created) / 86400000)); const dotColor = d > 25 ? '#00a046' : (d > 5 ? '#f59e0b' : '#e53935'); const hasMsg = (window._unreadAdIds || []).includes(a.id); return `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer;"><span><span style="color:${dotColor}; margin-right:8px; font-size:16px;">●</span>${hasMsg ? '<span style="margin-right:6px; font-size:16px;">📩</span>' : ''}${a.title}</span><strong style="color:var(--primary);">${a.price} €</strong></div>`; }).join('') : '<p style="color:#888; text-align:center; padding:24px;">Δεν έχετε αγγελίες ακόμα</p>'}
       </div>
-            <div style="border:1px dashed #ccc; border-radius:10px; padding:10px 12px; text-align:center; display:flex; flex-direction:column; justify-content:center;">
-        <p style="font-size:12px; color:#666; margin-bottom:8px;">Θέλετε να προσθέσετε κάτι;</p>
-        <button class="primary" onclick="showPostAd()" style="padding:8px 10px; font-size:13px; line-height:1.2;">+ Προσθήκη αγγελίας</button>
+                  <div style="border:1px dashed #ccc; border-radius:10px; padding:16px; text-align:center;">
+        <p style="font-size:13px; color:#666; margin-bottom:12px;">Θέλετε να προσθέσετε κάτι;</p>
+        <button class="primary" onclick="showPostAd()">+ Προσθήκη αγγελίας</button>
       </div>
     </div>
   `;
