@@ -376,6 +376,12 @@ async function promoteAd(id) {
   showHome();
 }
 
+async function setAdStatus(id, status) {
+  await api('/api/ads/' + id + '/status', { method: 'POST', body: JSON.stringify({ status }) });
+  closeModal('adModal');
+  showCabinet();
+}
+
 async function loadMessages(adId) {
   const msgs = await api('/api/messages/' + adId);
   window._chatPartnerId = msgs.find(m => m.from !== currentUser.id)?.from || null;
