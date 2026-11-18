@@ -117,7 +117,9 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <div class="form-group"><input id="adTitle" placeholder="Τίτλος"></div>
     <div class="form-group"><select id="adCat"></select></div>
     <div class="form-group"><input id="adPrice" type="number" placeholder="Τιμή (€)"></div>
-    <div class="form-group"><input id="adCity" placeholder="Πόλη" value="Αθήνα"></div>
+        <div class="form-group"><select id="adCitySelect"></select></div>
+    <div class="form-group"><select id="adZoneSelect"></select></div>
+    <div class="form-group"><input id="adSubArea" placeholder="Ακριβής περιοχή / Γειτονιά (προαιρετικό)"></div>
     <div class="form-group"><textarea id="adDesc" placeholder="Περιγραφή" rows="4"></textarea></div>
         <div class="form-group"><input type="file" id="adPhoto" accept="image/*" multiple></div>
     <button class="primary" onclick="postAd()">Δημοσίευση</button>
@@ -252,9 +254,49 @@ function updateSubDropdown(catId) {
   const targetCat = dezoCategories.find(c => c.id === catId);
   if (targetCat) {
     const list = lang === 'el' ? targetCat.subs.el : targetCat.subs.en;
-    subSel.innerHTML = list.map(sub => `<option value="${sub}">${sub}</option>`).join('');
+        subSel.innerHTML = list.map(sub => `<option value="${sub}">${sub}</option>`).join('');
   }
 }
+
+const dezoLocations = [
+  { group: "Αττική & Αθήνα", cities: ["Αθήνα", "Πειραιάς", "Υπόλοιπο Αττικής"] },
+  { group: "Μακεδονία & Θράκη", cities: ["Θεσσαλονίκη", "Καβάλα", "Σέρρες", "Κατερίνη", "Βέροια", "Κοζάνη", "Πτολεμαΐδα", "Καστοριά", "Αλεξανδρούπολη", "Ξάνθη", "Κομοτηνή", "Δράμα", "Χαλκιδική"] },
+  { group: "Θεσσαλία & Στερεά Ελλάδα", cities: ["Λάρισα", "Βόλος", "Τρίκαλα", "Καρδίτσα", "Χαλκίδα", "Λαμία", "Θήβα"] },
+  { group: "Πελοπόννησος & Δυτική Ελλάδα", cities: ["Πάτρα", "Καλαμάτα", "Κόρινθος & Λουτράκι", "Τρίπολη", "Άργος & Ναύπλιο", "Σπάρτη", "Αγρίνιο", "Πύργος"] },
+  { group: "Ήπειρος", cities: ["Ιωάννινα", "Άρτα", "Πρέβεζα", "Ηγουμενίτσα"] },
+  { group: "Κρήτη", cities: ["Ηράκλειο", "Χανιά", "Ρέθυμνο", "Άγιος Νικόλαος / Λασίθι"] },
+  { group: "Νησιά", cities: ["Ρόδος", "Κέρκυρα", "Μυτιλήνη / Λέσβος", "Χίος", "Σάμος", "Κως", "Ζάκυνθος", "Κεφαλονιά", "Κυκλάδες"] }
+];
+
+const dezoZones = {
+  "Αθήνα": ["Κέντρο Αθήνας", "Κυψέλη / Πατήσια / Γαλάτσι", "Αμπελόκηποι / Ζωγράφου / Γουδή", "Καλλιθέα", "Νέα Σμύρνη", "Παλαιό Φάληρο / Άλιμος", "Γλυφάδα / Βούλα / Βουλιαγμένη", "Ηλιούπολη / Αργυρούπολη / Ελληνικό", "Βύρωνας / Καισαριανή", "Περιστέρι", "Αιγάλεω / Χαϊδάρι", "Ίλιον / Πετρούπολη / Άγιοι Ανάργυροι", "Χαλάνδρι / Αγία Παρασκευή", "Μαρούσι / Πεύκη / Λυκόβρυση", "Κηφισιά / Νέα Ερυθραία", "Νέα Ιωνία / Ηράκλειο / Μεταμόρφωση", "Άλλη περιοχή"],
+  "Πειραιάς": ["Πειραιάς Κέντρο", "Νίκαια / Κορυδαλλός", "Κερατσίνι / Δραπετσώνα / Πέραμα", "Σαλαμίνα", "Άλλη περιοχή"],
+  "Υπόλοιπο Αττικής": ["Παλλήνη / Γέρακας / Γλυκά Νερά", "Σπάτα / Αρτέμιδα / Ραφήνα", "Νέα Μάκρη / Μαραθώνας", "Κορωπί / Μαρκόπουλο / Πόρτο Ράφτη", "Βάρη / Καλύβια / Ανάβυσσος / Λαύριο", "Ελευσίνα / Ασπρόπυργος", "Μέγαρα / Νέα Πέραμος", "Άλλη περιοχή"],
+  "Θεσσαλονίκη": ["Κέντρο Θεσσαλονίκης", "Καλαμαριά", "Τούμπα / Χαριλάου", "Πυλαία / Πανόραμα", "Θέρμη / Περαία / Ανατολικά Προάστια", "Εύοσμος / Κορδελιό / Αμπελόκηποι", "Σταυρούπολη / Πολίχνη / Νεάπολη / Συκιές", "Ωραιόκαστρο / Σίνδος / Δυτικά Προάστια", "Άλλη περιοχή"],
+  "Λάρισα": ["Πόλη Λάρισας — Κέντρο", "Πόλη Λάρισας — Συνοικίες", "Γιάννουλη / Φαλάνη", "Τύρναβος / Αμπελώνας", "Ελασσόνα", "Φάρσαλα", "Αγιά / Παράλια Λάρισας", "Άλλη περιοχή"],
+  "Πάτρα": ["Κέντρο Πάτρας", "Βόρεια Πάτρα / Ρίο", "Νότια Πάτρα / Οβρυά / Παραλία", "Άλλη περιοχή"],
+  "Ηράκλειο": ["Πόλη Ηρακλείου", "Γάζι / Αμμουδάρα", "Χερσόνησος / Μάλια", "Μοίρες / Τυμπάκι", "Άλλη περιοχή"]
+};
+
+function initLocations() {
+  const citySel = document.getElementById('adCitySelect');
+  const zoneSel = document.getElementById('adZoneSelect');
+  if (!citySel || !zoneSel) return;
+  citySel.innerHTML = dezoLocations.map(g => `<optgroup label="${g.group}">${g.cities.map(c => `<option value="${c}">${c}</option>`).join('')}</optgroup>`).join('');
+  const updateZones = () => {
+    const zones = dezoZones[citySel.value] || ["Κέντρο πόλης", "Περίχωρα / Χωριά", "Άλλη περιοχή"];
+    zoneSel.innerHTML = zones.map(z => `<option value="${z}">${z}</option>`).join('');
+    updatePlaceholder();
+  };
+  const updatePlaceholder = () => {
+    const subInp = document.getElementById('adSubArea');
+    if (subInp) subInp.placeholder = zoneSel.value === 'Άλλη περιοχή' ? 'Γράψτε την περιοχή ή το χωριό σας...' : 'Ακριβής περιοχή / Γειτονιά (προαιρετικό)';
+  };
+  citySel.onchange = updateZones;
+  zoneSel.onchange = updatePlaceholder;
+  updateZones();
+}
+initLocations();
 
 async function loadAds(category) {
   checkUnread();
@@ -470,9 +512,14 @@ async function postAd() {
     title: document.getElementById('adTitle').value,
     category: document.getElementById('adCat').value,
     subcategory: subCategoryValue,
-    price: document.getElementById('adPrice').value,
-    city: document.getElementById('adCity').value,
-    description: document.getElementById('adDesc').value,
+          price: document.getElementById('adPrice').value,
+      city: (() => {
+        const c = document.getElementById('adCitySelect').value;
+        const z = document.getElementById('adZoneSelect').value;
+        const s = document.getElementById('adSubArea').value.trim();
+        return z === 'Άλλη περιοχή' ? (s ? `${c} — ${s}` : c) : (s ? `${c} — ${z} (${s})` : `${c} — ${z}`);
+      })(),
+      description: document.getElementById('adDesc').value,
     photos: photoUrls
   })});
     btn.disabled = false; btn.textContent = 'Δημοσίευση';
