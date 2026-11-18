@@ -61,9 +61,15 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
 <body>
 <header>
     <div class="logo" onclick="showHome()">ΔΕΖΩ.gr<span id="tagline" style="line-height:1.25;">Μια ΔΕύτερη ΖΩή<br>για τα πράγματά σας</span></div>
-  <div class="search">
-    <input id="searchInput" placeholder="Αναζήτηση..." onkeypress="if(event.key==='Enter') searchAds()">
-    <button onclick="searchAds()">🔍</button>
+    <div class="search" style="flex-direction:column; gap:6px;">
+    <div style="display:flex; width:100%;">
+      <input id="searchInput" placeholder="Αναζήτηση (π.χ. τζιν, καναπές)..." onkeypress="if(event.key==='Enter') searchAds()">
+      <button onclick="searchAds()">🔍</button>
+    </div>
+    <div style="display:flex; gap:6px; width:100%;">
+      <select id="filterCity" style="flex:1; padding:6px 10px; border:1px solid #ddd; border-radius:16px; font-size:13px; background:#fafafa; outline:none; min-width:0;"></select>
+      <select id="filterZone" style="flex:1; padding:6px 10px; border:1px solid #ddd; border-radius:16px; font-size:13px; background:#fafafa; outline:none; min-width:0;"><option value="">Όλες οι περιοχές</option></select>
+    </div>
   </div>
     <div style="display:flex; align-items:center; gap:14px;">
      <span id="cartBell" onclick="handleCartClick()" title="Καλάθι" style="cursor:pointer; font-size:20px; position:relative;">🛒<span id="cartBadge" style="display:none; position:absolute; top:-4px; right:-6px; background:var(--primary); color:#fff; font-size:10px; font-weight:700; border-radius:50%; padding:1px 5px;"></span></span>
@@ -295,19 +301,46 @@ function initLocations() {
   citySel.onchange = updateZones;
   zoneSel.onchange = updatePlaceholder;
   updateZones();
+  const fCity = document.getElementById('filterCity');
+  const fZone = document.getElementById('filterZone');
+  if (fCity && fZone) {
+    fCity.innerHTML = `<option value="">Όλη η Ελλάδα</option>` + dezoLocations.map(g => `<optgroup label="${g.group}">${g.cities.map(c => `<option value="${c}">${c}</option>`).join('')}</optgroup>`).join('');
+    fCity.onchange = () => {
+      const zList = dezoZones[fCity.value] || (fCity.value ? ["Κέντρο πόλης", "Περίχωρα / Χωριά"] : []);
+      fZone.innerHTML = `<option value="">Όλες οι περιοχές</option>` + zList.filter(z => z !== 'Άλλη περιοχή').map(z => `<option value="${z}">${z}</option>`).join('');
+      loadAds(window._activeCat || '');
+    };
+    fZone.onchange = () => loadAds(window._activeCat || '');
+  }
 }
 initLocations();
 
-async function loadAds(category) {
+async function loadAds(category, keepSearch) {
+  if (!keepSearch) {
+    const inp = document.getElementById('searchInput');
+    if (inp) inp.value = '';
+  }
+  window._activeCat = category || '';
   checkUnread();
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
   if (category) document.querySelector(`[data-id="${category}"]`)?.classList.add('active');
   else document.querySelector('.cat-btn')?.classList.add('active');
-  const q = document.getElementById('searchInput').value;
+  const q = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+  const fCity = document.getElementById('filterCity')?.value || '';
+  const fZone = document.getElementById('filterZone')?.value || '';
   const params = new URLSearchParams();
   if (category) params.set('category', category);
-  if (q) params.set('q', q);
-  currentAds = await api('/api/ads?' + params);
+  let list = await api('/api/ads?' + params);
+  if (fCity) list = list.filter(ad => ad.city && (ad.city === fCity || ad.city.startsWith(fCity + ' —')));
+  if (fZone) list = list.filter(ad => ad.city && ad.city.includes(fZone));
+  if (q) {
+    const words = q.split(/\s+/);
+    list = list.filter(ad => {
+      const hay = `${ad.title || ''} ${ad.description || ''} ${ad.city || ''} ${ad.subCategory || ''}`.toLowerCase();
+      return words.every(w => hay.includes(w));
+    });
+  }
+  currentAds = list;
   renderAds(currentAds);
 }
 
@@ -329,7 +362,7 @@ function renderAds(list) {
 }
 
 function showHome() { document.getElementById('cabinetFooter').style.display = 'none'; loadAds(); }
-function searchAds() { loadAds(); }
+function searchAds() { loadAds('', true); }
 
 async function revealPhone(id, el) {
   try {
