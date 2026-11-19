@@ -248,6 +248,7 @@ function toggleLang() {
   });
 
   loadCategories();
+ initLocations();
   showHome();
 }
 function updateUserMenu() {
@@ -327,40 +328,185 @@ const dezoZones = {
   "Πειραιάς": ["Πειραιάς Κέντρο", "Νίκαια / Κορυδαλλός", "Κερατσίνι / Δραπετσώνα / Πέραμα", "Σαλαμίνα", "Άλλη περιοχή"],
   "Υπόλοιπο Αττικής": ["Παλλήνη / Γέρακας / Γλυκά Νερά", "Σπάτα / Αρτέμιδα / Ραφήνα", "Νέα Μάκρη / Μαραθώνας", "Κορωπί / Μαρκόπουλο / Πόρτο Ράφτη", "Βάρη / Καλύβια / Ανάβυσσος / Λαύριο", "Ελευσίνα / Ασπρόπυργος", "Μέγαρα / Νέα Πέραμος", "Άλλη περιοχή"],
   "Θεσσαλονίκη": ["Κέντρο Θεσσαλονίκης", "Καλαμαριά", "Τούμπα / Χαριλάου", "Πυλαία / Πανόραμα", "Θέρμη / Περαία / Ανατολικά Προάστια", "Εύοσμος / Κορδελιό / Αμπελόκηποι", "Σταυρούπολη / Πολίχνη / Νεάπολη / Συκιές", "Ωραιόκαστρο / Σίνδος / Δυτικά Προάστια", "Άλλη περιοχή"],
-  "Λάρισα": ["Πόλη Λάρισας — Κέντρο", "Πόλη Λάρισας — Συνοικίες", "Γιάννουλη / Φαλάνη", "Τύρναβος / Αμπελώνας", "Ελασσόνα", "Φάρσαλα", "Αγιά / Παράλια Λάρισας", "Άλλη περιοχή"],
+  "Λάρισα": ["Πόλη Λάρισας - Κέντρο", "Πόλη Λάρισας - Συνοικίες", "Γιάννουλη / Φαλάνη", "Τύρναβος / Αμπελώνας", "Ελασσόνα", "Φάρσαλα", "Αγιά / Παράλια Λάρισας", "Άλλη περιοχή"],
   "Πάτρα": ["Κέντρο Πάτρας", "Βόρεια Πάτρα / Ρίο", "Νότια Πάτρα / Οβρυά / Παραλία", "Άλλη περιοχή"],
   "Ηράκλειο": ["Πόλη Ηρακλείου", "Γάζι / Αμμουδάρα", "Χερσόνησος / Μάλια", "Μοίρες / Τυμπάκι", "Άλλη περιοχή"]
 };
 
+const locEnMap = {
+  "Αττική & Αθήνα": "Attica & Athens",
+  "Μακεδονία & Θράκη": "Macedonia & Thrace",
+  "Θεσσαλία & Στερεά Ελλάδα": "Thessaly & Central Greece",
+  "Πελοπόννησος & Δυτική Ελλάδα": "Peloponnese & Western Greece",
+  "Ήπειρος": "Epirus",
+  "Κρήτη": "Crete",
+  "Νησιά": "Islands",
+  "Αθήνα": "Athens",
+  "Πειραιάς": "Piraeus",
+  "Υπόλοιπο Αττικής": "Rest of Attica",
+  "Θεσσαλονίκη": "Thessaloniki",
+  "Καβάλα": "Kavala",
+  "Σέρρες": "Serres",
+  "Κατερίνη": "Katerini",
+  "Βέροια": "Veria",
+  "Κοζάνη": "Kozani",
+  "Πτολεμαΐδα": "Ptolemaida",
+  "Καστοριά": "Kastoria",
+  "Αλεξανδρούπολη": "Alexandroupoli",
+  "Ξάνθη": "Xanthi",
+  "Κομοτηνή": "Komotini",
+  "Δράμα": "Drama",
+  "Χαλκιδική": "Chalkidiki",
+  "Λάρισα": "Larissa",
+  "Βόλος": "Volos",
+  "Τρίκαλα": "Trikala",
+  "Καρδίτσα": "Karditsa",
+  "Χαλκίδα": "Chalkida",
+  "Λαμία": "Lamia",
+  "Θήβα": "Thebes",
+  "Πάτρα": "Patras",
+  "Καλαμάτα": "Kalamata",
+  "Κόρινθος & Λουτράκι": "Corinth & Loutraki",
+  "Τρίπολη": "Tripoli",
+  "Άργος & Ναύπλιο": "Argos & Nafplio",
+  "Σπάρτη": "Sparta",
+  "Αγρίνιο": "Agrinio",
+  "Πύργος": "Pyrgos",
+  "Ιωάννινα": "Ioannina",
+  "Άρτα": "Arta",
+  "Πρέβεζα": "Preveza",
+  "Ηγουμενίτσα": "Igoumenitsa",
+  "Ηράκλειο": "Heraklion",
+  "Χανιά": "Chania",
+  "Ρέθυμνο": "Rethymno",
+  "Άγιος Νικόλαος / Λασίθι": "Agios Nikolaos / Lasithi",
+  "Ρόδος": "Rhodes",
+  "Κέρκυρα": "Corfu",
+  "Μυτιλήνη / Λέσβος": "Mytilene / Lesvos",
+  "Χίος": "Chios",
+  "Σάμος": "Samos",
+  "Κως": "Kos",
+  "Ζάκυνθος": "Zakynthos",
+  "Κεφαλονιά": "Kefalonia",
+  "Κυκλάδες": "Cyclades",
+  "Κέντρο Αθήνας": "Athens Center",
+  "Κυψέλη / Πατήσια / Γαλάτσι": "Kypseli / Patisia / Galatsi",
+  "Αμπελόκηποι / Ζωγράφου / Γουδή": "Ampelokipoi / Zografou / Goudi",
+  "Καλλιθέα": "Kallithea",
+  "Νέα Σμύρνη": "Nea Smyrni",
+  "Παλαιό Φάληρο / Άλιμος": "Palaio Faliro / Alimos",
+  "Γλυφάδα / Βούλα / Βουλιαγμένη": "Glyfada / Voula / Vouliagmeni",
+  "Ηλιούπολη / Αργυρούπολη / Ελληνικό": "Ilioupoli / Argyroupoli / Elliniko",
+  "Βύρωνας / Καισαριανή": "Vyronas / Kaisariani",
+  "Περιστέρι": "Peristeri",
+  "Αιγάλεω / Χαϊδάρι": "Aigaleo / Chaidari",
+  "Ίλιον / Πετρούπολη / Άγιοι Ανάργυροι": "Ilion / Petroupoli / Agioi Anargyroi",
+  "Χαλάνδρι / Αγία Παρασκευή": "Chalandri / Agia Paraskevi",
+  "Μαρούσι / Πεύκη / Λυκόβρυση": "Marousi / Pefki / Lykovrysi",
+  "Κηφισιά / Νέα Ερυθραία": "Kifisia / Nea Erythraia",
+  "Νέα Ιωνία / Ηράκλειο / Μεταμόρφωση": "Nea Ionia / Irakleio / Metamorfosi",
+  "Άλλη περιοχή": "Other area",
+  "Πειραιάς Κέντρο": "Piraeus Center",
+  "Νίκαια / Κορυδαλλός": "Nikaia / Korydallos",
+  "Κερατσίνι / Δραπετσώνα / Πέραμα": "Keratsini / Drapetsona / Perama",
+  "Σαλαμίνα": "Salamina",
+  "Παλλήνη / Γέρακας / Γλυκά Νερά": "Pallini / Gerakas / Glyka Nera",
+  "Σπάτα / Αρτέμιδα / Ραφήνα": "Spata / Artemida / Rafina",
+  "Νέα Μάκρη / Μαραθώνας": "Nea Makri / Marathonas",
+  "Κορωπί / Μαρκόπουλο / Πόρτο Ράφτη": "Koropi / Markopoulo / Porto Rafti",
+  "Βάρη / Καλύβια / Ανάβυσσος / Λαύριο": "Vari / Kalyvia / Anavyssos / Lavrio",
+  "Ελευσίνα / Ασπρόπυργος": "Elefsina / Aspropyrgos",
+  "Μέγαρα / Νέα Πέραμος": "Megara / Nea Peramos",
+  "Κέντρο Θεσσαλονίκης": "Thessaloniki Center",
+  "Καλαμαριά": "Kalamaria",
+  "Τούμπα / Χαριλάου": "Toumba / Charilaou",
+  "Πυλαία / Πανόραμα": "Pylaia / Panorama",
+  "Θέρμη / Περαία / Ανατολικά Προάστια": "Thermi / Peraia / Eastern Suburbs",
+  "Εύοσμος / Κορδελιό / Αμπελόκηποι": "Evosmos / Kordelio / Ampelokipoi",
+  "Σταυρούπολη / Πολίχνη / Νεάπολη / Συκιές": "Stavroupoli / Polichni / Neapoli / Sykies",
+  "Ωραιόκαστρο / Σίνδος / Δυτικά Προάστια": "Oraiokastro / Sindos / Western Suburbs",
+  "Πόλη Λάρισας - Κέντρο": "Larissa City - Center",
+  "Πόλη Λάρισας - Συνοικίες": "Larissa City - Suburbs",
+  "Γιάννουλη / Φαλάνη": "Giannouli / Falani",
+  "Τύρναβος / Αμπελώνας": "Tyrnavos / Ampelonas",
+  "Ελασσόνα": "Elassona",
+  "Φάρσαλα": "Farsala",
+  "Αγιά / Παράλια Λάρισας": "Agia / Larissa Coast",
+  "Κέντρο Πάτρας": "Patras Center",
+  "Βόρεια Πάτρα / Ρίο": "North Patras / Rio",
+  "Νότια Πάτρα / Οβρυά / Παραλία": "South Patras / Ovrya / Paralia",
+  "Πόλη Ηρακλείου": "Heraklion City",
+  "Γάζι / Αμμουδάρα": "Gazi / Ammoudara",
+  "Χερσόνησος / Μάλια": "Hersonissos / Malia",
+  "Μοίρες / Τυμπάκι": "Moires / Tympaki",
+  "Κέντρο πόλης": "City center",
+  "Περίχωρα / Χωριά": "Suburbs / Villages"
+};
+
+const locName = (str) => (lang === 'en' && locEnMap[str]) ? locEnMap[str] : str;
+
 function initLocations() {
   const citySel = document.getElementById('adCitySelect');
   const zoneSel = document.getElementById('adZoneSelect');
-  if (!citySel || !zoneSel) return;
-  citySel.innerHTML = dezoLocations.map(g => `<optgroup label="${g.group}">${g.cities.map(c => `<option value="${c}">${c}</option>`).join('')}</optgroup>`).join('');
-  const updateZones = () => {
-    const zones = dezoZones[citySel.value] || ["Κέντρο πόλης", "Περίχωρα / Χωριά", "Άλλη περιοχή"];
-    zoneSel.innerHTML = zones.map(z => `<option value="${z}">${z}</option>`).join('');
-    updatePlaceholder();
-  };
-  const updatePlaceholder = () => {
-    const subInp = document.getElementById('adSubArea');
-    if (subInp) subInp.placeholder = zoneSel.value === 'Άλλη περιοχή' ? 'Γράψτε την περιοχή ή το χωριό σας...' : 'Ακριβής περιοχή / Γειτονιά (προαιρετικό)';
-  };
-  citySel.onchange = updateZones;
-  zoneSel.onchange = updatePlaceholder;
-  updateZones();
   const fCity = document.getElementById('filterCity');
   const fZone = document.getElementById('filterZone');
-  if (fCity && fZone) {
-    fCity.innerHTML = `<option value="">Όλη η Ελλάδα</option>` + dezoLocations.map(g => `<optgroup label="${g.group}">${g.cities.map(c => `<option value="${c}">${c}</option>`).join('')}</optgroup>`).join('');
-    fCity.onchange = () => {
-      const zList = dezoZones[fCity.value] || (fCity.value ? ["Κέντρο πόλης", "Περίχωρα / Χωριά"] : []);
-      fZone.innerHTML = `<option value="">Όλες οι περιοχές</option>` + zList.filter(z => z !== 'Άλλη περιοχή').map(z => `<option value="${z}">${z}</option>`).join('');
-      loadAds(window._activeCat || '');
+
+  const prevAdCity = citySel ? citySel.value : '';
+  const prevAdZone = zoneSel ? zoneSel.value : '';
+  const prevFCity = fCity ? fCity.value : '';
+  const prevFZone = fZone ? fZone.value : '';
+
+  const buildGroups = () => dezoLocations.map(g => `<optgroup label="${locName(g.group)}">${g.cities.map(c => `<option value="${c}">${locName(c)}</option>`).join('')}</optgroup>`).join('');
+
+  if (citySel && zoneSel) {
+    citySel.innerHTML = buildGroups();
+    if (prevAdCity) citySel.value = prevAdCity;
+
+    const updatePlaceholder = () => {
+      const subInp = document.getElementById('adSubArea');
+      if (subInp) {
+        subInp.placeholder = zoneSel.value === 'Άλλη περιοχή'
+          ? (lang === 'el' ? 'Γράψτε την περιοχή ή το χωριό σας...' : 'Type your area or village...')
+          : tr('subAreaPlaceholder');
+      }
     };
+
+    const updateZones = () => {
+      const zones = dezoZones[citySel.value] || ["Κέντρο πόλης", "Περίχωρα / Χωριά", "Άλλη περιοχή"];
+      zoneSel.innerHTML = zones.map(z => `<option value="${z}">${locName(z)}</option>`).join('');
+      updatePlaceholder();
+    };
+
+    citySel.onchange = updateZones;
+    zoneSel.onchange = updatePlaceholder;
+    updateZones();
+    if (prevAdZone && Array.from(zoneSel.options).some(o => o.value === prevAdZone)) {
+      zoneSel.value = prevAdZone;
+      updatePlaceholder();
+    }
+  }
+
+  if (fCity && fZone) {
+    const allGreeceLabel = lang === 'el' ? 'Όλη η Ελλάδα' : 'All Greece';
+    const allAreasLabel = lang === 'el' ? 'Όλες οι περιοχές' : 'All areas';
+    fCity.innerHTML = `<option value="">${allGreeceLabel}</option>` + buildGroups();
+    if (prevFCity) fCity.value = prevFCity;
+
+    const updateFilterZones = (runLoad) => {
+      const zList = dezoZones[fCity.value] || (fCity.value ? ["Κέντρο πόλης", "Περίχωρα / Χωριά"] : []);
+      fZone.innerHTML = `<option value="">${allAreasLabel}</option>` + zList.filter(z => z !== 'Άλλη περιοχή').map(z => `<option value="${z}">${locName(z)}</option>`).join('');
+      if (runLoad) loadAds(window._activeCat || '');
+    };
+
+    fCity.onchange = () => updateFilterZones(true);
+    updateFilterZones(false);
+    if (prevFZone && Array.from(fZone.options).some(o => o.value === prevFZone)) {
+      fZone.value = prevFZone;
+    }
     fZone.onchange = () => loadAds(window._activeCat || '');
   }
 }
+
 initLocations();
 
 async function loadAds(category, keepSearch) {
