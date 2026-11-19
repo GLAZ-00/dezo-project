@@ -118,17 +118,17 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
   </div>
 </div>
 <div class="modal" id="postModal">
-    <div class="modal-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><h2>Νέα αγγελία</h2><span onclick="closeModal('postModal')" style="cursor:pointer; font-size:26px;">&times;</span></div>
+  <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><h2 id="postModalTitle">Νέα αγγελία</h2><span onclick="closeModal('postModal')" style="cursor:pointer; font-size:26px;">&times;</span></div>
     <div class="form-group"><input id="adTitle" placeholder="Τίτλος"></div>
     <div class="form-group"><select id="adCat"></select></div>
     <div class="form-group"><input id="adPrice" type="number" placeholder="Τιμή (€)"></div>
-        <div class="form-group"><select id="adCitySelect"></select></div>
+    <div class="form-group"><select id="adCitySelect"></select></div>
     <div class="form-group"><select id="adZoneSelect"></select></div>
     <div class="form-group"><input id="adSubArea" placeholder="Ακριβής περιοχή / Γειτονιά (προαιρετικό)"></div>
     <div class="form-group"><textarea id="adDesc" placeholder="Περιγραφή" rows="4"></textarea></div>
-        <div class="form-group"><input type="file" id="adPhoto" accept="image/*" multiple></div>
-    <button class="primary" onclick="postAd()">Δημοσίευση</button>
+    <div class="form-group"><input type="file" id="adPhoto" accept="image/*" multiple></div>
+    <button id="postSubmitBtn" class="primary" onclick="postAd()">Δημοσίευση</button>
   </div>
 </div>
 <div class="modal" id="adModal">
