@@ -202,8 +202,14 @@ function toggleLang() {
   document.getElementById('langToggle').textContent = lang === 'el' ? 'EN' : 'ΕΛ';
   document.getElementById('tagline').innerHTML = tr('tagline');
   document.getElementById('searchInput').placeholder = tr('search');
+  document.getElementById('postModalTitle').textContent = tr('newAd');
+  document.getElementById('adTitle').placeholder = tr('titlePlaceholder');
+  document.getElementById('adPrice').placeholder = tr('pricePlaceholder');
+  document.getElementById('adSubArea').placeholder = tr('subAreaPlaceholder');
+  document.getElementById('adDesc').placeholder = tr('descPlaceholder');
+  document.getElementById('postSubmitBtn').textContent = tr('publishBtn');
   updateUserMenu();
-  
+
   // Переводим кнопки категорий в шапке сайта на лету
   document.querySelectorAll('#categories .cat-btn').forEach(btn => {
     const id = btn.getAttribute('data-id');
@@ -218,7 +224,6 @@ function toggleLang() {
   loadCategories();
   showHome();
 }
-
 function updateUserMenu() {
   const menu = document.getElementById('userMenu');
   const addBtn = document.getElementById('addBtn');
