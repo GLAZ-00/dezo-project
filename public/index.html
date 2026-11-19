@@ -249,7 +249,8 @@ function toggleLang() {
 
   loadCategories();
  initLocations();
-  showHome();
+    if (document.getElementById('cabinetFooter').style.display === 'flex') showCabinet();
+  else showHome();
 }
 function updateUserMenu() {
   const menu = document.getElementById('userMenu');
@@ -758,30 +759,30 @@ async function showCabinet() {
   if (!currentUser) return showLogin();
   await checkUnread();
   document.getElementById('cabinetFooter').style.display = 'flex';
-    const allMyAds = await api('/api/my-ads');
+  const allMyAds = await api('/api/my-ads');
   const myAds = allMyAds.filter(a => !a.status || a.status === 'active');
-    const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX';
+  const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX';
   document.getElementById('mainContent').innerHTML = `
-        <div style="background:#fff; border:1px solid #eee; border-radius:12px; height:165px; padding:16px; margin-bottom:12px; position:relative;">
+    <div style="background:#fff; border:1px solid #eee; border-radius:12px; height:165px; padding:16px; margin-bottom:12px; position:relative;">
       <span onclick="this.parentElement.style.display='none'" style="position:absolute; top:10px; right:14px; cursor:pointer; font-size:20px; color:#888; line-height:1;">&times;</span>
     </div>
     <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
-      <span onclick="showHome()" title="Κλείσιμο" style="cursor:pointer; font-size:26px; line-height:1; color:#555; padding:0 6px;">&times;</span>
+      <span onclick="showHome()" title="${lang === 'el' ? 'Κλείσιμο' : 'Close'}" style="cursor:pointer; font-size:26px; line-height:1; color:#555; padding:0 6px;">&times;</span>
     </div>
-            <div style="min-height:150px; margin-bottom:16px;"></div>
+    <div style="min-height:150px; margin-bottom:16px;"></div>
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:16px;">
-      <button class="primary" style="padding:12px;" onclick="showCabinet()">Τα πράγματά μου</button>
-      <div>${isAdmin ? `<button style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="openAdminInbox()">Μηνύματα</button>` : ''}</div>
-     <button style="padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="openArchive()">Αρχείο</button>
+      <button class="primary" style="padding:12px;" onclick="showCabinet()">${lang === 'el' ? 'Τα πράγματά μου' : 'My items'}</button>
+      <div>${isAdmin ? `<button style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="openAdminInbox()">${lang === 'el' ? 'Μηνύματα' : 'Messages'}</button>` : ''}</div>
+      <button style="padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="openArchive()">${lang === 'el' ? 'Αρχείο' : 'Archive'}</button>
     </div>
     <div id="modChatZone" style="min-height:130px; margin-bottom:16px;"></div>
     <div style="background:#fff; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.06); display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start;">
-            <div style="max-height:112px; overflow-y:auto; padding-right:4px;">
-                ${myAds.length ? myAds.map(a => { const d = Math.max(0, 30 - Math.floor((Date.now() - a.created) / 86400000)); const dotColor = d > 25 ? '#00a046' : (d > 5 ? '#f59e0b' : '#e53935'); const hasMsg = (window._unreadAdIds || []).includes(a.id); return `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer;"><span><span style="color:${dotColor}; margin-right:8px; font-size:16px;">●</span>${hasMsg ? '<span style="margin-right:6px; font-size:16px;">📩</span>' : ''}${a.title}</span><strong style="color:var(--primary);">${a.price} €</strong></div>`; }).join('') : '<p style="color:#888; text-align:center; padding:24px;">Δεν έχετε αγγελίες ακόμα</p>'}
+      <div style="max-height:112px; overflow-y:auto; padding-right:4px;">
+        ${myAds.length ? myAds.map(a => { const d = Math.max(0, 30 - Math.floor((Date.now() - a.created) / 86400000)); const dotColor = d > 25 ? '#00a046' : (d > 5 ? '#f59e0b' : '#e53935'); const hasMsg = (window._unreadAdIds || []).includes(a.id); return `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer;"><span><span style="color:${dotColor}; margin-right:8px; font-size:16px;">●</span>${hasMsg ? '<span style="margin-right:6px; font-size:16px;">📥</span>' : ''}${a.title}</span><strong style="color:var(--primary);">${a.price} €</strong></div>`; }).join('') : `<p style="color:#888; text-align:center; padding:24px;">${lang === 'el' ? 'Δεν έχετε αγγελίες ακόμα' : 'You have no listings yet'}</p>`}
       </div>
-                  <div style="border:1px dashed #ccc; border-radius:10px; padding:16px; text-align:center;">
-        <p style="font-size:13px; color:#666; margin-bottom:12px;">Θέλετε να προσθέσετε κάτι;</p>
-        <button class="primary" onclick="showPostAd()">+ Προσθήκη αγγελίας</button>
+      <div style="border:1px dashed #ccc; border-radius:10px; padding:16px; text-align:center;">
+        <p style="font-size:13px; color:#666; margin-bottom:12px;">${lang === 'el' ? 'Θέλετε να προσθέσετε κάτι;' : 'Want to add something?'}</p>
+        <button class="primary" onclick="showPostAd()">${lang === 'el' ? '+ Προσθήκη αγγελίας' : '+ Add listing'}</button>
       </div>
     </div>
   `;
@@ -791,7 +792,7 @@ async function openSupportChat() {
   if (!currentUser) return showLogin();
   if (modPoll) clearInterval(modPoll);
   const box = document.getElementById('modChatZone');
-  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>Μήνυμα προς διαχειριστή</strong><span onclick="clearInterval(modPoll); document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:18px;">&times;</span></div><div id="supList" style="max-height:110px; overflow-y:auto; margin-bottom:8px; font-size:13px;"><span style="color:#888;">Γράψτε το μήνυμά σας...</span></div><div style="display:flex; gap:8px;"><input id="supInput" placeholder="Γράψτε εδώ..." style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px;"><button class="primary" style="width:auto; padding:8px 14px;" onclick="sendSupport()">Αποστολή</button></div></div>`;
+  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>${lang === 'el' ? 'Μήνυμα προς διαχειριστή' : 'Message to admin'}</strong><span onclick="clearInterval(modPoll); document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:18px;">&times;</span></div><div id="supList" style="max-height:110px; overflow-y:auto; margin-bottom:8px; font-size:13px;"><span style="color:#888;">${lang === 'el' ? 'Γράψτε το μήνυμά σας...' : 'Write your message...'}</span></div><div style="display:flex; gap:8px;"><input id="supInput" placeholder="${lang === 'el' ? 'Γράψτε εδώ...' : 'Type here...'}" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px;"><button class="primary" style="width:auto; padding:8px 14px;" onclick="sendSupport()">${lang === 'el' ? 'Αποστολή' : 'Send'}</button></div></div>`;
   const load = async () => {
     if (!document.getElementById('supList')) return clearInterval(modPoll);
     try {
