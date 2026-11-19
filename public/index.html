@@ -127,7 +127,13 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <div class="form-group"><select id="adZoneSelect"></select></div>
     <div class="form-group"><input id="adSubArea" placeholder="Ακριβής περιοχή / Γειτονιά (προαιρετικό)"></div>
     <div class="form-group"><textarea id="adDesc" placeholder="Περιγραφή" rows="4"></textarea></div>
-    <div class="form-group"><input type="file" id="adPhoto" accept="image/*" multiple></div>
+        <div class="form-group">
+      <input type="file" id="adPhoto" accept="image/*" multiple style="display:none;" onchange="updatePhotoLabel()">
+      <div onclick="document.getElementById('adPhoto').click()" style="border:1px solid #ddd; border-radius:8px; padding:10px 12px; cursor:pointer; display:flex; align-items:center; gap:10px; background:#fafafa;">
+        <span id="adPhotoBtn" style="background:#eee; border:1px solid #ccc; border-radius:6px; padding:4px 10px; font-size:13px; color:#333;">Επιλογή φωτογραφιών</span>
+        <span id="adPhotoText" style="font-size:13px; color:#666;">Δεν επιλέχθηκαν αρχεία</span>
+      </div>
+    </div>
     <button id="postSubmitBtn" class="primary" onclick="postAd()">Δημοσίευση</button>
   </div>
 </div>
@@ -235,6 +241,8 @@ function toggleLang() {
   document.getElementById('regSubmitBtn').textContent = tr('regTitle');
   document.getElementById('hasAccountLink').textContent = tr('hasAccount');
   updateUserMenu();
+  updatePhotoLabel();
+
 
   // Переводим кнопки категорий в шапке сайта на лету
   document.querySelectorAll('#categories .cat-btn').forEach(btn => {
@@ -542,7 +550,7 @@ async function loadAds(category, keepSearch) {
 function renderAds(list) {
   const main = document.getElementById('mainContent');
     const bannerHtml = `<div style="background:#fff; border:1px solid #eee; border-radius:12px; height:165px; padding:16px; margin-bottom:12px; position:sticky; top:135px; z-index:90; box-shadow:0 4px 10px rgba(0,0,0,.06);"><span onclick="this.parentElement.style.display='none'" style="position:absolute; top:10px; right:14px; cursor:pointer; font-size:20px; color:#888; line-height:1;">&times;</span></div>`;
-  if (!list.length) { main.innerHTML = bannerHtml + `<p style="text-align:center;padding:40px;">Δεν βρέθηκαν αγγελίες</p>`; return; }
+   if (!list.length) { main.innerHTML = bannerHtml + `<p style="text-align:center;padding:40px;color:#888;">${lang === 'el' ? 'Δεν βρέθηκαν αγγελίες' : 'No listings found'}</p>`; return; }
   main.innerHTML = bannerHtml + `<div class="ads-grid">${list.map(ad => `
     <div class="ad-card" onclick="showAd('${ad.id}')">
       ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
@@ -555,7 +563,17 @@ function renderAds(list) {
       </div>
     </div>`).join('')}</div>`;
 }
-
+function updatePhotoLabel() {
+  const inp = document.getElementById('adPhoto');
+  const btn = document.getElementById('adPhotoBtn');
+  const txt = document.getElementById('adPhotoText');
+  if (!inp || !btn || !txt) return;
+  btn.textContent = lang === 'el' ? 'Επιλογή φωτογραφιών' : 'Choose photos';
+  const count = inp.files ? inp.files.length : 0;
+  txt.textContent = count > 0
+    ? (lang === 'el' ? `Επιλέχθηκαν ${count} αρχεία` : `${count} files selected`)
+    : (lang === 'el' ? 'Δεν επιλέχθηκαν αρχεία' : 'No files chosen');
+}
 function showHome() { document.getElementById('cabinetFooter').style.display = 'none'; loadAds(); }
 function searchAds() { loadAds('', true); }
 
