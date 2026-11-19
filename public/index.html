@@ -102,19 +102,19 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     <h2 id="loginTitle">Σύνδεση</h2>
     <div class="form-group"><input id="loginEmail" type="email" placeholder="Email"></div>
     <div class="form-group"><input id="loginPass" type="password" placeholder="Κωδικός"></div>
-    <button class="primary" onclick="login()">Σύνδεση</button>
-    <p style="margin-top:12px; text-align:center; cursor:pointer; color:var(--primary);" onclick="showRegister()">Δεν έχεις λογαριασμό; Εγγραφή</p>
+    <button id="loginSubmitBtn" class="primary" onclick="login()">Σύνδεση</button>
+    <p id="noAccountLink" style="margin-top:12px; text-align:center; cursor:pointer; color:var(--primary);" onclick="showRegister()">Δεν έχεις λογαριασμό; Εγγραφή</p>
   </div>
 </div>
 <div class="modal" id="registerModal">
   <div class="modal-content">
-    <h2>Εγγραφή</h2>
+    <h2 id="regTitle">Εγγραφή</h2>
     <div class="form-group"><input id="regName" placeholder="Όνομα"></div>
     <div class="form-group"><input id="regEmail" type="email" placeholder="Email"></div>
     <div class="form-group"><input id="regPhone" placeholder="Τηλέφωνο"></div>
     <div class="form-group"><input id="regPass" type="password" placeholder="Κωδικός (min 6)"></div>
-    <button class="primary" onclick="register()">Εγγραφή</button>
-    <p style="margin-top:12px; text-align:center; cursor:pointer; color:var(--primary);" onclick="showLogin()">Έχεις ήδη λογαριασμό;</p>
+    <button id="regSubmitBtn" class="primary" onclick="register()">Εγγραφή</button>
+    <p id="hasAccountLink" style="margin-top:12px; text-align:center; cursor:pointer; color:var(--primary);" onclick="showLogin()">Έχεις ήδη λογαριασμό;</p>
   </div>
 </div>
 <div class="modal" id="postModal">
@@ -167,6 +167,14 @@ office: 'γραφείο μου',
     descPlaceholder: 'Περιγραφή',
     publishBtn: 'Δημοσίευση',
     uploadingBtn: 'Φόρτωση...',
+        loginTitle: 'Σύνδεση',
+    passPlaceholder: 'Κωδικός',
+    noAccount: 'Δεν έχεις λογαριασμό; Εγγραφή',
+    regTitle: 'Εγγραφή',
+    namePlaceholder: 'Όνομα',
+    phonePlaceholder: 'Τηλέφωνο',
+    passMinPlaceholder: 'Κωδικός (min 6)',
+    hasAccount: 'Έχεις ήδη λογαριασμό;',
   },
   en: {
     tagline: 'A Second Life<br>for your things',
@@ -191,6 +199,14 @@ office: 'My office',
     descPlaceholder: 'Description',
     publishBtn: 'Publish',
     uploadingBtn: 'Uploading...',
+        loginTitle: 'Login',
+    passPlaceholder: 'Password',
+    noAccount: "Don't have an account? Register",
+    regTitle: 'Register',
+    namePlaceholder: 'Name',
+    phonePlaceholder: 'Phone',
+    passMinPlaceholder: 'Password (min 6)',
+    hasAccount: 'Already have an account?',
 
   }
 };
@@ -208,6 +224,16 @@ function toggleLang() {
   document.getElementById('adSubArea').placeholder = tr('subAreaPlaceholder');
   document.getElementById('adDesc').placeholder = tr('descPlaceholder');
   document.getElementById('postSubmitBtn').textContent = tr('publishBtn');
+    document.getElementById('loginTitle').textContent = tr('loginTitle');
+  document.getElementById('loginPass').placeholder = tr('passPlaceholder');
+  document.getElementById('loginSubmitBtn').textContent = tr('loginTitle');
+  document.getElementById('noAccountLink').textContent = tr('noAccount');
+  document.getElementById('regTitle').textContent = tr('regTitle');
+  document.getElementById('regName').placeholder = tr('namePlaceholder');
+  document.getElementById('regPhone').placeholder = tr('phonePlaceholder');
+  document.getElementById('regPass').placeholder = tr('passMinPlaceholder');
+  document.getElementById('regSubmitBtn').textContent = tr('regTitle');
+  document.getElementById('hasAccountLink').textContent = tr('hasAccount');
   updateUserMenu();
 
   // Переводим кнопки категорий в шапке сайта на лету
