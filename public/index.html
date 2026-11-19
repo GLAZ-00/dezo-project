@@ -814,20 +814,20 @@ async function sendSupport() {
 async function openAdminInbox() {
   if (modPoll) clearInterval(modPoll);
   const box = document.getElementById('modChatZone');
-  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>Μηνύματα χρηστών (Διαχειριστής)</strong><span onclick="clearInterval(modPoll); document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:18px;">&times;</span></div><div id="admList" style="max-height:140px; overflow-y:auto; font-size:13px;">Φόρτωση...</div></div>`;
+  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>${lang === 'el' ? 'Μηνύματα χρηστών (Διαχειριστής)' : 'User messages (Admin)'}</strong><span onclick="clearInterval(modPoll); document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:18px;">&times;</span></div><div id="admList" style="max-height:140px; overflow-y:auto; font-size:13px;">${lang === 'el' ? 'Φόρτωση...' : 'Loading...'}</div></div>`;
   const load = async () => {
     if (!document.getElementById('admList')) return clearInterval(modPoll);
     try {
       const all = await api('/api/admin-messages');
       checkUnread();
-            document.getElementById('admList').innerHTML = all.length ? all.map(m => `<div style="padding:6px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; gap:8px;"><span><b>${m.fromName}:</b> ${m.text}</span><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">${m.fromId !== currentUser.id ? `<button onclick="replyAdmin('${m.fromId}','${m.fromName}')" style="padding:4px 10px; border:1px solid var(--primary); color:var(--primary); background:#fff; border-radius:6px; cursor:pointer; font-size:12px;">Απάντηση</button>` : ''}<span onclick="deleteAdminMsg('${m.id}')" title="Διαγραφή" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`).join('') : '<span style="color:#888;">Δεν υπάρχουν μηνύματα ακόμα.</span>';
+      document.getElementById('admList').innerHTML = all.length ? all.map(m => `<div style="padding:6px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; gap:8px;"><span><b>${m.fromName}:</b> ${m.text}</span><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">${m.fromId !== currentUser.id ? `<button onclick="replyAdmin('${m.fromId}','${m.fromName}')" style="padding:4px 10px; border:1px solid var(--primary); color:var(--primary); background:#fff; border-radius:6px; cursor:pointer; font-size:12px;">${lang === 'el' ? 'Απάντηση' : 'Reply'}</button>` : ''}<span onclick="deleteAdminMsg('${m.id}')" title="${lang === 'el' ? 'Διαγραφή' : 'Delete'}" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`).join('') : `<span style="color:#888;">${lang === 'el' ? 'Δεν υπάρχουν μηνύματα ακόμα.' : 'No messages yet.'}</span>`;
     } catch (e) {}
   };
   load();
   modPoll = setInterval(load, 3000);
 }
 async function replyAdmin(toUserId, name) {
-  const text = prompt('Απάντηση προς ' + name + ':');
+  const text = prompt((lang === 'el' ? 'Απάντηση προς ' : 'Reply to ') + name + ':');
   if (!text || !text.trim()) return;
   await api('/api/admin-messages', { method: 'POST', body: JSON.stringify({ toUserId, text: text.trim() }) });
 }
@@ -844,15 +844,15 @@ async function deleteAdForever(id) {
 async function openArchive() {
   if (modPoll) clearInterval(modPoll);
   const box = document.getElementById('modChatZone');
-  box.innerHTML = `<div style="background:#f9f9f9; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><strong>Αρχείο αγγελιών</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:20px; line-height:1; color:#666;">&times;</span></div><div id="archiveList" style="max-height:135px; overflow-y:auto; font-size:14px;">Φόρτωση...</div></div>`;
+  box.innerHTML = `<div style="background:#f9f9f9; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><strong>${lang === 'el' ? 'Αρχείο αγγελιών' : 'Listings archive'}</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:20px; line-height:1; color:#666;">&times;</span></div><div id="archiveList" style="max-height:135px; overflow-y:auto; font-size:14px;">${lang === 'el' ? 'Φόρτωση...' : 'Loading...'}</div></div>`;
   const all = await api('/api/my-ads');
   const archived = all.filter(a => a.status && a.status !== 'active');
   const warnSvg = `<svg width="20" height="20" viewBox="0 0 24 24" style="vertical-align:middle; flex-shrink:0;"><polygon points="12,2 23,21 1,21" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linejoin="round"/><rect x="10.6" y="8" width="2.8" height="7" rx="1" fill="#e53935"/><circle cx="12" cy="17.8" r="1.6" fill="#e53935"/></svg>`;
   const redLight = `<span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#ff1744; box-shadow:0 0 6px #ff1744; flex-shrink:0;"></span>`;
   document.getElementById('archiveList').innerHTML = archived.length ? archived.map(a => {
     const icon = a.status === 'sold' ? '<span style="font-size:16px;">✅</span>' : (a.status === 'rejected' ? warnSvg : redLight);
-    return `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#fff; border:1px solid #eee; border-radius:8px; margin-bottom:6px; gap:8px;"><div onclick="showAd('${a.id}')" style="display:flex; align-items:center; gap:8px; cursor:pointer; overflow:hidden; flex:1;">${icon}<span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.title}</span></div><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">${a.status === 'expired' ? `<span onclick="changeAdStatus('${a.id}','active')" title="Ανανέωση 30 ημ." style="cursor:pointer; font-size:16px;">🔄</span>` : ''}<span onclick="deleteAdForever('${a.id}')" title="Διαγραφή" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`;
-  }).join('') : '<p style="color:#888; text-align:center; padding:16px 0;">Το αρχείο είναι άδειο</p>';
+    return `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#fff; border:1px solid #eee; border-radius:8px; margin-bottom:6px; gap:8px;"><div onclick="showAd('${a.id}')" style="display:flex; align-items:center; gap:8px; cursor:pointer; overflow:hidden; flex:1;">${icon}<span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.title}</span></div><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">${a.status === 'expired' ? `<span onclick="changeAdStatus('${a.id}','active')" title="${lang === 'el' ? 'Ανανέωση 30 ημ.' : 'Renew 30 days'}" style="cursor:pointer; font-size:16px;">🔄</span>` : ''}<span onclick="deleteAdForever('${a.id}')" title="${lang === 'el' ? 'Διαγραφή' : 'Delete'}" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`;
+  }).join('') : `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Το αρχείο είναι άδειο' : 'Archive is empty'}</p>`;
 }
 window._unreadAdIds = [];
 window._unreadAdmin = 0;
@@ -901,17 +901,16 @@ async function handleCartClick() {
   if (!currentUser) return showLogin();
   await showCabinet();
   openCart();
-}
-async function openCart() {
+}async function openCart() {
   if (modPoll) clearInterval(modPoll);
   const box = document.getElementById('modChatZone');
-  box.innerHTML = `<div style="background:#f9f9f9; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><strong>🛒 Το καλάθι μου</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:20px; line-height:1; color:#666;">&times;</span></div><div id="cartList" style="max-height:135px; overflow-y:auto; font-size:14px;">Φόρτωση...</div></div>`;
+  box.innerHTML = `<div style="background:#f9f9f9; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><strong>🛒 ${lang === 'el' ? 'Το καλάθι μου' : 'My cart'}</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:20px; line-height:1; color:#666;">&times;</span></div><div id="cartList" style="max-height:135px; overflow-y:auto; font-size:14px;">${lang === 'el' ? 'Φόρτωση...' : 'Loading...'}</div></div>`;
   const ids = getCart();
-  if (!ids.length) { document.getElementById('cartList').innerHTML = '<p style="color:#888; text-align:center; padding:16px 0;">Το καλάθι σας είναι άδειο</p>'; return; }
-    const all = await api('/api/ads');
+  if (!ids.length) { document.getElementById('cartList').innerHTML = `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Το καλάθι σας είναι άδειο' : 'Your cart is empty'}</p>`; return; }
+  const all = await api('/api/ads');
   const items = all.filter(a => ids.includes(a.id));
   if (items.length !== ids.length) saveCart(items.map(a => a.id));
-  document.getElementById('cartList').innerHTML = items.length ? items.map(a => `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#fff; border:1px solid #eee; border-radius:8px; margin-bottom:6px; gap:8px;"><div onclick="showAd('${a.id}')" style="display:flex; align-items:center; gap:8px; cursor:pointer; overflow:hidden; flex:1;"><span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.title}</span></div><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;"><strong style="color:var(--primary);">${a.price} €</strong><span onclick="toggleCart('${a.id}'); openCart();" title="Αφαίρεση" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`).join('') : '<p style="color:#888; text-align:center; padding:16px 0;">Το καλάθι σας είναι άδειο</p>';
+  document.getElementById('cartList').innerHTML = items.length ? items.map(a => `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#fff; border:1px solid #eee; border-radius:8px; margin-bottom:6px; gap:8px;"><div onclick="showAd('${a.id}')" style="display:flex; align-items:center; gap:8px; cursor:pointer; overflow:hidden; flex:1;"><span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.title}</span></div><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;"><strong style="color:var(--primary);">${a.price} €</strong><span onclick="toggleCart('${a.id}'); openCart();" title="${lang === 'el' ? 'Αφαίρεση' : 'Remove'}" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`).join('') : `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Το καλάθι σας είναι άδειο' : 'Your cart is empty'}</p>`;
 }
 // Init
 updateUserMenu();
