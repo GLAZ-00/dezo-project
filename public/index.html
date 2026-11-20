@@ -773,6 +773,71 @@ async function postAd() {
   alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
   showHome();
 }
+function showLimitedModeNotice() {
+  alert(lang === 'el'
+    ? 'Η λειτουργία δεν είναι διαθέσιμη προς το παρόν (λειτουργία περιορισμένης δοκιμής). Θα σας ενημερώσουμε μόλις ενεργοποιηθεί!'
+    : 'This feature is currently unavailable (limited test mode). We will notify you as soon as it goes live!');
+}
+
+function openEuroHistory() {
+  if (modPoll) clearInterval(modPoll);
+  const box = document.getElementById('modChatZone');
+  box.innerHTML = `
+    <div style="background:#f9f9f9; border:1px solid #ddd; border-radius:10px; padding:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <strong>💶 ${lang === 'el' ? 'Ιστορικό καταθέσεων & μετατροπών (€)' : 'Euro Deposits & Conversions History (€)'}</strong>
+        <span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:20px; line-height:1; color:#666;">&times;</span>
+      </div>
+      <div style="max-height:135px; overflow-y:auto; font-size:13px; color:#666; text-align:center; padding:16px 8px;">
+        ${lang === 'el'
+          ? 'Δεν υπάρχουν συναλλαγές σε € ακόμα (λειτουργία δοκιμής).'
+          : 'No € transactions yet (test mode).'}
+      </div>
+    </div>`;
+}
+function openDcHistory() {
+  if (modPoll) clearInterval(modPoll);
+  const box = document.getElementById('modChatZone');
+  const history = Array.isArray(currentUser?.dcHistory) ? currentUser.dcHistory : [];
+  box.innerHTML = `
+    <div style="background:#f9f9f9; border:1px solid #ddd; border-radius:10px; padding:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <strong>🪙 ${lang === 'el' ? 'Ιστορικό κινήσεων DezoCoin (DC)' : 'DezoCoin (DC) Transactions History'}</strong>
+        <span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:20px; line-height:1; color:#666;">&times;</span>
+      </div>
+      <div style="max-height:135px; overflow-y:auto; font-size:13px;">
+        ${history.length
+          ? history.map(item => `
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#fff; border:1px solid #eee; border-radius:8px; margin-bottom:6px; gap:8px;">
+                <div>
+                  <div style="font-weight:600; color:#222;">${lang === 'el' ? (item.textEl || item.text) : (item.textEn || item.text)}</div>
+                  <div style="font-size:11px; color:#888;">${item.date || ''}</div>
+                </div>
+                <div style="text-align:right; flex-shrink:0;">
+                  <div style="font-weight:700; color:${item.amount >= 0 ? 'var(--primary)' : '#e53935'};">${item.amount >= 0 ? '+' + item.amount : item.amount} DC</div>
+                  ${typeof item.balanceAfter === 'number' ? `<div style="font-size:11px; color:#888;">${lang === 'el' ? 'Υπόλ.' : 'Bal.'}: ${item.balanceAfter} DC</div>` : ''}
+                </div>
+              </div>`).join('')
+          : `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Δεν υπάρχουν κινήσεις DezoCoin ακόμα.' : 'No DezoCoin movements yet.'}</p>`}
+      </div>
+    </div>`;
+}
+
+function renderWalletSvg(isOpen, accentColor) {
+  return isOpen
+    ? `<svg width="42" height="38" viewBox="0 0 44 40" style="flex-shrink:0;">
+        <path d="M24 10 L35 3 Q39 2 40 6 L37 13 Z" fill="${accentColor}" opacity="0.9"/>
+        <rect x="4" y="10" width="32" height="24" rx="5" fill="#fff" stroke="${accentColor}" stroke-width="2.4"/>
+        <path d="M4 16 H36" stroke="${accentColor}" stroke-width="1.6" opacity="0.4"/>
+        <circle cx="29" cy="23" r="2.2" fill="${accentColor}"/>
+      </svg>`
+    : `<svg width="42" height="38" viewBox="0 0 44 40" style="flex-shrink:0;">
+        <rect x="4" y="10" width="32" height="24" rx="5" fill="#f7f7f7" stroke="#888" stroke-width="2.2"/>
+        <path d="M24 17 H38 Q40 17 40 20 V24 Q40 27 38 27 H24 Q21 27 21 22 Q21 17 24 17 Z" fill="#eaeaea" stroke="#777" stroke-width="2"/>
+        <circle cx="26" cy="22" r="2" fill="#666"/>
+      </svg>`;
+}
+
 async function showCabinet() {
   if (!currentUser) return showLogin();
   await checkUnread();
@@ -780,6 +845,9 @@ async function showCabinet() {
   const allMyAds = await api('/api/my-ads');
   const myAds = allMyAds.filter(a => !a.status || a.status === 'active');
   const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX';
+  const euroBal = typeof currentUser.euroBalance === 'number' ? currentUser.euroBalance : 0;
+  const dcBal = typeof currentUser.balance === 'number' ? currentUser.balance : 0;
+
   document.getElementById('mainContent').innerHTML = `
     <div style="background:#fff; border:1px solid #eee; border-radius:12px; height:165px; padding:16px; margin-bottom:12px; position:relative;">
       <span onclick="this.parentElement.style.display='none'" style="position:absolute; top:10px; right:14px; cursor:pointer; font-size:20px; color:#888; line-height:1;">&times;</span>
@@ -787,7 +855,37 @@ async function showCabinet() {
     <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
       <span onclick="showHome()" title="${lang === 'el' ? 'Κλείσιμο' : 'Close'}" style="cursor:pointer; font-size:26px; line-height:1; color:#555; padding:0 6px;">&times;</span>
     </div>
-    <div style="min-height:150px; margin-bottom:16px;"></div>
+    <div id="cabinetTopWidgets" style="min-height:150px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div id="luckyChanceSlot" style="flex:1; min-width:140px;"></div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; margin-left:auto;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button onclick="openEuroHistory()" style="padding:6px 10px; font-size:12px; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer; color:#555;">📋 ${lang === 'el' ? 'Ιστορικό €' : 'History €'}</button>
+          <div onclick="showLimitedModeNotice()" style="display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e0e0e0; border-radius:10px; padding:5px 12px; cursor:pointer; min-width:138px; justify-content:space-between;">
+            ${renderWalletSvg(euroBal > 0, '#1976d2')}
+            <div style="text-align:right;">
+              <div style="font-size:11px; color:#888; font-weight:600;">EURO</div>
+              <div style="font-size:15px; font-weight:700; color:#555;">${euroBal.toFixed(2)} €</div>
+            </div>
+          </div>
+        </div>
+
+        <div onclick="showLimitedModeNotice()" style="display:inline-flex; align-items:center; gap:6px; background:#f5f5f5; border:1px dashed #bbb; border-radius:20px; padding:3px 12px; font-size:11px; font-weight:700; color:#555; cursor:pointer;">
+          <span>⇅ Exchange</span>
+          <span style="color:#888; font-weight:500;">(1€ = 4 DC)</span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button onclick="openDcHistory()" style="padding:6px 10px; font-size:12px; background:#fff; border:1px solid #c8e6c9; border-radius:8px; cursor:pointer; color:var(--primary); font-weight:600;">📋 ${lang === 'el' ? 'Ιστορικό DC' : 'History DC'}</button>
+          <div onclick="openDcHistory()" style="display:flex; align-items:center; gap:8px; background:#fff; border:1.5px solid ${dcBal > 0 ? 'var(--primary)' : '#e0e0e0'}; border-radius:10px; padding:5px 12px; cursor:pointer; min-width:138px; justify-content:space-between; box-shadow:0 2px 6px rgba(0,0,0,.04);">
+            ${renderWalletSvg(dcBal > 0, '#00a046')}
+            <div style="text-align:right;">
+              <div style="font-size:11px; color:var(--primary); font-weight:700;">DezoCoin</div>
+              <div style="font-size:16px; font-weight:800; color:#222;">${dcBal} DC</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:16px;">
       <button class="primary" style="padding:12px;" onclick="showCabinet()">${lang === 'el' ? 'Τα πράγματά μου' : 'My items'}</button>
       <div>${isAdmin ? `<button style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="openAdminInbox()">${lang === 'el' ? 'Μηνύματα' : 'Messages'}</button>` : ''}</div>
@@ -799,12 +897,6 @@ async function showCabinet() {
         ${myAds.length ? myAds.map(a => { const d = Math.max(0, 30 - Math.floor((Date.now() - a.created) / 86400000)); const dotColor = d > 25 ? '#00a046' : (d > 5 ? '#f59e0b' : '#e53935'); const hasMsg = (window._unreadAdIds || []).includes(a.id); return `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer;"><span><span style="color:${dotColor}; margin-right:8px; font-size:16px;">●</span>${hasMsg ? '<span style="margin-right:6px; font-size:16px;">📥</span>' : ''}${a.title}</span><strong style="color:var(--primary);">${a.price} €</strong></div>`; }).join('') : `<p style="color:#888; text-align:center; padding:24px;">${lang === 'el' ? 'Δεν έχετε αγγελίες ακόμα' : 'You have no listings yet'}</p>`}
       </div>
       <div style="border:1px dashed #ccc; border-radius:10px; padding:16px; text-align:center;">
-        <p style="font-size:13px; color:#666; margin-bottom:12px;">${lang === 'el' ? 'Θέλετε να προσθέσετε κάτι;' : 'Want to add something?'}</p>
-        <button class="primary" onclick="showPostAd()">${lang === 'el' ? '+ Προσθήκη αγγελίας' : '+ Add listing'}</button>
-      </div>
-    </div>
-  `;
-}
 let modPoll = null;
 async function openSupportChat() {
   if (!currentUser) return showLogin();
