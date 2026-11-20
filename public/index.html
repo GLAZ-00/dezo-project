@@ -56,6 +56,17 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
   div[style*="border:1px dashed"] p { margin: 0 0 4px 0 !important; font-size: 11px !important; line-height: 1.15 !important; }
   div[style*="border:1px dashed"] button.primary { font-size: 0 !important; padding: 6px 4px !important; line-height: 1.15 !important; }
     div[style*="border:1px dashed"] button.primary::after { content: "+\AΠροσθήκη αγγελίας"; white-space: pre-line; font-size: 12px !important; }
+      @media (max-width: 650px) {
+      #cabinetTopWidgets { justify-content: space-between !important; padding: 0 2px; }
+      #luckyChanceSlot { margin-right: auto; padding-left: 4px; }
+      #luckyChanceSlot img { width: 88px !important; height: 102px !important; }
+      #walletsRightCol { position: static !important; transform: none !important; gap: 4px !important; max-width: 148px; }
+      .wallet-row-euro, .wallet-row-dc { flex-direction: column !important; align-items: stretch !important; gap: 4px !important; width: 100%; }
+      .wallet-row-dc { flex-direction: column-reverse !important; }
+      .wallet-card-compact { min-width: 0 !important; width: 100%; padding: 4px 8px !important; }
+      .wallet-hist-btn { width: 100%; padding: 4px 6px !important; font-size: 11px !important; text-align: center; }
+      .exchange-pill-compact { width: 100%; justify-content: center; padding: 2px 6px !important; font-size: 10px !important; text-align: center; }
+    }
 </style>
 </head>
 <body>
@@ -864,10 +875,10 @@ async function showCabinet() {
           <span style="font-size:12px; font-weight:800; color:#b37819; margin-top:4px; letter-spacing:0.3px;">${lang === 'el' ? 'Η Τυχερή σου Ευκαιρία' : 'Your Lucky Chance'}</span>
         </div>
       </div>
-      <div style="position:absolute; right:0; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; align-items:flex-end; gap:8px; z-index:3;">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <button onclick="openEuroHistory()" style="padding:6px 10px; font-size:12px; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer; color:#555;">📋 ${lang === 'el' ? 'Ιστορικό €' : 'History €'}</button>
-          <div onclick="showLimitedModeNotice()" style="display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e0e0e0; border-radius:10px; padding:5px 12px; cursor:pointer; min-width:138px; justify-content:space-between;">
+            <div id="walletsRightCol" style="position:absolute; right:0; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; align-items:flex-end; gap:8px; z-index:3;">
+        <div class="wallet-row-euro" style="display:flex; align-items:center; gap:8px;">
+          <button class="wallet-hist-btn" onclick="openEuroHistory()" style="padding:6px 10px; font-size:12px; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer; color:#555;">📋 ${lang === 'el' ? 'Ιστορικό €' : 'History €'}</button>
+          <div class="wallet-card-compact" onclick="showLimitedModeNotice()" style="display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e0e0e0; border-radius:10px; padding:5px 12px; cursor:pointer; min-width:138px; justify-content:space-between;">
             ${renderWalletSvg(euroBal > 0, '#1976d2')}
             <div style="text-align:right;">
               <div style="font-size:11px; color:#888; font-weight:600;">EURO</div>
@@ -876,14 +887,14 @@ async function showCabinet() {
           </div>
         </div>
 
-        <div onclick="showLimitedModeNotice()" style="display:inline-flex; align-items:center; gap:6px; background:#f5f5f5; border:1px dashed #bbb; border-radius:20px; padding:3px 12px; font-size:11px; font-weight:700; color:#555; cursor:pointer;">
+        <div class="exchange-pill-compact" onclick="showLimitedModeNotice()" style="display:inline-flex; align-items:center; gap:6px; background:#f5f5f5; border:1px dashed #bbb; border-radius:20px; padding:3px 12px; font-size:11px; font-weight:700; color:#555; cursor:pointer;">
           <span>⇅ Exchange</span>
           <span style="color:#888; font-weight:500;">(1€ = 4 DC)</span>
         </div>
 
-        <div style="display:flex; align-items:center; gap:8px;">
-          <button onclick="openDcHistory()" style="padding:6px 10px; font-size:12px; background:#fff; border:1px solid #c8e6c9; border-radius:8px; cursor:pointer; color:var(--primary); font-weight:600;">📋 ${lang === 'el' ? 'Ιστορικό DC' : 'History DC'}</button>
-          <div onclick="openDcHistory()" style="display:flex; align-items:center; gap:8px; background:#fff; border:1.5px solid ${dcBal > 0 ? 'var(--primary)' : '#e0e0e0'}; border-radius:10px; padding:5px 12px; cursor:pointer; min-width:138px; justify-content:space-between; box-shadow:0 2px 6px rgba(0,0,0,.04);">
+        <div class="wallet-row-dc" style="display:flex; align-items:center; gap:8px;">
+          <button class="wallet-hist-btn" onclick="openDcHistory()" style="padding:6px 10px; font-size:12px; background:#fff; border:1px solid #c8e6c9; border-radius:8px; cursor:pointer; color:var(--primary); font-weight:600;">📋 ${lang === 'el' ? 'Ιστορικό DC' : 'History DC'}</button>
+          <div class="wallet-card-compact" onclick="openDcHistory()" style="display:flex; align-items:center; gap:8px; background:#fff; border:1.5px solid ${dcBal > 0 ? 'var(--primary)' : '#e0e0e0'}; border-radius:10px; padding:5px 12px; cursor:pointer; min-width:138px; justify-content:space-between; box-shadow:0 2px 6px rgba(0,0,0,.04);">
             ${renderWalletSvg(dcBal > 0, '#00a046')}
             <div style="text-align:right;">
               <div style="font-size:11px; color:var(--primary); font-weight:700;">DezoCoin</div>
@@ -893,6 +904,8 @@ async function showCabinet() {
         </div>
       </div>
     </div>
+
+    
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:16px;">
       <button class="primary" style="padding:12px;" onclick="showCabinet()">${lang === 'el' ? 'Τα πράγματά μου' : 'My items'}</button>
       <div>${isAdmin ? `<button style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="openAdminInbox()">${lang === 'el' ? 'Μηνύματα' : 'Messages'}</button>` : ''}</div>
