@@ -856,45 +856,14 @@ async function showCabinet() {
     <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
       <span onclick="showHome()" title="${lang === 'el' ? 'Κλείσιμο' : 'Close'}" style="cursor:pointer; font-size:26px; line-height:1; color:#555; padding:0 6px;">&times;</span>
     </div>
-    <div id="cabinetTopWidgets" style="min-height:150px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-            <div id="luckyChanceSlot" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <div id="cabinetTopWidgets" style="position:relative; min-height:155px; margin-bottom:16px; display:flex; align-items:center; justify-content:center;">
+      <div id="luckyChanceSlot" style="display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2;">
         <div onclick="alert(lang==='el' ? '🎰 Η Τυχερή σου Ευκαιρία — ο Τροχός της Τύχης ανοίγει στο επόμενο βήμα!' : '🎰 Your Lucky Chance — Wheel of Fortune opens in the next step!')" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
-          <svg width="86" height="86" viewBox="0 0 120 120" style="filter:drop-shadow(0 4px 8px rgba(0,0,0,0.22));">
-            <defs>
-              <linearGradient id="dzGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#fff3b0"/>
-                <stop offset="35%" stop-color="#f5c451"/>
-                <stop offset="70%" stop-color="#d4942a"/>
-                <stop offset="100%" stop-color="#9e6714"/>
-              </linearGradient>
-              <linearGradient id="dzEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#34d399"/>
-                <stop offset="45%" stop-color="#059669"/>
-                <stop offset="100%" stop-color="#064e3b"/>
-              </linearGradient>
-              <path id="dzTopArc" d="M 24,60 A 36,36 0 1,1 96,60"/>
-              <path id="dzBotArc" d="M 22,62 A 38,38 0 0,0 98,62"/>
-            </defs>
-            <circle cx="60" cy="60" r="57" fill="url(#dzGold)" stroke="#8c580c" stroke-width="2"/>
-            <circle cx="60" cy="60" r="50" fill="none" stroke="#fff8dc" stroke-width="4.5" stroke-dasharray="1.8 3.1" opacity="0.95"/>
-            <circle cx="60" cy="60" r="46" fill="url(#dzGold)" stroke="#b37819" stroke-width="1.5"/>
-            <text font-size="8.2" font-weight="800" fill="#5c3804" letter-spacing="1.4"><textPath href="#dzTopArc" startOffset="50%" text-anchor="middle">DEZOCOIN</textPath></text>
-            <text font-size="7.4" font-weight="800" fill="#5c3804" letter-spacing="1"><textPath href="#dzBotArc" startOffset="50%" text-anchor="middle">LUCKY CHANCE</textPath></text>
-            <g transform="translate(34,42)">
-              <path d="M5 4 H13 C20 4 22.5 9.5 22.5 16 C22.5 22.5 20 28 13 28 H5 Z" fill="none" stroke="#5c3804" stroke-width="5.6" stroke-linejoin="round"/>
-              <path d="M41 6.5 C38.5 4.2 35 3.8 32 5 C27.5 6.8 25.5 11 25.5 16 C25.5 21 27.5 25.2 32 27 C35 28.2 38.5 27.8 41 25.5" fill="none" stroke="#5c3804" stroke-width="5.6" stroke-linecap="round"/>
-              <line x1="15" y1="13" x2="38" y2="13" stroke="#5c3804" stroke-width="5" stroke-linecap="round"/>
-              <line x1="15" y1="19" x2="38" y2="19" stroke="#5c3804" stroke-width="5" stroke-linecap="round"/>
-              <path d="M5 4 H13 C20 4 22.5 9.5 22.5 16 C22.5 22.5 20 28 13 28 H5 Z" fill="none" stroke="url(#dzEmerald)" stroke-width="3.8" stroke-linejoin="round"/>
-              <path d="M41 6.5 C38.5 4.2 35 3.8 32 5 C27.5 6.8 25.5 11 25.5 16 C25.5 21 27.5 25.2 32 27 C35 28.2 38.5 27.8 41 25.5" fill="none" stroke="url(#dzEmerald)" stroke-width="3.8" stroke-linecap="round"/>
-              <line x1="15" y1="13" x2="38" y2="13" stroke="url(#dzEmerald)" stroke-width="3.3" stroke-linecap="round"/>
-              <line x1="15" y1="19" x2="38" y2="19" stroke="url(#dzEmerald)" stroke-width="3.3" stroke-linecap="round"/>
-            </g>
-          </svg>
-          <span style="font-size:11px; font-weight:800; color:#b37819; margin-top:2px; letter-spacing:0.3px;">${lang === 'el' ? 'Η Τυχερή σου Ευκαιρία' : 'Your Lucky Chance'}</span>
+          <img src="/image_658f5f82.jpg" alt="DezoCoin" style="width:116px; height:116px; object-fit:contain; mix-blend-mode:multiply; filter:drop-shadow(0 6px 12px rgba(0,0,0,0.22));">
+          <span style="font-size:12px; font-weight:800; color:#b37819; margin-top:4px; letter-spacing:0.3px;">${lang === 'el' ? 'Η Τυχερή σου Ευκαιρία' : 'Your Lucky Chance'}</span>
         </div>
       </div>
-      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; margin-left:auto;">
+      <div style="position:absolute; right:0; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; align-items:flex-end; gap:8px; z-index:3;">
         <div style="display:flex; align-items:center; gap:8px;">
           <button onclick="openEuroHistory()" style="padding:6px 10px; font-size:12px; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer; color:#555;">📋 ${lang === 'el' ? 'Ιστορικό €' : 'History €'}</button>
           <div onclick="showLimitedModeNotice()" style="display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e0e0e0; border-radius:10px; padding:5px 12px; cursor:pointer; min-width:138px; justify-content:space-between;">
