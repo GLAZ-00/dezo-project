@@ -58,7 +58,7 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
     div[style*="border:1px dashed"] button.primary::after { content: "+\AΠροσθήκη αγγελίας"; white-space: pre-line; font-size: 12px !important; }
       @media (max-width: 650px) {
       #cabinetTopWidgets { justify-content: space-between !important; padding: 0 2px; }
-      #luckyChanceSlot { margin-right: auto; padding-left: 4px; }
+          #luckyChanceSlot { position: absolute; left: 50%; transform: translateX(-50%); z-index: 2; }
       #luckyChanceSlot img { width: 88px !important; height: 102px !important; }
       #walletsRightCol { position: static !important; transform: none !important; gap: 4px !important; max-width: 148px; }
       .wallet-row-euro, .wallet-row-dc { flex-direction: column !important; align-items: stretch !important; gap: 4px !important; width: 100%; }
@@ -872,7 +872,7 @@ async function showCabinet() {
         <div onclick="alert(lang==='el' ? '🎰 Η Τυχερή σου Ευκαιρία — ο Τροχός της Τύχης ανοίγει στο επόμενο βήμα!' : '🎰 Your Lucky Chance — Wheel of Fortune opens in the next step!')" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
           <img src="/image_658f5f82.jpg" alt="DezoCoin" style="width:104px; height:122px; object-fit:cover; border-radius:50%; filter:drop-shadow(0 6px 12px rgba(0,0,0,0.22));">
 
-          <span style="font-size:12px; font-weight:800; color:#b37819; margin-top:4px; letter-spacing:0.3px;">${lang === 'el' ? 'Η Τυχερή σου Ευκαιρία' : 'Your Lucky Chance'}</span>
+            <span style="font-size:12px; font-weight:800; color:#b37819; margin-top:4px; letter-spacing:0.3px;">${lang === 'el' ? 'Ευκαιρία' : 'Lucky Chance'}</span>
         </div>
       </div>
             <div id="walletsRightCol" style="position:absolute; right:0; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; align-items:flex-end; gap:8px; z-index:3;">
