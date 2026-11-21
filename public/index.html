@@ -875,9 +875,9 @@ function spinLuckyWheel(isFree) {
     const title = lang === 'el' ? won.el : won.en;
     playWheelSound(won.prize ? 'win' : 'lose');
     document.getElementById('wheelResultBanner').textContent = won.prize
-      ? (lang === 'el' ? `🎉 Κερδίσατε: ${title}!` : `🎉 You won: ${title}!`)
+          document.getElementById('wheelResultBanner').textContent = won.prize
+      ? (lang === 'el' ? '🎉 Κερδίσατε: ' + title + '!' : '🎉 You won: ' + title + '!')
       : (lang === 'el' ? '😔 Δοκίμασε ξανά!' : '😔 Try again!');
-  }, 4400);
 }
 function showLimitedModeNotice() {
   alert(lang === 'el'
