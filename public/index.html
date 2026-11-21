@@ -1025,4 +1025,159 @@ async function showCabinet() {
     <div id="modChatZone" style="min-height:130px; margin-bottom:16px;"></div>
     <div style="background:#fff; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.06); display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start;">
       <div style="max-height:112px; overflow-y:auto; padding-right:4px;">
-        ${myAds.length ? myAds.map(a => { const d = Math.max(0, 30 - Math.floor((Date.now() - a.created) / 86400000)); const dotColor = d > 25 ? '#00a046' : (d > 5 ? '#f59e0b' : '#e53935'); const hasMsg = (window._unreadAdIds || []).includes(a.id); return `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer;"><span><span style="color:${dotColor}; margin-right:8px; font-size:16px;">●
+        ${myAds.length ? myAds.map(a => { const d = Math.max(0, 30 - Math.floor((Date.now() - a.created) / 86400000)); const dotColor = d > 25 ? '#00a046' : (d > 5 ? '#f59e0b' : '#e53935'); const hasMsg = (window._unreadAdIds || []).includes(a.id); return `<div onclick="showAd('${a.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer;"><span><span style="color:${dotColor}; margin-right:8px; font-size:16px;">●</span>${hasMsg ? '<span style="margin-right:6px; font-size:16px;">📥</span>' : ''}${a.title}</span><strong style="color:var(--primary);">${a.price} €</strong></div>`; }).join('') : `<p style="color:#888; text-align:center; padding:24px;">${lang === 'el' ? 'Δεν έχετε αγγελίες ακόμα' : 'You have no listings yet'}</p>`}
+      </div>
+      <div style="border:1px dashed #ccc; border-radius:10px; padding:16px; text-align:center;">
+              <p style="font-size:13px; color:#666; margin-bottom:12px;">${lang === 'el' ? 'Θέλετε να προσθέσετε κάτι;' : 'Want to add something?'}</p>
+        <button class="primary" onclick="showPostAd()">${lang === 'el' ? '+ Προσθήκη αγγελίας' : '+ Add listing'}</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('cabinetTopWidgets').innerHTML = document.getElementById('cabinetTopWidgets').innerHTML.replace(/\bDC\b/g, dcLogo(16));
+}
+let modPoll = null;
+async function openSupportChat() {
+  if (!currentUser) return showLogin();
+  if (modPoll) clearInterval(modPoll);
+  const box = document.getElementById('modChatZone');
+  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>${lang === 'el' ? 'Μήνυμα προς διαχειριστή' : 'Message to admin'}</strong><span onclick="clearInterval(modPoll); document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:18px;">&times;</span></div><div id="supList" style="max-height:110px; overflow-y:auto; margin-bottom:8px; font-size:13px;"><span style="color:#888;">${lang === 'el' ? 'Γράψτε το μήνυμά σας...' : 'Write your message...'}</span></div><div style="display:flex; gap:8px;"><input id="supInput" placeholder="${lang === 'el' ? 'Γράψτε εδώ...' : 'Type here...'}" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px;"><button class="primary" style="width:auto; padding:8px 14px;" onclick="sendSupport()">${lang === 'el' ? 'Αποστολή' : 'Send'}</button></div></div>`;
+  const load = async () => {
+    if (!document.getElementById('supList')) return clearInterval(modPoll);
+    try {
+      const all = await api('/api/admin-messages');
+      checkUnread();
+      const mine = all.filter(m => m.fromId === currentUser.id || m.toUserId === currentUser.id);
+      if (mine.length) document.getElementById('supList').innerHTML = mine.map(m => `<div style="margin:4px 0;"><b>${m.fromName}:</b> ${m.text}</div>`).join('');
+    } catch (e) {}
+  };
+  load();
+  modPoll = setInterval(load, 3000);
+}
+async function sendSupport() {
+  const inp = document.getElementById('supInput');
+  if (!inp.value.trim()) return;
+  await api('/api/admin-messages', { method: 'POST', body: JSON.stringify({ text: inp.value.trim() }) });
+  inp.value = '';
+}
+async function openAdminInbox() {
+  if (modPoll) clearInterval(modPoll);
+  const box = document.getElementById('modChatZone');
+  box.innerHTML = `<div style="background:#fff; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><strong>${lang === 'el' ? 'Μηνύματα χρηστών (Διαχειριστής)' : 'User messages (Admin)'}</strong><span onclick="clearInterval(modPoll); document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:18px;">&times;</span></div><div id="admList" style="max-height:140px; overflow-y:auto; font-size:13px;">${lang === 'el' ? 'Φόρτωση...' : 'Loading...'}</div></div>`;
+  const load = async () => {
+    if (!document.getElementById('admList')) return clearInterval(modPoll);
+    try {
+      const all = await api('/api/admin-messages');
+      checkUnread();
+      document.getElementById('admList').innerHTML = all.length ? all.map(m => `<div style="padding:6px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; gap:8px;"><span><b>${m.fromName}:</b> ${m.text}</span><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">${m.fromId !== currentUser.id ? `<button onclick="replyAdmin('${m.fromId}','${m.fromName}')" style="padding:4px 10px; border:1px solid var(--primary); color:var(--primary); background:#fff; border-radius:6px; cursor:pointer; font-size:12px;">${lang === 'el' ? 'Απάντηση' : 'Reply'}</button>` : ''}<span onclick="deleteAdminMsg('${m.id}')" title="${lang === 'el' ? 'Διαγραφή' : 'Delete'}" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`).join('') : `<span style="color:#888;">${lang === 'el' ? 'Δεν υπάρχουν μηνύματα ακόμα.' : 'No messages yet.'}</span>`;
+    } catch (e) {}
+  };
+  load();
+  modPoll = setInterval(load, 3000);
+}
+async function replyAdmin(toUserId, name) {
+  const text = prompt((lang === 'el' ? 'Απάντηση προς ' : 'Reply to ') + name + ':');
+  if (!text || !text.trim()) return;
+  await api('/api/admin-messages', { method: 'POST', body: JSON.stringify({ toUserId, text: text.trim() }) });
+}
+async function deleteAdminMsg(id) {
+  await api('/api/admin-messages/' + id, { method: 'DELETE' });
+  checkUnread();
+  openAdminInbox();
+}
+async function deleteAdForever(id) {
+  if (!confirm(lang === 'el' ? 'Διαγραφή οριστικά;' : 'Delete permanently?')) return;
+  await api('/api/ads/' + id, { method: 'DELETE' });
+  openArchive();
+}
+async function openArchive() {
+  if (modPoll) clearInterval(modPoll);
+  const box = document.getElementById('modChatZone');
+  box.innerHTML = `<div style="background:#f9f9f9; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><strong>${lang === 'el' ? 'Αρχείο αγγελιών' : 'Listings archive'}</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:20px; line-height:1; color:#666;">&times;</span></div><div id="archiveList" style="max-height:135px; overflow-y:auto; font-size:14px;">${lang === 'el' ? 'Φόρτωση...' : 'Loading...'}</div></div>`;
+  const all = await api('/api/my-ads');
+  const archived = all.filter(a => a.status && a.status !== 'active');
+  const warnSvg = `<svg width="20" height="20" viewBox="0 0 24 24" style="vertical-align:middle; flex-shrink:0;"><polygon points="12,2 23,21 1,21" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linejoin="round"/><rect x="10.6" y="8" width="2.8" height="7" rx="1" fill="#e53935"/><circle cx="12" cy="17.8" r="1.6" fill="#e53935"/></svg>`;
+  const redLight = `<span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#ff1744; box-shadow:0 0 6px #ff1744; flex-shrink:0;"></span>`;
+  document.getElementById('archiveList').innerHTML = archived.length ? archived.map(a => {
+    const icon = a.status === 'sold' ? '<span style="font-size:16px;">✅</span>' : (a.status === 'rejected' ? warnSvg : redLight);
+    return `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#fff; border:1px solid #eee; border-radius:8px; margin-bottom:6px; gap:8px;"><div onclick="showAd('${a.id}')" style="display:flex; align-items:center; gap:8px; cursor:pointer; overflow:hidden; flex:1;">${icon}<span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.title}</span></div><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">${a.status === 'expired' ? `<span onclick="changeAdStatus('${a.id}','active')" title="${lang === 'el' ? 'Ανανέωση 30 ημ.' : 'Renew 30 days'}" style="cursor:pointer; font-size:16px;">🔄</span>` : ''}<span onclick="deleteAdForever('${a.id}')" title="${lang === 'el' ? 'Διαγραφή' : 'Delete'}" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`;
+  }).join('') : `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Το αρχείο είναι άδειο' : 'Archive is empty'}</p>`;
+}
+window._unreadAdIds = [];
+window._unreadAdmin = 0;
+async function checkUnread() {
+  const badge = document.getElementById('msgBadge');
+  if (!currentUser || !badge) { if (badge) badge.style.display = 'none'; return; }
+    try {
+    const data = await api('/api/unread?t=' + Date.now());
+    window._unreadAdIds = data.adIds || [];
+    window._unreadAdmin = data.adminCount || 0;
+    if (data.total > 0) { badge.textContent = data.total; badge.style.display = 'inline-block'; }
+    else { badge.style.display = 'none'; }
+  } catch (e) {}
+}
+async function handleBellClick() {
+  if (!currentUser) return showLogin();
+  await showCabinet();
+  if (window._unreadAdmin > 0) {
+    const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX';
+    if (isAdmin) openAdminInbox(); else openSupportChat();
+  }
+}
+function getCart() { try { return JSON.parse(localStorage.getItem('dezo_cart') || '[]'); } catch { return []; } }
+function saveCart(list) { localStorage.setItem('dezo_cart', JSON.stringify(list)); updateCartBadge(); }
+function isInCart(id) { return getCart().includes(id); }
+function updateCartBadge() {
+  const b = document.getElementById('cartBadge');
+  if (!b) return;
+  const n = getCart().length;
+  if (n > 0) { b.textContent = n; b.style.display = 'inline-block'; } else { b.style.display = 'none'; }
+}
+function toggleCart(id) {
+  let list = getCart();
+  if (list.includes(id)) list = list.filter(x => x !== id); else list.push(id);
+  saveCart(list);
+  const btn = document.getElementById('adCartBtn');
+  if (btn) {
+    const added = list.includes(id);
+    btn.style.borderColor = added ? 'var(--primary)' : '#ccc';
+    btn.style.background = added ? '#e8f5e9' : '#fff';
+    btn.style.color = added ? 'var(--primary)' : '#333';
+    btn.textContent = added ? '🛒 ✓' : '🛒';
+  }
+}
+async function handleCartClick() {
+  if (!currentUser) return showLogin();
+  await showCabinet();
+  openCart();
+}async function openCart() {
+  if (modPoll) clearInterval(modPoll);
+  const box = document.getElementById('modChatZone');
+  box.innerHTML = `<div style="background:#f9f9f9; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><strong>🛒 ${lang === 'el' ? 'Το καλάθι μου' : 'My cart'}</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:20px; line-height:1; color:#666;">&times;</span></div><div id="cartList" style="max-height:135px; overflow-y:auto; font-size:14px;">${lang === 'el' ? 'Φόρτωση...' : 'Loading...'}</div></div>`;
+  const ids = getCart();
+  if (!ids.length) { document.getElementById('cartList').innerHTML = `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Το καλάθι σας είναι άδειο' : 'Your cart is empty'}</p>`; return; }
+  const all = await api('/api/ads');
+  const items = all.filter(a => ids.includes(a.id));
+  if (items.length !== ids.length) saveCart(items.map(a => a.id));
+  document.getElementById('cartList').innerHTML = items.length ? items.map(a => `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#fff; border:1px solid #eee; border-radius:8px; margin-bottom:6px; gap:8px;"><div onclick="showAd('${a.id}')" style="display:flex; align-items:center; gap:8px; cursor:pointer; overflow:hidden; flex:1;"><span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.title}</span></div><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;"><strong style="color:var(--primary);">${a.price} €</strong><span onclick="toggleCart('${a.id}'); openCart();" title="${lang === 'el' ? 'Αφαίρεση' : 'Remove'}" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`).join('') : `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Το καλάθι σας είναι άδειο' : 'Your cart is empty'}</p>`;
+}
+// Init
+updateUserMenu();
+updateCartBadge();
+loadCategories();
+showHome();
+checkUnread();
+setTimeout(checkUnread, 800);
+setInterval(checkUnread, 2000);
+const wakeCheck = () => { checkUnread(); setTimeout(checkUnread, 500); setTimeout(checkUnread, 1500); };
+document.addEventListener('visibilitychange', () => { if (!document.hidden) wakeCheck(); });
+window.addEventListener('pageshow', wakeCheck);
+window.addEventListener('focus', wakeCheck);
+document.addEventListener('touchstart', checkUnread, { passive: true });
+</script>
+
+<footer id="cabinetFooter" style="display:none; max-width:1200px; margin:24px auto 12px; padding:16px 20px; background:#fff; border-radius:12px; border-top:1px solid #eee; font-size:13px; color:#666; flex-wrap:wrap; justify-content:space-between; gap:12px;">
+  <div><strong>ΔΕΖΩ.gr</strong> — Μια Δεύτερη Ζωή για τα πράγματά σας • Αθήνα, Ελλάδα</div>
+    <div><span onclick="openSupportChat()" style="color:var(--primary); font-weight:600; cursor:pointer; text-decoration:underline;">Επικοινωνία με διαχειριστή / Αναφορά</span> • Όροι Χρήσης</div>
+</footer>
+</body>
+</html>
