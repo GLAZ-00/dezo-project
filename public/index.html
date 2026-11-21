@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -785,115 +786,6 @@ async function postAd() {
   showHome();
 }
  const dcLogo = (h = 20) => `<svg width="${h}" height="${h}" viewBox="0 0 40 40" style="vertical-align:-4px; display:inline-block; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.22));"><defs><linearGradient id="dzMiniG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff3b0"/><stop offset="45%" stop-color="#f5c451"/><stop offset="100%" stop-color="#b37819"/></linearGradient></defs><circle cx="20" cy="20" r="18.5" fill="url(#dzMiniG)" stroke="#8c580c" stroke-width="1.5"/><circle cx="20" cy="20" r="15.5" fill="none" stroke="#fff8dc" stroke-width="0.9" stroke-dasharray="1.5 1.8" opacity="0.85"/><g transform="translate(5,6) scale(0.76)" fill="none" stroke="#046c4e" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 H15 C24 3 27 9.5 27 18 C27 26.5 24 33 15 33 H5 Z" stroke-width="4.4"/><path d="M35 6 C32 3.5 28 3 24 4.5 C18 6.8 14.5 12 14.5 18 C14.5 24 18 29.2 24 31.5 C28 33 32 32.5 35 30" stroke-width="4.4"/><line x1="2" y1="15" x2="36" y2="15" stroke-width="3.6"/><line x1="2" y1="21" x2="36" y2="21" stroke-width="3.6"/></g></svg>`;
-  let wheelAngle = 0, wheelSpinning = false;
-const wheelSectors = [
-  { el: '+1 D€', en: '+1 D€', icon: '🪙', bg: '#058c42', tc: '#fff', prize: true },
-  { el: 'Δοκίμασε ξανά', en: 'Try again', icon: '↻', bg: '#e5e7eb', tc: '#374151', prize: false },
-  { el: 'VIP 1 εβδ.', en: 'VIP 1 wk', icon: '⭐', bg: '#eab308', tc: '#1f2937', prize: true },
-  { el: 'Δοκίμασε ξανά', en: 'Try again', icon: '↻', bg: '#e5e7eb', tc: '#374151', prize: false },
-  { el: 'Προβολή 3 ημ.', en: 'Boost 3 d', icon: '🚀', bg: '#f6b26b', tc: '#1f2937', prize: true },
-  { el: 'Δοκίμασε ξανά', en: 'Try again', icon: '↻', bg: '#e5e7eb', tc: '#374151', prize: false },
-  { el: '+2 D€', en: '+2 D€', icon: '🪙', bg: '#058c42', tc: '#fff', prize: true },
-  { el: 'Δοκίμασε ξανά', en: 'Try again', icon: '↻', bg: '#e5e7eb', tc: '#374151', prize: false },
-  { el: '+1 Θέση', en: '+1 Slot', icon: '📋', bg: '#e06666', tc: '#fff', prize: true },
-  { el: 'Δοκίμασε ξανά', en: 'Try again', icon: '↻', bg: '#e5e7eb', tc: '#374151', prize: false },
-  { el: 'Προβολή 5 ημ.', en: 'Boost 5 d', icon: '🚀', bg: '#f6b26b', tc: '#1f2937', prize: true },
-  { el: 'Δοκίμασε ξανά', en: 'Try again', icon: '↻', bg: '#e5e7eb', tc: '#374151', prize: false },
-  { el: '+4 D€', en: '+4 D€', icon: '🪙', bg: '#058c42', tc: '#fff', prize: true },
-  { el: 'Δοκίμασε ξανά', en: 'Try again', icon: '↻', bg: '#e5e7eb', tc: '#374151', prize: false },
-  { el: 'VIP 3 εβδ.', en: 'VIP 3 wks', icon: '⭐', bg: '#eab308', tc: '#1f2937', prize: true },
-  { el: 'Δοκίμασε ξανά', en: 'Try again', icon: '↻', bg: '#e5e7eb', tc: '#374151', prize: false }
-];
-
-function playWheelSound(type) {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    if (type === 'tick') {
-      osc.frequency.value = 680; gain.gain.setValueAtTime(0.06, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
-      osc.start(); osc.stop(ctx.currentTime + 0.04);
-    } else if (type === 'win') {
-      [523, 659, 784, 1046].forEach((f, idx) => {
-        const o = ctx.createOscillator(), g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination); o.frequency.value = f;
-        g.gain.setValueAtTime(0.09, ctx.currentTime + idx * 0.1);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.35);
-        o.start(ctx.currentTime + idx * 0.1); o.stop(ctx.currentTime + idx * 0.1 + 0.35);
-      });
-    } else {
-      osc.frequency.value = 240; gain.gain.setValueAtTime(0.07, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-      osc.start(); osc.stop(ctx.currentTime + 0.25);
-    }
-  } catch (e) {}
-}
-
-function openLuckyWheel() {
-  let m = document.getElementById('luckyWheelModal');
-  if (m) m.remove();
-  const cx = 180, cy = 180, r = 166, step = 360 / 16;
-  let paths = '';
-  wheelSectors.forEach((s, i) => {
-    const a1 = (i * step - 90 - step / 2) * Math.PI / 180;
-    const a2 = ((i + 1) * step - 90 - step / 2) * Math.PI / 180;
-    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
-    const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
-    const rot = i * step;
-    const label = lang === 'el' ? s.el : s.en;
-    paths += `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 0,1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${s.bg}" stroke="#d4af37" stroke-width="1.2"/>`;
-    paths += `<g transform="translate(${cx},${cy}) rotate(${rot})"><text x="0" y="-142" text-anchor="middle" font-size="13">${s.icon}</text><text x="0" y="-114" text-anchor="middle" fill="${s.tc}" font-size="9.5" font-weight="800" transform="rotate(-90 0 -114)">${label}</text></g>`;
-  });
-  m = document.createElement('div');
-  m.id = 'luckyWheelModal';
-  m.style.cssText = 'position:fixed; inset:0; background:rgba(4,24,15,0.88); z-index:9999; display:flex; align-items:center; justify-content:center; padding:12px; backdrop-filter:blur(4px);';
-  m.innerHTML = `
-    <div style="position:relative; width:100%; max-width:390px; border-radius:24px; padding:20px 14px 22px; background:radial-gradient(circle at 50% 38%, rgba(234,179,8,0.28) 0%, #064e3b 48%, #022c22 100%); border:2.5px solid #d4af37; box-shadow:0 0 40px rgba(212,175,55,0.35), inset 0 0 30px rgba(0,0,0,0.6); text-align:center; color:#fff;">
-      <button onclick="document.getElementById('luckyWheelModal').remove()" style="position:absolute; top:12px; right:12px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,0.45); border:1.5px solid #d4af37; color:#fef08a; font-size:18px; cursor:pointer; line-height:1;">×</button>
-      <div style="font-size:21px; font-weight:900; color:#fde047; text-shadow:0 2px 8px rgba(0,0,0,0.6); margin-bottom:12px; letter-spacing:0.4px;">${lang === 'el' ? 'Η Τυχερή σου Ευκαιρία' : 'Your Lucky Chance'}</div>
-      <div style="position:relative; width:336px; height:336px; margin:0 auto 14px;">
-        <div style="position:absolute; top:-8px; left:50%; transform:translateX(-50%); z-index:5; width:0; height:0; border-left:14px solid transparent; border-right:14px solid transparent; border-top:26px solid #fde047; filter:drop-shadow(0 3px 4px rgba(0,0,0,0.6));"></div>
-        <div style="width:100%; height:100%; border-radius:50%; padding:8px; background:linear-gradient(135deg,#fff3b0,#d4942a,#8c580c); box-shadow:0 0 22px rgba(253,224,71,0.45); position:relative;">
-          <svg id="wheelSpinnerSvg" viewBox="0 0 360 360" style="width:100%; height:100%; border-radius:50%; display:block; transition:transform 4.2s cubic-bezier(0.15, 0.85, 0.2, 1);">${paths}</svg>
-          <img src="/image_658f5f82.jpg" alt="DezoCoin" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:76px; height:88px; object-fit:cover; border-radius:50%; border:3px solid #fde047; box-shadow:0 4px 14px rgba(0,0,0,0.65); z-index:4; pointer-events:none;">
-        </div>
-      </div>
-      <div id="wheelResultMsg" style="min-height:24px; font-size:15px; font-weight:800; color:#fde047; margin-bottom:10px;"></div>
-      <div style="display:flex; flex-direction:column; gap:9px; align-items:center;">
-        <button onclick="spinLuckyWheel(true)" style="width:86%; padding:12px; border-radius:14px; border:2px solid #86efac; background:linear-gradient(180deg,#16a34a,#065f46); color:#fff; font-size:16px; font-weight:900; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.4);">${lang === 'el' ? 'ΠΕΡΙΣΤΡΟΦΗ (Δωρεάν)' : 'SPIN FREE'}</button>
-        <button onclick="spinLuckyWheel(false)" style="width:72%; padding:9px 14px; border-radius:12px; border:1.5px solid #fde047; background:linear-gradient(180deg,#facc15,#ca8a04); color:#1f2937; font-size:14px; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 3px 10px rgba(0,0,0,0.35);">${lang === 'el' ? 'Περιστροφή με 1' : 'Spin for 1'} ${dcLogo(18)}</button>
-      </div>
-    </div>`;
-  document.body.appendChild(m);
-}
-
-function spinLuckyWheel(isFree) {
-  if (wheelSpinning) return;
-  wheelSpinning = true;
-  document.getElementById('wheelResultMsg').textContent = '';
-  const targetIdx = Math.floor(Math.random() * 16);
-  const step = 360 / 16;
-  const stopAngle = (360 - targetIdx * step) % 360;
-  wheelAngle += 1800 + ((stopAngle - (wheelAngle % 360) + 360) % 360);
-  const svg = document.getElementById('wheelSpinnerSvg');
-  if (svg) svg.style.transform = `rotate(${wheelAngle}deg)`;
-  let ticks = 0;
-  const ticker = setInterval(() => {
-    playWheelSound('tick');
-    if (++ticks > 18) clearInterval(ticker);
-  }, 190);
-  setTimeout(() => {
-    wheelSpinning = false;
-    const won = wheelSectors[targetIdx];
-    const title = lang === 'el' ? won.el : won.en;
-    playWheelSound(won.prize ? 'win' : 'lose');
-    document.getElementById('wheelResultMsg').innerHTML = won.prize
-      ? (lang === 'el' ? `🎉 Κερδίσατε: ${title}!` : `🎉 You won: ${title}!`)
-      : (lang === 'el' ? '😔 Δοκίμασε ξανά!' : '😔 Try again!');
-  }, 4300);
-}
 function showLimitedModeNotice() {
   alert(lang === 'el'
     ? 'Η λειτουργία δεν είναι διαθέσιμη προς το παρόν (λειτουργία περιορισμένης δοκιμής). Θα σας ενημερώσουμε μόλις ενεργοποιηθεί!'
@@ -978,8 +870,7 @@ async function showCabinet() {
     </div>
         <div id="cabinetTopWidgets" style="position:relative; min-height:155px; margin-bottom:16px; display:flex; align-items:center; justify-content:center;">
       <div id="luckyChanceSlot" style="display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2;">
-         <div onclick="openLuckyWheel()" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
-
+        <div onclick="alert(lang==='el' ? '🎰 Η Τυχερή σου Ευκαιρία — ο Τροχός της Τύχης ανοίγει στο επόμενο βήμα!' : '🎰 Your Lucky Chance — Wheel of Fortune opens in the next step!')" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
           <img src="/image_658f5f82.jpg" alt="DezoCoin" style="width:104px; height:122px; object-fit:cover; border-radius:50%; filter:drop-shadow(0 6px 12px rgba(0,0,0,0.22));">
 
             <span style="font-size:12px; font-weight:800; color:#b37819; margin-top:4px; letter-spacing:0.3px;">${lang === 'el' ? 'Ευκαιρία' : 'Lucky Chance'}</span>
@@ -1102,83 +993,3 @@ async function openArchive() {
   }).join('') : `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Το αρχείο είναι άδειο' : 'Archive is empty'}</p>`;
 }
 window._unreadAdIds = [];
-window._unreadAdmin = 0;
-async function checkUnread() {
-  const badge = document.getElementById('msgBadge');
-  if (!currentUser || !badge) { if (badge) badge.style.display = 'none'; return; }
-    try {
-    const data = await api('/api/unread?t=' + Date.now());
-    window._unreadAdIds = data.adIds || [];
-    window._unreadAdmin = data.adminCount || 0;
-    if (data.total > 0) { badge.textContent = data.total; badge.style.display = 'inline-block'; }
-    else { badge.style.display = 'none'; }
-  } catch (e) {}
-}
-async function handleBellClick() {
-  if (!currentUser) return showLogin();
-  await showCabinet();
-  if (window._unreadAdmin > 0) {
-    const isAdmin = currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX';
-    if (isAdmin) openAdminInbox(); else openSupportChat();
-  }
-}
-function getCart() { try { return JSON.parse(localStorage.getItem('dezo_cart') || '[]'); } catch { return []; } }
-function saveCart(list) { localStorage.setItem('dezo_cart', JSON.stringify(list)); updateCartBadge(); }
-function isInCart(id) { return getCart().includes(id); }
-function updateCartBadge() {
-  const b = document.getElementById('cartBadge');
-  if (!b) return;
-  const n = getCart().length;
-  if (n > 0) { b.textContent = n; b.style.display = 'inline-block'; } else { b.style.display = 'none'; }
-}
-function toggleCart(id) {
-  let list = getCart();
-  if (list.includes(id)) list = list.filter(x => x !== id); else list.push(id);
-  saveCart(list);
-  const btn = document.getElementById('adCartBtn');
-  if (btn) {
-    const added = list.includes(id);
-    btn.style.borderColor = added ? 'var(--primary)' : '#ccc';
-    btn.style.background = added ? '#e8f5e9' : '#fff';
-    btn.style.color = added ? 'var(--primary)' : '#333';
-    btn.textContent = added ? '🛒 ✓' : '🛒';
-  }
-}
-async function handleCartClick() {
-  if (!currentUser) return showLogin();
-  await showCabinet();
-  openCart();
-}async function openCart() {
-  if (modPoll) clearInterval(modPoll);
-  const box = document.getElementById('modChatZone');
-  box.innerHTML = `<div style="background:#f9f9f9; border:1px solid #ddd; border-radius:10px; padding:12px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><strong>🛒 ${lang === 'el' ? 'Το καλάθι μου' : 'My cart'}</strong><span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:20px; line-height:1; color:#666;">&times;</span></div><div id="cartList" style="max-height:135px; overflow-y:auto; font-size:14px;">${lang === 'el' ? 'Φόρτωση...' : 'Loading...'}</div></div>`;
-  const ids = getCart();
-  if (!ids.length) { document.getElementById('cartList').innerHTML = `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Το καλάθι σας είναι άδειο' : 'Your cart is empty'}</p>`; return; }
-  const all = await api('/api/ads');
-  const items = all.filter(a => ids.includes(a.id));
-  if (items.length !== ids.length) saveCart(items.map(a => a.id));
-  document.getElementById('cartList').innerHTML = items.length ? items.map(a => `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#fff; border:1px solid #eee; border-radius:8px; margin-bottom:6px; gap:8px;"><div onclick="showAd('${a.id}')" style="display:flex; align-items:center; gap:8px; cursor:pointer; overflow:hidden; flex:1;"><span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.title}</span></div><div style="display:flex; align-items:center; gap:10px; flex-shrink:0;"><strong style="color:var(--primary);">${a.price} €</strong><span onclick="toggleCart('${a.id}'); openCart();" title="${lang === 'el' ? 'Αφαίρεση' : 'Remove'}" style="cursor:pointer; font-size:16px;">🗑️</span></div></div>`).join('') : `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Το καλάθι σας είναι άδειο' : 'Your cart is empty'}</p>`;
-}
-// Init
-updateUserMenu();
-updateCartBadge();
-loadCategories();
-showHome();
-checkUnread();
-setTimeout(checkUnread, 800);
-setInterval(checkUnread, 2000);
-const wakeCheck = () => { checkUnread(); setTimeout(checkUnread, 500); setTimeout(checkUnread, 1500); };
-document.addEventListener('visibilitychange', () => { if (!document.hidden) wakeCheck(); });
-window.addEventListener('pageshow', wakeCheck);
-window.addEventListener('focus', wakeCheck);
-document.addEventListener('touchstart', checkUnread, { passive: true });
-</script>
-
-<footer id="cabinetFooter" style="display:none; max-width:1200px; margin:24px auto 12px; padding:16px 20px; background:#fff; border-radius:12px; border-top:1px solid #eee; font-size:13px; color:#666; flex-wrap:wrap; justify-content:space-between; gap:12px;">
-  <div><strong>ΔΕΖΩ.gr</strong> — Μια Δεύτερη Ζωή για τα πράγματά σας • Αθήνα, Ελλάδα</div>
-    <div><span onclick="openSupportChat()" style="color:var(--primary); font-weight:600; cursor:pointer; text-decoration:underline;">Επικοινωνία με διαχειριστή / Αναφορά</span> • Όροι Χρήσης</div>
-</footer>
-</body>
-</html>
-
-
