@@ -869,7 +869,8 @@ async function showCabinet() {
     </div>
         <div id="cabinetTopWidgets" style="position:relative; min-height:155px; margin-bottom:16px; display:flex; align-items:center; justify-content:center;">
       <div id="luckyChanceSlot" style="display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2;">
-        <div onclick="alert(lang==='el' ? '🎰 Η Τυχερή σου Ευκαιρία — ο Τροχός της Τύχης ανοίγει στο επόμενο βήμα!' : '🎰 Your Lucky Chance — Wheel of Fortune opens in the next step!')" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+         <div onclick="openLuckyWheel()" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+
           <img src="/image_658f5f82.jpg" alt="DezoCoin" style="width:104px; height:122px; object-fit:cover; border-radius:50%; filter:drop-shadow(0 6px 12px rgba(0,0,0,0.22));">
 
             <span style="font-size:12px; font-weight:800; color:#b37819; margin-top:4px; letter-spacing:0.3px;">${lang === 'el' ? 'Ευκαιρία' : 'Lucky Chance'}</span>
