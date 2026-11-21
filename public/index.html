@@ -874,7 +874,6 @@ function spinLuckyWheel(isFree) {
     const won = wheelPrizes[targetIdx];
     const title = lang === 'el' ? won.el : won.en;
     playWheelSound(won.prize ? 'win' : 'lose');
-    document.getElementById('wheelResultBanner').textContent = won.prize
           document.getElementById('wheelResultBanner').textContent = won.prize
       ? (lang === 'el' ? '🎉 Κερδίσατε: ' + title + '!' : '🎉 You won: ' + title + '!')
       : (lang === 'el' ? '😔 Δοκίμασε ξανά!' : '😔 Try again!');
