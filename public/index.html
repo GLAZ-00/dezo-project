@@ -786,6 +786,100 @@ async function postAd() {
   showHome();
 }
  const dcLogo = (h = 20) => `<svg width="${h}" height="${h}" viewBox="0 0 40 40" style="vertical-align:-4px; display:inline-block; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.22));"><defs><linearGradient id="dzMiniG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff3b0"/><stop offset="45%" stop-color="#f5c451"/><stop offset="100%" stop-color="#b37819"/></linearGradient></defs><circle cx="20" cy="20" r="18.5" fill="url(#dzMiniG)" stroke="#8c580c" stroke-width="1.5"/><circle cx="20" cy="20" r="15.5" fill="none" stroke="#fff8dc" stroke-width="0.9" stroke-dasharray="1.5 1.8" opacity="0.85"/><g transform="translate(5,6) scale(0.76)" fill="none" stroke="#046c4e" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 H15 C24 3 27 9.5 27 18 C27 26.5 24 33 15 33 H5 Z" stroke-width="4.4"/><path d="M35 6 C32 3.5 28 3 24 4.5 C18 6.8 14.5 12 14.5 18 C14.5 24 18 29.2 24 31.5 C28 33 32 32.5 35 30" stroke-width="4.4"/><line x1="2" y1="15" x2="36" y2="15" stroke-width="3.6"/><line x1="2" y1="21" x2="36" y2="21" stroke-width="3.6"/></g></svg>`;
+  let wheelAngle = 0, wheelSpinning = false;
+const wheelPrizes = [
+  { el: 'Δοκίμασε ξανά', en: 'Try again', prize: false },
+  { el: 'VIP 1 εβδ.', en: 'VIP 1 week', prize: true },
+  { el: 'Δοκίμασε ξανά', en: 'Try again', prize: false },
+  { el: 'Προβολή 3 ημ.', en: 'Promo 3 days', prize: true },
+  { el: 'Δοκίμασε ξανά', en: 'Try again', prize: false },
+  { el: '+2 D€', en: '+2 D€', prize: true },
+  { el: 'Δοκίμασε ξανά', en: 'Try again', prize: false },
+  { el: '+1 Θέση', en: '+1 position', prize: true },
+  { el: 'Δοκίμασε ξανά', en: 'Try again', prize: false },
+  { el: 'Προβολή 5 ημ.', en: 'Promo 5 days', prize: true },
+  { el: 'Δοκίμασε ξανά', en: 'Try again', prize: false },
+  { el: '+4 D€', en: '+4 D€', prize: true },
+  { el: 'Δοκίμασε ξανά', en: 'Try again', prize: false },
+  { el: 'VIP 3 εβδ.', en: 'VIP 3 weeks', prize: true },
+  { el: 'Δοκίμασε ξανά', en: 'Try again', prize: false },
+  { el: '+1 D€', en: '+1 D€', prize: true }
+];
+
+function playWheelSound(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (type === 'tick') {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination); o.frequency.value = 680;
+      g.gain.setValueAtTime(0.06, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+      o.start(); o.stop(ctx.currentTime + 0.04);
+    } else if (type === 'win') {
+      [523, 659, 784, 1046].forEach((f, idx) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination); o.frequency.value = f;
+        g.gain.setValueAtTime(0.09, ctx.currentTime + idx * 0.1);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.35);
+        o.start(ctx.currentTime + idx * 0.1); o.stop(ctx.currentTime + idx * 0.1 + 0.35);
+      });
+    } else {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination); o.frequency.value = 240;
+      g.gain.setValueAtTime(0.07, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+      o.start(); o.stop(ctx.currentTime + 0.25);
+    }
+  } catch (e) {}
+}
+
+function openLuckyWheel() {
+  let m = document.getElementById('luckyWheelModal');
+  if (m) m.remove();
+  const imgUrl = lang === 'el' ? '/IMG_20261121_153751.jpg' : '/grok_1795268415770.jpg';
+  wheelAngle = 0;
+  m = document.createElement('div');
+  m.id = 'luckyWheelModal';
+  m.style.cssText = 'position:fixed; inset:0; background:rgba(3,18,12,0.88); z-index:9999; display:flex; align-items:center; justify-content:center; padding:10px; backdrop-filter:blur(4px);';
+  m.innerHTML = `
+    <div style="position:relative; width:100%; max-width:390px; aspect-ratio:1152/1536; border-radius:20px; overflow:hidden; box-shadow:0 0 40px rgba(212,175,55,0.45); background:#042417;">
+      <img src="${imgUrl}" alt="Lucky Chance" style="width:100%; height:100%; display:block; object-fit:cover; pointer-events:none;">
+      <div id="wheelDiskRotator" style="position:absolute; left:13.8%; top:21.5%; width:72.4%; height:54.3%; border-radius:50%; background-image:url('${imgUrl}'); background-size:138.1% 184.2%; background-position:50% 47.4%; transition:transform 4.3s cubic-bezier(0.15, 0.85, 0.2, 1); pointer-events:none;"></div>
+      <div style="position:absolute; left:38.5%; top:40.2%; width:23%; height:17.2%; border-radius:50%; background-image:url('${imgUrl}'); background-size:434.8% 581.4%; background-position:50% 48.2%; pointer-events:none; z-index:3;"></div>
+      <div style="position:absolute; left:44.5%; top:16.5%; width:11%; height:9%; background-image:url('${imgUrl}'); background-size:909% 1111%; background-position:50% 18.8%; pointer-events:none; z-index:4;"></div>
+      <div id="wheelResultBanner" style="position:absolute; left:8%; right:8%; top:76.5%; text-align:center; font-size:15px; font-weight:900; color:#fde047; text-shadow:0 2px 6px #000, 0 0 10px #000; z-index:5; pointer-events:none;"></div>
+      <button onclick="document.getElementById('luckyWheelModal').remove()" aria-label="Close" style="position:absolute; top:2.8%; right:4.5%; width:10.5%; height:7.8%; background:transparent; border:none; cursor:pointer; z-index:6;"></button>
+      <button onclick="spinLuckyWheel(true)" aria-label="Spin Free" style="position:absolute; left:10.5%; top:81.8%; width:79%; height:7.8%; background:transparent; border:none; cursor:pointer; z-index:6;"></button>
+      <button onclick="spinLuckyWheel(false)" aria-label="Spin 1 DC" style="position:absolute; left:24.5%; top:91.2%; width:51%; height:6.2%; background:transparent; border:none; cursor:pointer; z-index:6;"></button>
+    </div>`;
+  document.body.appendChild(m);
+}
+
+function spinLuckyWheel(isFree) {
+  if (wheelSpinning) return;
+  wheelSpinning = true;
+  document.getElementById('wheelResultBanner').textContent = '';
+  const targetIdx = Math.floor(Math.random() * 16);
+  const step = 360 / 16;
+  const stopAngle = (360 - (targetIdx + 0.5) * step) % 360;
+  wheelAngle += 1800 + ((stopAngle - (wheelAngle % 360) + 360) % 360);
+  const disk = document.getElementById('wheelDiskRotator');
+  if (disk) disk.style.transform = `rotate(${wheelAngle}deg)`;
+  let ticks = 0;
+  const ticker = setInterval(() => {
+    playWheelSound('tick');
+    if (++ticks > 18) clearInterval(ticker);
+  }, 190);
+  setTimeout(() => {
+    wheelSpinning = false;
+    const won = wheelPrizes[targetIdx];
+    const title = lang === 'el' ? won.el : won.en;
+    playWheelSound(won.prize ? 'win' : 'lose');
+    document.getElementById('wheelResultBanner').textContent = won.prize
+      ? (lang === 'el' ? `🎉 Κερδίσατε: ${title}!` : `🎉 You won: ${title}!`)
+      : (lang === 'el' ? '😔 Δοκίμασε ξανά!' : '😔 Try again!');
+  }, 4400);
+}
 function showLimitedModeNotice() {
   alert(lang === 'el'
     ? 'Η λειτουργία δεν είναι διαθέσιμη προς το παρόν (λειτουργία περιορισμένης δοκιμής). Θα σας ενημερώσουμε μόλις ενεργοποιηθεί!'
@@ -870,7 +964,7 @@ async function showCabinet() {
     </div>
         <div id="cabinetTopWidgets" style="position:relative; min-height:155px; margin-bottom:16px; display:flex; align-items:center; justify-content:center;">
       <div id="luckyChanceSlot" style="display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2;">
-        <div onclick="alert(lang==='el' ? '🎰 Η Τυχερή σου Ευκαιρία — ο Τροχός της Τύχης ανοίγει στο επόμενο βήμα!' : '🎰 Your Lucky Chance — Wheel of Fortune opens in the next step!')" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+             <div onclick="openLuckyWheel()" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
           <img src="/image_658f5f82.jpg" alt="DezoCoin" style="width:104px; height:122px; object-fit:cover; border-radius:50%; filter:drop-shadow(0 6px 12px rgba(0,0,0,0.22));">
 
             <span style="font-size:12px; font-weight:800; color:#b37819; margin-top:4px; letter-spacing:0.3px;">${lang === 'el' ? 'Ευκαιρία' : 'Lucky Chance'}</span>
