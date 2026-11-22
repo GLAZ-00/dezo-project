@@ -869,7 +869,7 @@ function spinLuckyWheel(isFree) {
   document.getElementById('wheelResultBanner').textContent = '';
   const targetIdx = Math.floor(Math.random() * 16);
   const step = 360 / 16;
-  const stopAngle = (360 - (targetIdx + 0.5) * step) % 360;
+    const stopAngle = (360 - targetIdx * step) % 360;
   wheelAngle += 1800 + ((stopAngle - (wheelAngle % 360) + 360) % 360);
   const disk = document.getElementById('wheelDiskRotator');
   if (disk) disk.style.transform = `rotate(${wheelAngle}deg)`;
