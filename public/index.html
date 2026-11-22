@@ -902,7 +902,7 @@ function spinLuckyWheel(isFree) {
   }, 190);
   setTimeout(() => {
     wheelSpinning = false;
-     const won = wheelPrizes[lang === 'el' ? targetIdx : (targetIdx + 14) % 16];
+    const won = wheelPrizes[lang === 'el' ? (targetIdx + 1) % 16 : (targetIdx + 15) % 16];
     const title = lang === 'el' ? won.el : won.en;
     playWheelSound(won.prize ? 'win' : 'lose');
     document.getElementById('wheelResultBanner').textContent = won.prize
