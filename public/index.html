@@ -838,12 +838,27 @@ function openLuckyWheel() {
   const imgUrl = isEl ? '/IMG_20261121_153751.jpg' : '/grok_1795268415770.jpg';
   const diskPos = isEl ? '50% 47.9%' : '50% 48.5%';
   const hubPos = isEl ? '50% 48.3%' : '50% 48.9%';
-  const gemSvg = (cx, cy, r) => {
+    const gemSvg = (cx, cy, r) => {
     const s = r * 0.72, d = r * 0.52, t = r * 0.34;
-    return `<g transform="translate(${cx},${cy})"><circle r="${r}" fill="#c8ecff" stroke="#184e77" stroke-width="${r*0.14}"/><polygon points="0,0 ${-d},${-s} ${d},${-s}" fill="#ffffff"/><polygon points="0,0 ${d},${-s} ${s},${-d}" fill="#2b7cb3"/><polygon points="0,0 ${s},${-d} ${s},${d}" fill="#9ce5ff"/><polygon points="0,0 ${s},${d} ${d},${s}" fill="#1b4965"/><polygon points="0,0 ${d},${s} ${-d},${s}" fill="#7ad7f0"/><polygon points="0,0 ${-d},${s} ${-s},${d}" fill="#2b7cb3"/><polygon points="0,0 ${-s},${d} ${-s},${-d}" fill="#ffffff"/><polygon points="0,0 ${-s},${-d} ${-d},${-s}" fill="#4895ef"/><polygon points="0,${-t} ${t},0 0,${t} ${-t},0" fill="#ffffff" opacity="0.95"/></g>`;
+    return `<g transform="translate(${cx},${cy})">` +
+      `<circle r="${r}" fill="#c8ecff" stroke="#184e77" stroke-width="${r*0.14}"/>` +
+      `<polygon points="0,0 ${-d},${-s} ${d},${-s}" fill="#ffffff"/>` +
+      `<polygon points="0,0 ${d},${-s} ${s},${-d}" fill="#2b7cb3"/>` +
+      `<polygon points="0,0 ${s},${-d} ${s},${d}" fill="#9ce5ff"/>` +
+      `<polygon points="0,0 ${s},${d} ${d},${s}" fill="#1b4965"/>` +
+      `<polygon points="0,0 ${d},${s} ${-d},${s}" fill="#7ad7f0"/>` +
+      `<polygon points="0,0 ${-d},${s} ${-s},${d}" fill="#2b7cb3"/>` +
+      `<polygon points="0,0 ${-s},${d} ${-s},${-d}" fill="#ffffff"/>` +
+      `<polygon points="0,0 ${-s},${-d} ${-d},${-s}" fill="#4895ef"/>` +
+      `<polygon points="0,${-t} ${t},0 0,${t} ${-t},0" fill="#ffffff" opacity="0.95"/>` +
+      `</g>`;
   };
-  const outerGems = Array.from({ length: 88 }, (_, i) => `<g transform="rotate(${(i * 360) / 88} 100 100)">${gemSvg(100, 4.2, 3.35)}</g>`).join('');
-  const innerGems = Array.from({ length: 44 }, (_, i) => `<g transform="rotate(${(i * 360) / 44} 100 100)">${gemSvg(100, 5.2, 6.7)}</g>`).join('');
+  const outerGems = Array.from({ length: 88 }, (_, i) =>
+    `<g transform="rotate(${(i * 360) / 88} 100 100)">${gemSvg(100, 4.2, 3.35)}</g>`
+  ).join('');
+  const innerGems = Array.from({ length: 44 }, (_, i) =>
+    `<g transform="rotate(${(i * 360) / 44} 100 100)">${gemSvg(100, 5.2, 6.7)}</g>`
+  ).join('');
   wheelAngle = 0;
   m = document.createElement('div');
   m.id = 'luckyWheelModal';
