@@ -830,7 +830,8 @@ function playWheelSound(type) {
       g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
       o.start(); o.stop(ctx.currentTime + 0.25);
     }
-  } catch (e) {}
+    } catch (e) {}
+}
 function openLuckyWheel() {
   let m = document.getElementById('luckyWheelModal');
   if (m) m.remove();
