@@ -870,7 +870,7 @@ async function showCabinet() {
     </div>
         <div id="cabinetTopWidgets" style="position:relative; min-height:155px; margin-bottom:16px; display:flex; align-items:center; justify-content:center;">
       <div id="luckyChanceSlot" style="display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2;">
-        <div onclick="openLuckyWheel()" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+        <div onclick="alert(lang==='el' ? '🎰 Η Τυχερή σου Ευκαιρία — ο Τροχός της Τύχης ανοίγει στο επόμενο βήμα!' : '🎰 Your Lucky Chance — Wheel of Fortune opens in the next step!')" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
           <img src="/image_658f5f82.jpg" alt="DezoCoin" style="width:104px; height:122px; object-fit:cover; border-radius:50%; filter:drop-shadow(0 6px 12px rgba(0,0,0,0.22));">
 
             <span style="font-size:12px; font-weight:800; color:#b37819; margin-top:4px; letter-spacing:0.3px;">${lang === 'el' ? 'Ευκαιρία' : 'Lucky Chance'}</span>
@@ -1069,82 +1069,5 @@ document.addEventListener('touchstart', checkUnread, { passive: true });
   <div><strong>ΔΕΖΩ.gr</strong> — Μια Δεύτερη Ζωή για τα πράγματά σας • Αθήνα, Ελλάδα</div>
     <div><span onclick="openSupportChat()" style="color:var(--primary); font-weight:600; cursor:pointer; text-decoration:underline;">Επικοινωνία με διαχειριστή / Αναφορά</span> • Όροι Χρήσης</div>
 </footer>
-  <div id="luckyWheelModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.86); z-index:9999; align-items:center; justify-content:center; padding:10px;">
-  <div id="luckyWheelBox" style="position:relative; width:min(92vw, 430px); aspect-ratio:2/3; border-radius:16px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,0.75);"></div>
-</div>
-
-<script>
-let wheelAngle = 0;
-let wheelSpinning = false;
-
-function openLuckyWheel() {
-  if (!currentUser) return showLogin();
-  const isEl = lang === 'el';
-  const imgSrc = isEl ? '/grok_1795379176009.jpg' : '/grok_1795379304995.jpg';
-  wheelAngle = 0;
-  wheelSpinning = false;
-
-  const box = document.getElementById('luckyWheelBox');
-  box.innerHTML = `
-        <img src="${imgSrc}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill; display:block; pointer-events:none;">
-        <img id="wheelRotorImg" src="${imgSrc}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill; display:block; pointer-events:none; clip-path:circle(34.4% at 50% 43.6%); transform-origin:50% 43.6%; will-change:transform;">
-    <img src="${imgSrc}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill; display:block; pointer-events:none; clip-path:polygon(45.5% 18.8%, 54.5% 18.8%, 51.8% 24.4%, 48.2% 24.4%);">
-     <img src="/grok_1795376942103.jpg" style="position:absolute; left:51.0%; top:44.3%; width:48.6%; aspect-ratio:1/1; transform:translate(-50%,-50%); clip-path:circle(46.4%); filter:drop-shadow(0 4px 10px rgba(0,0,0,0.7)); pointer-events:none;">
-         <svg viewBox="0 0 200 200" style="position:absolute; left:51.0%; top:44.3%; width:48.6%; aspect-ratio:1/1; transform:translate(-50%,-50%); pointer-events:none;">
-      <defs>
-        <radialGradient id="dzGemBlue" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#a6e3ff"/><stop offset="45%" stop-color="#1e6ef5"/><stop offset="100%" stop-color="#091d5c"/></radialGradient>
-        <radialGradient id="dzGemPink" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffc2f3"/><stop offset="45%" stop-color="#d633b8"/><stop offset="100%" stop-color="#520846"/></radialGradient>
-      </defs>
-      ${Array.from({length: 56}, (_, i) => {
-        const a = (i * 360 / 56) * Math.PI / 180;
-        const x = (100 + 83.2 * Math.cos(a)).toFixed(1);
-        const y = (100 + 83.2 * Math.sin(a)).toFixed(1);
-        const fill = i % 2 === 0 ? 'url(#dzGemBlue)' : 'url(#dzGemPink)';
-        return `<circle cx="${x}" cy="${y}" r="2.7" fill="${fill}" stroke="#5c3806" stroke-width="0.6"/>`;
-      }).join('')}
-    </svg>
-    <span onclick="closeLuckyWheel()" style="position:absolute; top:10px; right:12px; width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,0.65); color:#fff; font-size:22px; line-height:32px; text-align:center; cursor:pointer; z-index:10; border:1px solid rgba(255,255,255,0.35);">&times;</span>
-    <div id="wheelStatusText" style="position:absolute; left:18%; width:64%; top:76.2%; height:5.4%; display:flex; align-items:center; justify-content:center; color:#fff6cc; font-weight:700; font-size:13px; text-align:center; text-shadow:0 1px 3px #000; pointer-events:none;"></div>
-    <button onclick="spinLuckyWheel(false)" style="position:absolute; left:17%; width:66%; top:83.2%; height:6.2%; background:transparent; border:none; cursor:pointer; border-radius:30px;" title="Spin Free"></button>
-    <button onclick="spinLuckyWheel(true)" style="position:absolute; left:17%; width:66%; top:90.6%; height:6.2%; background:transparent; border:none; cursor:pointer; border-radius:30px;" title="Spin 1 D€"></button>
-  `;
-  document.getElementById('luckyWheelModal').style.display = 'flex';
-}
-
-function closeLuckyWheel() {
-  if (wheelSpinning) return;
-  document.getElementById('luckyWheelModal').style.display = 'none';
-  document.getElementById('luckyWheelBox').innerHTML = '';
-}
-
-function spinLuckyWheel(paid) {
-  if (wheelSpinning) return;
-  const isEl = lang === 'el';
-  const statusEl = document.getElementById('wheelStatusText');
-  const rotor = document.getElementById('wheelRotorImg');
-  if (!rotor) return;
-
-  const sectors = isEl
-    ? ['Vip 3 εβδ.', 'Δοκιμάστε ξανά', '4 D€', 'Δοκιμάστε ξανά', 'προβολή 5 ημ.', 'Δοκιμάστε ξανά', '2 D€', 'Δοκιμάστε ξανά', 'προβολή 3 ημ.', 'Δοκιμάστε ξανά', '+1 θέση', 'Δοκιμάστε ξανά']
-    : ['Vip 3 weeks', 'Try again', '4 D€', 'Try again', 'promotion 5 days', 'Try again', '2 D€', 'Try again', 'promotion 3 days', 'Try again', '+1 position', 'Try again'];
-
-  const idx = Math.floor(Math.random() * 12);
-  const sectorAngle = 360 / 12;
-  const targetStop = (360 - idx * sectorAngle) % 360;
-  const currentMod = ((wheelAngle % 360) + 360) % 360;
-  const delta = (targetStop - currentMod + 360) % 360;
-  wheelAngle += 360 * 6 + delta;
-
-  wheelSpinning = true;
-  statusEl.textContent = isEl ? 'Καλή τύχη!...' : 'Good luck!...';
-  rotor.style.transition = 'transform 4.6s cubic-bezier(0.15, 0.85, 0.22, 1)';
-  rotor.style.transform = `rotate(${wheelAngle}deg)`;
-
-  setTimeout(() => {
-    wheelSpinning = false;
-    statusEl.textContent = sectors[idx];
-  }, 4700);
-}
-</script>
 </body>
 </html>
