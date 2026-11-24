@@ -1069,48 +1069,43 @@ document.addEventListener('touchstart', checkUnread, { passive: true });
     <div><span onclick="openSupportChat()" style="color:var(--primary); font-weight:600; cursor:pointer; text-decoration:underline;">Επικοινωνία με διαχειριστή / Αναφορά</span> • Όροι Χρήσης</div>
 </footer>
   <div id="luckyWheelModal" style="display:none; position:fixed; inset:0; z-index:9999; flex-direction:column; align-items:center; justify-content:space-between; padding:8px 10px 14px; background:radial-gradient(ellipse 72% 62% at 50% 62%, #08120c 44%, #0d2b1d 70%, #071911 88%, #040d09 100%), repeating-linear-gradient(115deg, rgba(255,220,120,0.03) 0px, rgba(255,220,120,0.03) 2px, transparent 2px, transparent 14px); background-blend-mode:normal, overlay;">
-  <div id="wheelTopAdBanner" style="position:relative; width:100%; max-width:960px; height:190px; flex-shrink:0; border-radius:22px; background:radial-gradient(ellipse at center, #14422c 0%, #0a2417 72%, #05130c 100%); box-shadow:0 10px 30px rgba(0,0,0,0.85), inset 0 0 28px rgba(0,0,0,0.75); display:flex; align-items:center; justify-content:center; overflow:visible;">
-    <svg viewBox="0 0 800 190" preserveAspectRatio="none" style="position:absolute; inset:-4px; width:calc(100% + 8px); height:calc(100% + 8px); pointer-events:none; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.85));">
+    <div id="wheelTopAdBanner" style="position:relative; z-index:5; width:100%; max-width:960px; height:min(19.5vh, 165px); margin-bottom:16px; flex-shrink:0; border-radius:20px; background:radial-gradient(ellipse at center, #14422c 0%, #0a2417 72%, #05130c 100%); box-shadow:0 8px 26px rgba(0,0,0,0.85), inset 0 0 26px rgba(0,0,0,0.78); display:flex; align-items:center; justify-content:center; overflow:visible;">
+    <svg viewBox="0 0 800 170" preserveAspectRatio="none" style="position:absolute; inset:-3px; width:calc(100% + 6px); height:calc(100% + 6px); pointer-events:none; filter:drop-shadow(0 3px 5px rgba(0,0,0,0.85));">
       <defs>
         <linearGradient id="baroqueGold" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#fff4b8"/>
-          <stop offset="28%" stop-color="#e6b84c"/>
-          <stop offset="55%" stop-color="#9e6b14"/>
-          <stop offset="80%" stop-color="#f2cb6b"/>
-          <stop offset="100%" stop-color="#7a4e08"/>
+          <stop offset="0%" stop-color="#fff5bd"/>
+          <stop offset="30%" stop-color="#e5b649"/>
+          <stop offset="55%" stop-color="#9c6914"/>
+          <stop offset="80%" stop-color="#f5cf6e"/>
+          <stop offset="100%" stop-color="#784c08"/>
         </linearGradient>
         <linearGradient id="baroqueLight" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#fff9d6"/>
+          <stop offset="0%" stop-color="#fffbe0"/>
           <stop offset="50%" stop-color="#d9a536"/>
           <stop offset="100%" stop-color="#6e4406"/>
         </linearGradient>
       </defs>
-      <!-- Основной двойной рельефный золотой каркас -->
-      <rect x="14" y="10" width="772" height="170" rx="22" fill="none" stroke="#452902" stroke-width="9"/>
-      <rect x="14" y="10" width="772" height="170" rx="22" fill="none" stroke="url(#baroqueGold)" stroke-width="5.5"/>
-      <rect x="22" y="18" width="756" height="154" rx="16" fill="none" stroke="url(#baroqueLight)" stroke-width="2" opacity="0.9"/>
-      <!-- Центральные верхний и нижний золотые картуши-вензели -->
-      <path d="M335,10 Q365,0 400,6 Q435,0 465,10 Q435,20 400,15 Q365,20 335,10 Z" fill="url(#baroqueGold)" stroke="#4a2c02" stroke-width="1.5"/>
-      <circle cx="400" cy="10" r="4.5" fill="#fff7cc" stroke="#7a4e08" stroke-width="1.2"/>
-      <path d="M335,180 Q365,190 400,184 Q435,190 465,180 Q435,170 400,175 Q365,170 335,180 Z" fill="url(#baroqueGold)" stroke="#4a2c02" stroke-width="1.5"/>
-      <circle cx="400" cy="180" r="4.5" fill="#fff7cc" stroke="#7a4e08" stroke-width="1.2"/>
-      <!-- Левый верхний барочный завиток -->
-      <path d="M8,36 C2,14 18,2 44,6 C62,9 74,20 62,28 C52,34 40,24 46,16 C32,14 20,24 22,40 C24,54 36,60 28,68 C20,76 6,62 8,36 Z" fill="url(#baroqueGold)" stroke="#422602" stroke-width="1.6"/>
-      <circle cx="24" cy="22" r="5" fill="url(#baroqueLight)" stroke="#422602" stroke-width="1.2"/>
-      <!-- Правый верхний барочный завиток -->
-      <path d="M792,36 C798,14 782,2 756,6 C738,9 726,20 738,28 C748,34 760,24 754,16 C768,14 780,24 778,40 C776,54 764,60 772,68 C780,76 794,62 792,36 Z" fill="url(#baroqueGold)" stroke="#422602" stroke-width="1.6"/>
-      <circle cx="776" cy="22" r="5" fill="url(#baroqueLight)" stroke="#422602" stroke-width="1.2"/>
-      <!-- Левый нижний барочный завиток -->
-      <path d="M8,154 C2,176 18,188 44,184 C62,181 74,170 62,162 C52,156 40,166 46,174 C32,176 20,166 22,150 C24,136 36,130 28,122 C20,114 6,128 8,154 Z" fill="url(#baroqueGold)" stroke="#422602" stroke-width="1.6"/>
-      <circle cx="24" cy="168" r="5" fill="url(#baroqueLight)" stroke="#422602" stroke-width="1.2"/>
-      <!-- Правый нижний барочный завиток -->
-      <path d="M792,154 C798,176 782,188 756,184 C738,181 726,170 738,162 C748,156 760,166 754,174 C768,176 780,166 778,150 C776,136 764,130 772,122 C780,114 794,128 792,154 Z" fill="url(#baroqueGold)" stroke="#422602" stroke-width="1.6"/>
-      <circle cx="776" cy="168" r="5" fill="url(#baroqueLight)" stroke="#422602" stroke-width="1.2"/>
-      <!-- Боковые левая и правая золотые розетки -->
-      <path d="M12,72 Q2,95 12,118 Q22,95 12,72 Z" fill="url(#baroqueGold)" stroke="#422602" stroke-width="1.4"/>
-      <path d="M788,72 Q798,95 788,118 Q778,95 788,72 Z" fill="url(#baroqueGold)" stroke="#422602" stroke-width="1.4"/>
+      <!-- Изящная двойная золотая рамка -->
+      <rect x="12" y="9" width="776" height="152" rx="18" fill="none" stroke="#3d2402" stroke-width="5"/>
+      <rect x="12" y="9" width="776" height="152" rx="18" fill="none" stroke="url(#baroqueGold)" stroke-width="3"/>
+      <rect x="18" y="15" width="764" height="140" rx="13" fill="none" stroke="url(#baroqueLight)" stroke-width="1.2" opacity="0.88"/>
+      <!-- Тонкие центральные витиеватые вензели сверху и снизу -->
+      <path d="M350,9 C368,2 385,14 400,6 C415,14 432,2 450,9 C432,16 415,11 400,15 C385,11 368,16 350,9 Z" fill="url(#baroqueGold)" stroke="#3d2402" stroke-width="0.9"/>
+      <circle cx="400" cy="9" r="3" fill="#fff8d6" stroke="#784c08" stroke-width="0.8"/>
+      <path d="M350,161 C368,168 385,156 400,164 C415,156 432,168 450,161 C432,154 415,159 400,155 C385,159 368,154 350,161 Z" fill="url(#baroqueGold)" stroke="#3d2402" stroke-width="0.9"/>
+      <circle cx="400" cy="161" r="3" fill="#fff8d6" stroke="#784c08" stroke-width="0.8"/>
+      <!-- Левая ажурная барочная филигрань -->
+      <path d="M12,46 C4,34 4,16 18,10 C32,4 48,10 52,20 C55,28 46,34 40,28 C36,24 41,18 45,20 M16,28 C24,22 34,26 32,36 C30,45 18,46 16,38 M12,56 C4,66 4,80 12,85 C4,90 4,104 12,114 M16,142 C24,148 34,144 32,134 C30,125 18,124 16,132 M12,124 C4,136 4,154 18,160 C32,166 48,160 52,150 C55,142 46,136 40,142 C36,146 41,152 45,150" fill="none" stroke="url(#baroqueGold)" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="15" cy="17" r="3.2" fill="url(#baroqueLight)" stroke="#3d2402" stroke-width="0.9"/>
+      <circle cx="15" cy="153" r="3.2" fill="url(#baroqueLight)" stroke="#3d2402" stroke-width="0.9"/>
+      <circle cx="9" cy="85" r="3" fill="#fff6c7" stroke="#6e4406" stroke-width="0.9"/>
+      <!-- Правая ажурная барочная филигрань -->
+      <path d="M788,46 C796,34 796,16 782,10 C768,4 752,10 748,20 C745,28 754,34 760,28 C764,24 759,18 755,20 M784,28 C776,22 766,26 768,36 C770,45 782,46 784,38 M788,56 C796,66 796,80 788,85 C796,90 796,104 788,114 M784,142 C776,148 766,144 768,134 C770,125 782,124 784,132 M788,124 C796,136 796,154 782,160 C768,166 752,160 748,150 C745,142 754,136 760,142 C764,146 759,152 755,150" fill="none" stroke="url(#baroqueGold)" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="785" cy="17" r="3.2" fill="url(#baroqueLight)" stroke="#3d2402" stroke-width="0.9"/>
+      <circle cx="785" cy="153" r="3.2" fill="url(#baroqueLight)" stroke="#3d2402" stroke-width="0.9"/>
+      <circle cx="791" cy="85" r="3" fill="#fff6c7" stroke="#6e4406" stroke-width="0.9"/>
     </svg>
-    <span onclick="this.parentElement.style.visibility='hidden'" title="Close" style="position:absolute; top:14px; right:18px; width:26px; height:26px; border-radius:50%; background:rgba(0,0,0,0.55); color:#f5d06e; font-size:17px; line-height:24px; text-align:center; cursor:pointer; border:1px solid rgba(245,208,110,0.55); z-index:3;">&times;</span>
+    <span onclick="this.parentElement.style.visibility='hidden'" title="Close" style="position:absolute; top:13px; right:16px; width:24px; height:24px; border-radius:50%; background:rgba(0,0,0,0.55); color:#f5d06e; font-size:16px; line-height:22px; text-align:center; cursor:pointer; border:1px solid rgba(245,208,110,0.55); z-index:3;">&times;</span>
   </div>
   <div style="flex:1; width:100%; display:flex; align-items:center; justify-content:center; min-height:0;">
     <div id="luckyWheelBox" style="position:relative; height:min(100%, 645px); max-width:92vw; aspect-ratio:2/3; border-radius:18px; overflow:hidden; background:#08120c; box-shadow:0 0 55px 24px #08120c, 0 0 95px 40px rgba(8,18,12,0.95);"></div>
