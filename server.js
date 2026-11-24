@@ -52,13 +52,31 @@ const auth = (req, res, next) => {
 
 // Register
 app.post('/api/register', async (req, res) => {
-  const { email, password, name, phone } = req.body;
+  const { email, password, name, phone, ref } = req.body;
   if (users.find(u => u.email === email)) return res.status(400).json({ error: 'Email exists' });
   const hash = await bcrypt.hash(password, 10);
-  const user = { id: uuidv4(), email, password: hash, name, phone, created: Date.now() };
+  const user = {
+    id: uuidv4(),
+    email,
+    password: hash,
+    name,
+    phone,
+    referredBy: ref && users.some(u => u.id === ref) ? ref : null,
+    refRewarded: false,
+    balance: 0,
+    euroBalance: 0,
+    bonusBatches: [],
+    dcHistory: [],
+    treasure: [],
+    extraSlots: 0,
+    streakCount: 0,
+    lastStreakDate: null,
+    lastFreeSpinDate: null,
+    created: Date.now()
+  };
   users.push(user);
   const token = jwt.sign({ id: user.id, email }, JWT_SECRET);
-  res.json({ token, user: { id: user.id, email, name, phone } });
+  res.json({ token, user: { id: user.id, email, name, phone, balance: 0, euroBalance: 0 } });
 });
 
 // Login
@@ -117,7 +135,16 @@ app.post('/api/ads', auth, (req, res) => {
     promoted: false,
     views: 0
   };
-  ads.push(ad);
+    ads.push(ad);
+  const author = users.find(u => u.id === req.user.id);
+  if (author && author.referredBy && !author.refRewarded) {
+    const inviter = users.find(u => u.id === author.referredBy);
+    if (inviter) {
+      author.refRewarded = true;
+      grantBonusDc(inviter, 4, 'Μπόνους πρόσκλησης φίλου / Friend invite bonus (+4 DC)');
+      grantBonusDc(author, 2, 'Μπόνους 1ης αγγελίας (πρόσκληση) / 1st listing invite bonus (+2 DC)');
+    }
+  }
   res.json(ad);
 });
 
