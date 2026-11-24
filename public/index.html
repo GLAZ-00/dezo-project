@@ -940,7 +940,7 @@ function closeTreasureChest() {
   if (box && document.getElementById('treasureChestPanel')) box.innerHTML = '';
 }
 
-function toggleTreasureChest() {
+async function toggleTreasureChest() {
   if (treasureChestOpen) return closeTreasureChest();
   if (typeof modPoll !== 'undefined' && modPoll) clearInterval(modPoll);
   treasureChestOpen = true;
@@ -959,15 +959,58 @@ function toggleTreasureChest() {
         <strong style="color:#ffd24d; font-size:15px;">✨ ${isEl ? 'Ο Θησαυρός μου (Μπόνους & Δώρα 7 ημερών)' : 'My Treasure (7-Day Bonuses & Rewards)'}</strong>
         <span onclick="closeTreasureChest()" title="${isEl ? 'Κλείσιμο' : 'Close'}" style="cursor:pointer; font-size:20px; color:#ffd24d; line-height:1; padding:0 4px;">&times;</span>
       </div>
-      <div id="treasureItemsList" style="font-size:13px; color:#e6cfa3; margin-bottom:10px;">
-        ${isEl ? 'Δεν έχετε ενεργά δώρα ακόμα. Γυρίστε τον τροχό ή πατήστε το κεντρικό νόμισμα για το καθημερινό σας μπόνους!' : 'No active rewards yet. Spin the wheel or tap the center coin for your daily bonus!'}
-      </div>
-            <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; background:rgba(0,0,0,0.3); border:1px dashed rgba(212,166,58,0.5); border-radius:8px; padding:8px 12px; font-size:12px;">
+      <div id="treasureItemsList" style="font-size:13px; color:#e6cfa3; margin-bottom:10px;">${isEl ? 'Φόρτωση...' : 'Loading...'}</div>
+      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; background:rgba(0,0,0,0.3); border:1px dashed rgba(212,166,58,0.5); border-radius:8px; padding:8px 12px; font-size:12px;">
         <span style="color:#fff4c2;">🎁 ${isEl ? 'Πρόσκληση φίλου: +4 DC για εσάς & +2 DC για τον φίλο (με την 1η αγγελία)' : 'Invite a friend: +4 DC for you & +2 DC for your friend (after 1st listing)'}</span>
         <button onclick="navigator.clipboard?.writeText('${refLink}'); alert('${isEl ? 'Ο σύνδεσμος αντιγράφηκε!' : 'Referral link copied!'}')" style="padding:5px 12px; background:linear-gradient(180deg, #f5cf6e 0%, #c98a14 100%); color:#1a1000; font-weight:800; border:none; border-radius:6px; cursor:pointer; font-size:12px;">${isEl ? 'Αντιγραφή συνδέσμου' : 'Copy link'}</button>
       </div>
     </div>
   `;
+
+  try {
+    const [st, myAdsAll] = await Promise.all([api('/api/wheel/state'), api('/api/my-ads')]);
+    const activeAds = (myAdsAll || []).filter(a => !a.status || a.status === 'active');
+    const items = st.treasure || [];
+    const listEl = document.getElementById('treasureItemsList');
+    if (!listEl) return;
+    if (!items.length) {
+      listEl.innerHTML = isEl
+        ? 'Δεν έχετε ενεργά δώρα ακόμα. Γυρίστε τον τροχό ή πατήστε το κεντρικό νόμισμα για το καθημερινό σας μπόνους!'
+        : 'No active rewards yet. Spin the wheel or tap the center coin for your daily bonus!';
+      return;
+    }
+    listEl.innerHTML = items.map(it => {
+      const hrsLeft = Math.max(1, Math.ceil((it.expiresAt - Date.now()) / 3600000));
+      const dLeft = Math.floor(hrsLeft / 24);
+      const hRem = hrsLeft % 24;
+      const timerTxt = isEl ? `Λήγει σε: ${dLeft}η ${hRem}ώ` : `Expires in: ${dLeft}d ${hRem}h`;
+      const adSelect = it.code === 'slot_1' ? '' : `<select id="selAd_${it.id}" style="padding:4px 6px; border-radius:6px; border:1px solid #d4a63a; background:#091f14; color:#fff; font-size:12px; max-width:150px;">${activeAds.length ? activeAds.map(a => `<option value="${a.id}">${a.title}</option>`).join('') : `<option value="">${isEl ? 'Χωρίς αγγελία' : 'No active ad'}</option>`}</select>`;
+      return `<div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; margin-bottom:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(212,166,58,0.3); border-radius:8px;">
+        <div><strong style="color:#ffe07d;">${isEl ? it.label_el : it.label_en}</strong> <span style="font-size:11px; color:#a8d5ba; margin-left:6px;">(${timerTxt})</span></div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          ${adSelect}
+          <button onclick="applyTreasureItem('${it.id}', '${it.code}')" style="padding:5px 12px; background:linear-gradient(180deg, #4ade80 0%, #16a34a 100%); color:#052e16; font-weight:800; border:none; border-radius:6px; cursor:pointer; font-size:12px;">${isEl ? 'Εφαρμογή' : 'Apply'}</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) {}
+}
+
+async function applyTreasureItem(itemId, code) {
+  const isEl = lang === 'el';
+  const adId = code === 'slot_1' ? null : document.getElementById('selAd_' + itemId)?.value;
+  if (code !== 'slot_1' && !adId) {
+    return alert(isEl ? 'Δημοσιεύστε πρώτα μια ενεργή αγγελία!' : 'Please publish an active listing first!');
+  }
+  try {
+    await api('/api/treasure/use', { method: 'POST', body: JSON.stringify({ itemId, adId }) });
+    alert(isEl ? 'Το δώρο ενεργοποιήθηκε με επιτυχία!' : 'Reward activated successfully!');
+    treasureChestOpen = false;
+    await showCabinet();
+    toggleTreasureChest();
+  } catch (err) {
+    alert(err.message || 'Error');
+  }
 }
 let modPoll = null;
 async function openSupportChat() {
