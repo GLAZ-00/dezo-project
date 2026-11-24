@@ -1068,7 +1068,7 @@ document.addEventListener('touchstart', checkUnread, { passive: true });
   <div><strong>ΔΕΖΩ.gr</strong> — Μια Δεύτερη Ζωή για τα πράγματά σας • Αθήνα, Ελλάδα</div>
     <div><span onclick="openSupportChat()" style="color:var(--primary); font-weight:600; cursor:pointer; text-decoration:underline;">Επικοινωνία με διαχειριστή / Αναφορά</span> • Όροι Χρήσης</div>
 </footer>
-  <div id="luckyWheelModal" style="display:none; position:fixed; inset:0; z-index:9999; flex-direction:column; align-items:center; justify-content:space-between; padding:8px 10px 14px; overflow:hidden; background:radial-gradient(ellipse 65% 42% at 50% 48%, rgba(168,125,38,0.22) 0%, rgba(18,56,36,0.65) 45%, #071911 78%, #030a06 100%);">
+  <div id="luckyWheelModal" style="display:none; position:fixed; inset:0; z-index:9999; flex-direction:column; align-items:center; justify-content:space-between; padding:8px 10px 14px; overflow:hidden; background:radial-gradient(ellipse 46% 52% at 50% 56%, #06110b 48%, #0c291a 74%, #06180f 90%, #030a06 100%), #030a06;">
   <style>
     @keyframes dezoTwinkle {
       0%, 100% { opacity: 0.08; transform: scale(0.55) rotate(0deg); }
@@ -1076,43 +1076,48 @@ document.addEventListener('touchstart', checkUnread, { passive: true });
     }
     .dezo-star {
       position: absolute;
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       pointer-events: none;
-      background: radial-gradient(circle, #fffbe0 0%, #ffd24d 35%, transparent 72%);
+      background: radial-gradient(circle, #fffbe0 0%, #ffd24d 38%, transparent 72%);
       clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
       filter: drop-shadow(0 0 6px #ffd24d);
       animation: dezoTwinkle var(--dur, 3.2s) ease-in-out var(--del, 0s) infinite;
       z-index: 1;
     }
+    .dezo-star-lg {
+      width: 22px;
+      height: 22px;
+      filter: drop-shadow(0 0 9px #ffe07d);
+    }
     .dezo-spot {
       position: absolute;
-      width: 58vmax;
-      height: 58vmax;
+      width: 52vmax;
+      height: 52vmax;
       pointer-events: none;
       z-index: 1;
       mix-blend-mode: screen;
-      opacity: 0.65;
+      opacity: 0.58;
     }
   </style>
 
-  <!-- 4 угловых прожектора с мягким рассеивающимся лучом в сторону колеса -->
-  <div class="dezo-spot" style="bottom:-12vmax; left:-12vmax; background:conic-gradient(from 25deg at 18% 82%, transparent 0deg, rgba(255,215,105,0.34) 16deg, rgba(255,215,105,0.08) 32deg, transparent 46deg); -webkit-mask-image:radial-gradient(circle at 18% 82%, #000 0%, rgba(0,0,0,0.45) 38%, transparent 70%); mask-image:radial-gradient(circle at 18% 82%, #000 0%, rgba(0,0,0,0.45) 38%, transparent 70%);"></div>
-  <div class="dezo-spot" style="bottom:-12vmax; right:-12vmax; background:conic-gradient(from 289deg at 82% 82%, transparent 0deg, rgba(255,215,105,0.08) 14deg, rgba(255,215,105,0.34) 30deg, transparent 46deg); -webkit-mask-image:radial-gradient(circle at 82% 82%, #000 0%, rgba(0,0,0,0.45) 38%, transparent 70%); mask-image:radial-gradient(circle at 82% 82%, #000 0%, rgba(0,0,0,0.45) 38%, transparent 70%);"></div>
-  <div class="dezo-spot" style="top:14vh; left:-12vmax; background:conic-gradient(from 112deg at 18% 18%, transparent 0deg, rgba(255,215,105,0.28) 16deg, rgba(255,215,105,0.06) 32deg, transparent 46deg); -webkit-mask-image:radial-gradient(circle at 18% 18%, #000 0%, rgba(0,0,0,0.4) 35%, transparent 66%); mask-image:radial-gradient(circle at 18% 18%, #000 0%, rgba(0,0,0,0.4) 35%, transparent 66%);"></div>
-  <div class="dezo-spot" style="top:14vh; right:-12vmax; background:conic-gradient(from 202deg at 82% 18%, transparent 0deg, rgba(255,215,105,0.06) 14deg, rgba(255,215,105,0.28) 30deg, transparent 46deg); -webkit-mask-image:radial-gradient(circle at 82% 18%, #000 0%, rgba(0,0,0,0.4) 35%, transparent 66%); mask-image:radial-gradient(circle at 82% 18%, #000 0%, rgba(0,0,0,0.4) 35%, transparent 66%);"></div>
+  <!-- 4 угловых прожектора с мягким рассеивающимся лучом, затухающим до подхода к колесу -->
+  <div class="dezo-spot" style="bottom:-14vmax; left:-14vmax; background:conic-gradient(from 32deg at 18% 82%, transparent 0deg, rgba(255,215,100,0.34) 12deg, transparent 26deg); -webkit-mask-image:radial-gradient(circle at 18% 82%, #000 0%, rgba(0,0,0,0.42) 26%, transparent 50%); mask-image:radial-gradient(circle at 18% 82%, #000 0%, rgba(0,0,0,0.42) 26%, transparent 50%);"></div>
+  <div class="dezo-spot" style="bottom:-14vmax; right:-14vmax; background:conic-gradient(from 302deg at 82% 82%, transparent 0deg, rgba(255,215,100,0.34) 12deg, transparent 26deg); -webkit-mask-image:radial-gradient(circle at 82% 82%, #000 0%, rgba(0,0,0,0.42) 26%, transparent 50%); mask-image:radial-gradient(circle at 82% 82%, #000 0%, rgba(0,0,0,0.42) 26%, transparent 50%);"></div>
+  <div class="dezo-spot" style="top:14vh; left:-14vmax; opacity:0.48; background:conic-gradient(from 122deg at 18% 18%, transparent 0deg, rgba(255,215,100,0.28) 12deg, transparent 26deg); -webkit-mask-image:radial-gradient(circle at 18% 18%, #000 0%, rgba(0,0,0,0.38) 24%, transparent 46%); mask-image:radial-gradient(circle at 18% 18%, #000 0%, rgba(0,0,0,0.38) 24%, transparent 46%);"></div>
+  <div class="dezo-spot" style="top:14vh; right:-14vmax; opacity:0.48; background:conic-gradient(from 212deg at 82% 18%, transparent 0deg, rgba(255,215,100,0.28) 12deg, transparent 26deg); -webkit-mask-image:radial-gradient(circle at 82% 18%, #000 0%, rgba(0,0,0,0.38) 24%, transparent 46%); mask-image:radial-gradient(circle at 82% 18%, #000 0%, rgba(0,0,0,0.38) 24%, transparent 46%);"></div>
 
-  <!-- Мерцающие золотые звёзды-искры по боковым полям -->
-  <span class="dezo-star" style="top:31%; left:7%; --dur:2.8s; --del:0.2s;"></span>
-  <span class="dezo-star" style="top:44%; left:13%; width:10px; height:10px; --dur:3.6s; --del:1.1s;"></span>
-  <span class="dezo-star" style="top:58%; left:5%; width:17px; height:17px; --dur:4.1s; --del:0.6s;"></span>
-  <span class="dezo-star" style="top:73%; left:11%; width:12px; height:12px; --dur:2.9s; --del:1.8s;"></span>
-  <span class="dezo-star" style="top:84%; left:6%; width:15px; height:15px; --dur:3.5s; --del:0.9s;"></span>
-  <span class="dezo-star" style="top:33%; right:8%; --dur:3.3s; --del:0.7s;"></span>
-  <span class="dezo-star" style="top:47%; right:12%; width:16px; height:16px; --dur:4.0s; --del:1.5s;"></span>
-  <span class="dezo-star" style="top:61%; right:6%; width:11px; height:11px; --dur:2.7s; --del:0.3s;"></span>
-  <span class="dezo-star" style="top:75%; right:13%; width:15px; height:15px; --dur:3.8s; --del:2.0s;"></span>
-  <span class="dezo-star" style="top:85%; right:7%; width:12px; height:12px; --dur:3.1s; --del:1.2s;"></span>
+  <!-- Мерцающие золотые звёзды (мелкие искры и крупные 4-лучевые звёзды) -->
+  <span class="dezo-star" style="top:30%; left:7%; --dur:2.8s; --del:0.2s;"></span>
+  <span class="dezo-star dezo-star-lg" style="top:41%; left:12%; --dur:3.9s; --del:1.0s;"></span>
+  <span class="dezo-star" style="top:54%; left:5%; --dur:3.4s; --del:0.6s;"></span>
+  <span class="dezo-star dezo-star-lg" style="top:68%; left:11%; --dur:4.3s; --del:1.7s;"></span>
+  <span class="dezo-star" style="top:82%; left:6%; --dur:3.1s; --del:0.9s;"></span>
+  <span class="dezo-star dezo-star-lg" style="top:32%; right:8%; --dur:4.1s; --del:0.5s;"></span>
+  <span class="dezo-star" style="top:45%; right:13%; --dur:2.9s; --del:1.4s;"></span>
+  <span class="dezo-star dezo-star-lg" style="top:59%; right:6%; --dur:3.7s; --del:0.3s;"></span>
+  <span class="dezo-star" style="top:73%; right:12%; --dur:3.2s; --del:1.9s;"></span>
+  <span class="dezo-star dezo-star-lg" style="top:84%; right:7%; --dur:4.4s; --del:1.1s;"></span>
 
   <!-- Верхняя ажурная рекламная плашка -->
   <div id="wheelTopAdBanner" style="position:relative; z-index:5; width:100%; max-width:960px; height:min(19.5vh, 165px); margin-bottom:16px; flex-shrink:0; border-radius:20px; background:radial-gradient(ellipse at center, #14422c 0%, #0a2417 72%, #05130c 100%); box-shadow:0 8px 26px rgba(0,0,0,0.85), inset 0 0 26px rgba(0,0,0,0.78); display:flex; align-items:center; justify-content:center; overflow:visible;">
@@ -1150,9 +1155,9 @@ document.addEventListener('touchstart', checkUnread, { passive: true });
     <span onclick="this.parentElement.style.visibility='hidden'" title="Close" style="position:absolute; top:13px; right:16px; width:24px; height:24px; border-radius:50%; background:rgba(0,0,0,0.55); color:#f5d06e; font-size:16px; line-height:22px; text-align:center; cursor:pointer; border:1px solid rgba(245,208,110,0.55); z-index:3;">&times;</span>
   </div>
 
-  <!-- Игровая карточка с растворяющимися краями -->
+  <!-- Игровая карточка: размыта ТОЛЬКО самая кромка по краям, кнопки и заголовок 100% чёткие -->
   <div style="position:relative; z-index:2; flex:1; width:100%; display:flex; align-items:center; justify-content:center; min-height:0;">
-    <div id="luckyWheelBox" style="position:relative; height:min(100%, 645px); max-width:92vw; aspect-ratio:2/3; overflow:hidden; background:#08120c; -webkit-mask-image:radial-gradient(ellipse 52% 50% at 50% 50%, #000 72%, rgba(0,0,0,0.6) 88%, transparent 100%); mask-image:radial-gradient(ellipse 52% 50% at 50% 50%, #000 72%, rgba(0,0,0,0.6) 88%, transparent 100%);"></div>
+    <div id="luckyWheelBox" style="position:relative; height:min(100%, 645px); max-width:92vw; aspect-ratio:2/3; overflow:hidden; background:#06110b; -webkit-mask-image:linear-gradient(90deg, transparent 0%, #000 4.5%, #000 95.5%, transparent 100%), linear-gradient(180deg, transparent 0%, #000 3.5%, #000 96.5%, transparent 100%); -webkit-mask-composite:source-in; mask-image:linear-gradient(90deg, transparent 0%, #000 4.5%, #000 95.5%, transparent 100%), linear-gradient(180deg, transparent 0%, #000 3.5%, #000 96.5%, transparent 100%); mask-composite:intersect;"></div>
   </div>
 </div>
 <script>
