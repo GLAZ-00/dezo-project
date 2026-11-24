@@ -1094,7 +1094,7 @@ function openLuckyWheel() {
     <div style="position:absolute; left:50%; top:40.05%; width:43.2%; aspect-ratio:1/1; transform:translate(-50%, -50%); border-radius:50%; overflow:hidden; pointer-events:none; background:radial-gradient(circle, #e5c470 78%, #8f6218 100%); box-shadow:0 3px 8px rgba(0,0,0,0.65), inset 0 0 0 2px #6b4407;">
       <img src="/grok_1795376942103.jpg" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.035); clip-path:circle(47.2% at 50% 50%);">
     </div>
-    <svg viewBox="0 0 60 68" style="position:absolute; left:50%; top:15.2%; width:10.5%; transform:translateX(-50%); z-index:8; pointer-events:none; filter:drop-shadow(0 5px 6px rgba(0,0,0,0.8));">
+      <svg viewBox="0 0 60 68" style="position:absolute; left:50%; top:10.6%; width:10.5%; transform:translateX(-50%); z-index:8; pointer-events:none; filter:drop-shadow(0 5px 6px rgba(0,0,0,0.8));">
       <defs>
         <linearGradient id="ptrLeft" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stop-color="#fff3b0"/>
@@ -1137,36 +1137,35 @@ function spinLuckyWheel(paid) {
   const rotor = document.getElementById('wheelRotorImg');
   if (!rotor) return;
 
-  const prizes = isEl
+    const prizes = isEl
     ? [
-        { icon: '👑', text: 'Κερδίσατε VIP 3 εβδ.! 🎉', win: true },
+        { icon: '👑', text: 'Κερδίσατε VIP 3 εβδ.!', win: true },
         { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
-        { icon: '🪙', text: 'Κερδίσατε 4 D€! 🎉', win: true },
+        { icon: '🪙', text: 'Κερδίσατε 4 D€!', win: true },
         { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
-        { icon: '🚀', text: 'Κερδίσατε προβολή 5 ημ.! 🎉', win: true },
+        { icon: '🚀', text: 'Κερδίσατε προβολή 5 ημ.!', win: true },
         { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
-        { icon: '🪙', text: 'Κερδίσατε 2 D€! 🎉', win: true },
+        { icon: '🪙', text: 'Κερδίσατε 2 D€!', win: true },
         { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
-        { icon: '🚀', text: 'Κερδίσατε προβολή 3 ημ.! 🎉', win: true },
+        { icon: '🚀', text: 'Κερδίσατε προβολή 3 ημ.!', win: true },
         { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
-        { icon: '⬆️', text: 'Κερδίσατε +1 θέση! 🎉', win: true },
+        { icon: '⬆️', text: 'Κερδίσατε +1 θέση!', win: true },
         { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false }
       ]
     : [
-        { icon: '👑', text: 'You won VIP 3 weeks! 🎉', win: true },
+        { icon: '👑', text: 'You won VIP 3 weeks!', win: true },
         { icon: '😔', text: 'Try again...', win: false },
-        { icon: '🪙', text: 'You won 4 D€! 🎉', win: true },
+        { icon: '🪙', text: 'You won 4 D€!', win: true },
         { icon: '😔', text: 'Try again...', win: false },
-        { icon: '🚀', text: 'You won promotion 5 days! 🎉', win: true },
+        { icon: '🚀', text: 'You won promotion 5 days!', win: true },
         { icon: '😔', text: 'Try again...', win: false },
-        { icon: '🪙', text: 'You won 2 D€! 🎉', win: true },
+        { icon: '🪙', text: 'You won 2 D€!', win: true },
         { icon: '😔', text: 'Try again...', win: false },
-        { icon: '🚀', text: 'You won promotion 3 days! 🎉', win: true },
+        { icon: '🚀', text: 'You won promotion 3 days!', win: true },
         { icon: '😔', text: 'Try again...', win: false },
-        { icon: '⬆️', text: 'You won +1 position! 🎉', win: true },
+        { icon: '⬆️', text: 'You won +1 position!', win: true },
         { icon: '😔', text: 'Try again...', win: false }
       ];
-
   const idx = Math.floor(Math.random() * 12);
   const sectorAngle = 360 / 12;
   const targetStop = (360 - idx * sectorAngle) % 360;
@@ -1182,10 +1181,11 @@ function spinLuckyWheel(paid) {
   setTimeout(() => {
     wheelSpinning = false;
     const res = prizes[idx];
-    const goldStyle = res.win
-      ? 'background:linear-gradient(180deg, #fff9d2 0%, #ffd24d 50%, #c9860e 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 2px #000); font-size:15px;'
-      : 'color:#e6cfa3; text-shadow:0 2px 3px #000; font-size:14px;';
-    statusEl.innerHTML = `<span style="filter:drop-shadow(0 2px 2px #000); margin-right:5px; font-style:normal;">${res.icon}</span><span style="${goldStyle}">${res.text}</span>`;
+        const goldStyle = res.win
+      ? 'background:linear-gradient(180deg, #fff9d2 0%, #ffd24d 50%, #c9860e 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 2px #000); font-size:13.5px;'
+      : 'color:#e6cfa3; text-shadow:0 2px 3px #000; font-size:13.5px;';
+    const confetti = res.win ? `<span style="filter:drop-shadow(0 2px 2px #000); margin-left:4px; font-style:normal;">🎉</span>` : '';
+    statusEl.innerHTML = `<span style="filter:drop-shadow(0 2px 2px #000); margin-right:4px; font-style:normal;">${res.icon}</span><span style="${goldStyle}">${res.text}</span>${confetti}`;
   }, 4700);
 }
 </script>
