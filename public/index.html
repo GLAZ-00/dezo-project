@@ -1124,6 +1124,78 @@ function openLuckyWheel() {
   document.getElementById('luckyWheelModal').style.display = 'flex';
 }
 
+let wheelAudioCtx = null;
+function getWheelAudio() {
+  if (!wheelAudioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) wheelAudioCtx = new AC();
+  }
+  if (wheelAudioCtx && wheelAudioCtx.state === 'suspended') wheelAudioCtx.resume();
+  return wheelAudioCtx;
+}
+
+function playWheelTick() {
+  const ctx = getWheelAudio();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(920, now);
+  osc.frequency.exponentialRampToValueAtTime(240, now + 0.032);
+  gain.gain.setValueAtTime(0.16, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.036);
+}
+
+function playPrizeSound(idx) {
+  const ctx = getWheelAudio();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  const tone = (freq, start, dur, type = 'sine', vol = 0.16, slideTo = null) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now + start);
+    if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, now + start + dur);
+    gain.gain.setValueAtTime(0.001, now + start);
+    gain.gain.linearRampToValueAtTime(vol, now + start + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + start + dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now + start);
+    osc.stop(now + start + dur + 0.02);
+  };
+
+  if (idx % 2 === 1) {
+    // Попробуйте снова: мягкий нисходящий «ту-дум»
+    tone(330, 0.0, 0.18, 'triangle', 0.15, 290);
+    tone(246, 0.19, 0.32, 'triangle', 0.15, 196);
+  } else if (idx === 0) {
+    // VIP 3 недели: торжественная королевская фанфара
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, i * 0.09, 0.45, 'triangle', 0.16));
+  } else if (idx === 2 || idx === 6) {
+    // Монеты 4 D€ или 2 D€: звон золотых монет
+    tone(1318.5, 0.0, 0.28, 'sine', 0.18);
+    tone(1760.0, 0.08, 0.38, 'sine', 0.18);
+    if (idx === 2) tone(2093.0, 0.17, 0.45, 'sine', 0.16);
+  } else if (idx === 4 || idx === 8) {
+    // Продвижение 5 или 3 дня: взлёт ракеты вверх
+    tone(220, 0.0, 0.48, 'sawtooth', 0.09, 1180);
+    tone(880, 0.42, 0.25, 'sine', 0.15, 1320);
+  } else if (idx === 10) {
+    // +1 позиция: «чик-чик» ключа в замке и мягкий скрип открывающейся двери
+    tone(2400, 0.0, 0.035, 'square', 0.12, 900);
+    tone(2650, 0.14, 0.035, 'square', 0.12, 950);
+    tone(310, 0.32, 0.45, 'sawtooth', 0.06, 465);
+    tone(587.33, 0.78, 0.30, 'sine', 0.15);
+  }
+}
+
 function closeLuckyWheel() {
   if (wheelSpinning) return;
   document.getElementById('luckyWheelModal').style.display = 'none';
@@ -1132,12 +1204,13 @@ function closeLuckyWheel() {
 
 function spinLuckyWheel(paid) {
   if (wheelSpinning) return;
+  getWheelAudio();
   const isEl = lang === 'el';
   const statusEl = document.getElementById('wheelStatusText');
   const rotor = document.getElementById('wheelRotorImg');
   if (!rotor) return;
 
-    const prizes = isEl
+  const prizes = isEl
     ? [
         { icon: '👑', text: 'Κερδίσατε VIP 3 εβδ.!', win: true },
         { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
@@ -1166,22 +1239,41 @@ function spinLuckyWheel(paid) {
         { icon: '⬆️', text: 'You won +1 position!', win: true },
         { icon: '😔', text: 'Try again...', win: false }
       ];
+
   const idx = Math.floor(Math.random() * 12);
   const sectorAngle = 360 / 12;
+  const startAngle = wheelAngle;
   const targetStop = (360 - idx * sectorAngle) % 360;
   const currentMod = ((wheelAngle % 360) + 360) % 360;
   const delta = (targetStop - currentMod + 360) % 360;
   wheelAngle += 360 * 6 + delta;
+  const totalSpin = wheelAngle - startAngle;
 
   wheelSpinning = true;
   statusEl.innerHTML = `<span style="color:#ffe680; text-shadow:0 2px 3px #000;">✨ ${isEl ? 'Καλή τύχη!...' : 'Good luck!...'} ✨</span>`;
   rotor.style.transition = 'transform 4.6s cubic-bezier(0.15, 0.85, 0.22, 1)';
   rotor.style.transform = `rotate(${wheelAngle}deg)`;
 
+  let lastSector = Math.floor(startAngle / sectorAngle);
+  const spinStart = performance.now();
+  const trackTicks = (now) => {
+    if (!wheelSpinning) return;
+    const p = Math.min((now - spinStart) / 4600, 1);
+    const ease = 1 - Math.pow(1 - p, 3.1);
+    const curSector = Math.floor((startAngle + totalSpin * ease) / sectorAngle);
+    if (curSector !== lastSector) {
+      playWheelTick();
+      lastSector = curSector;
+    }
+    if (p < 1) requestAnimationFrame(trackTicks);
+  };
+  requestAnimationFrame(trackTicks);
+
   setTimeout(() => {
     wheelSpinning = false;
+    playPrizeSound(idx);
     const res = prizes[idx];
-        const goldStyle = res.win
+    const goldStyle = res.win
       ? 'background:linear-gradient(180deg, #fff9d2 0%, #ffd24d 50%, #c9860e 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 2px #000); font-size:13.5px;'
       : 'color:#e6cfa3; text-shadow:0 2px 3px #000; font-size:13.5px;';
     const confetti = res.win ? `<span style="filter:drop-shadow(0 2px 2px #000); margin-left:4px; font-style:normal;">🎉</span>` : '';
