@@ -1068,8 +1068,18 @@ document.addEventListener('touchstart', checkUnread, { passive: true });
   <div><strong>ΔΕΖΩ.gr</strong> — Μια Δεύτερη Ζωή για τα πράγματά σας • Αθήνα, Ελλάδα</div>
     <div><span onclick="openSupportChat()" style="color:var(--primary); font-weight:600; cursor:pointer; text-decoration:underline;">Επικοινωνία με διαχειριστή / Αναφορά</span> • Όροι Χρήσης</div>
 </footer>
-  <div id="luckyWheelModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.86); z-index:9999; align-items:center; justify-content:center; padding:10px;">
-  <div id="luckyWheelBox" style="position:relative; width:min(92vw, 430px); aspect-ratio:2/3; border-radius:16px; overflow:hidden; background:#09140e; box-shadow:0 12px 40px rgba(0,0,0,0.75);"></div>
+  <div id="luckyWheelModal" style="display:none; position:fixed; inset:0; z-index:9999; flex-direction:column; align-items:center; justify-content:space-between; padding:10px 10px 14px; background:radial-gradient(ellipse 68% 58% at 50% 56%, #09140e 42%, #0d2b1d 68%, #071911 86%, #040d09 100%), repeating-linear-gradient(115deg, rgba(255,220,120,0.03) 0px, rgba(255,220,120,0.03) 2px, transparent 2px, transparent 14px); background-blend-mode:normal, overlay;">
+  <div id="wheelTopAdBanner" style="position:relative; width:100%; max-width:960px; height:96px; flex-shrink:0; border-radius:14px; background:radial-gradient(ellipse at center, #133b28 0%, #091f14 75%, #05120b 100%); border:2px solid #d4a63a; box-shadow:0 6px 24px rgba(0,0,0,0.75), inset 0 0 0 3px #081a11, inset 0 0 0 4.5px rgba(245,208,110,0.65), inset 0 0 22px rgba(212,166,58,0.22); display:flex; align-items:center; justify-content:center; overflow:hidden;">
+    <div style="position:absolute; inset:6px; border:1px dashed rgba(245,208,110,0.45); border-radius:9px; pointer-events:none;"></div>
+    <span style="position:absolute; top:5px; left:8px; color:#e5b94c; font-size:12px; opacity:0.85; pointer-events:none;">❧</span>
+    <span style="position:absolute; top:5px; right:8px; color:#e5b94c; font-size:12px; opacity:0.85; transform:scaleX(-1); pointer-events:none;">❧</span>
+    <span style="position:absolute; bottom:5px; left:8px; color:#e5b94c; font-size:12px; opacity:0.85; transform:scaleY(-1); pointer-events:none;">❧</span>
+    <span style="position:absolute; bottom:5px; right:8px; color:#e5b94c; font-size:12px; opacity:0.85; transform:scale(-1,-1); pointer-events:none;">❧</span>
+    <span onclick="this.parentElement.style.visibility='hidden'" title="Close" style="position:absolute; top:6px; right:10px; width:22px; height:22px; border-radius:50%; background:rgba(0,0,0,0.45); color:#f5d06e; font-size:15px; line-height:20px; text-align:center; cursor:pointer; border:1px solid rgba(245,208,110,0.4); z-index:2;">&times;</span>
+  </div>
+  <div style="flex:1; width:100%; display:flex; align-items:center; justify-content:center; min-height:0;">
+    <div id="luckyWheelBox" style="position:relative; height:min(100%, 645px); max-width:92vw; aspect-ratio:2/3; border-radius:18px; overflow:hidden; background:#09140e; box-shadow:0 0 45px 18px #09140e, 0 0 80px 30px rgba(9,20,14,0.92);"></div>
+  </div>
 </div>
 
 <script>
