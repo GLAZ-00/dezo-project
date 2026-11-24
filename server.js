@@ -326,18 +326,18 @@ function spendDc(user, cost, note) {
 }
 
 const WHEEL_SECTORS_12 = [
-  { index: 0, code: 'dc_2', label_el: '2 DezoCoin', label_en: '2 DezoCoin', weight: 16 },
-  { index: 1, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 18 },
-  { index: 2, code: 'promo_3', label_el: 'Προώθηση 3 ημερών', label_en: '3-Day Promotion', weight: 10 },
-  { index: 3, code: 'dc_4', label_el: '4 DezoCoin', label_en: '4 DezoCoin', weight: 7 },
-  { index: 4, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 18 },
-  { index: 5, code: 'slot_1', label_el: '+1 Θέση αγγελίας', label_en: '+1 Listing Slot', weight: 5 },
-  { index: 6, code: 'dc_2', label_el: '2 DezoCoin', label_en: '2 DezoCoin', weight: 14 },
-  { index: 7, code: 'promo_5', label_el: 'Προώθηση 5 ημερών', label_en: '5-Day Promotion', weight: 5 },
-  { index: 8, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 18 },
-  { index: 9, code: 'vip_21', label_el: 'VIP 3 εβδομάδες', label_en: 'VIP 3 Weeks', weight: 3 },
-  { index: 10, code: 'promo_3', label_el: 'Προώθηση 3 ημερών', label_en: '3-Day Promotion', weight: 8 },
-  { index: 11, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 18 }
+  { index: 0, code: 'vip_21', label_el: 'VIP 3 εβδομάδες', label_en: 'VIP 3 Weeks', weight: 3 },
+  { index: 1, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 14 },
+  { index: 2, code: 'dc_4', label_el: '4 DezoCoin', label_en: '4 DezoCoin', weight: 7 },
+  { index: 3, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 14 },
+  { index: 4, code: 'promo_5', label_el: 'Προώθηση 5 ημερών', label_en: '5-Day Promotion', weight: 6 },
+  { index: 5, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 14 },
+  { index: 6, code: 'dc_2', label_el: '2 DezoCoin', label_en: '2 DezoCoin', weight: 15 },
+  { index: 7, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 14 },
+  { index: 8, code: 'promo_3', label_el: 'Προώθηση 3 ημερών', label_en: '3-Day Promotion', weight: 9 },
+  { index: 9, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 14 },
+  { index: 10, code: 'slot_1', label_el: '+1 Θέση αγγελίας', label_en: '+1 Listing Slot', weight: 5 },
+  { index: 11, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 14 }
 ];
 
 app.get('/api/wheel/state', auth, (req, res) => {
