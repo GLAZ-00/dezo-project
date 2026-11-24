@@ -1156,14 +1156,14 @@ function playPrizeSound(idx) {
   if (!ctx) return;
   const now = ctx.currentTime;
 
-  const tone = (freq, start, dur, type = 'sine', vol = 0.16, slideTo = null) => {
+  const tone = (freq, start, dur, type = 'sine', vol = 0.2, slideTo = null) => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = type;
     osc.frequency.setValueAtTime(freq, now + start);
     if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, now + start + dur);
     gain.gain.setValueAtTime(0.001, now + start);
-    gain.gain.linearRampToValueAtTime(vol, now + start + 0.015);
+    gain.gain.linearRampToValueAtTime(vol, now + start + 0.008);
     gain.gain.exponentialRampToValueAtTime(0.001, now + start + dur);
     osc.connect(gain);
     gain.connect(ctx.destination);
@@ -1172,27 +1172,40 @@ function playPrizeSound(idx) {
   };
 
   if (idx % 2 === 1) {
-    // Попробуйте снова: мягкий нисходящий «ту-дум»
-    tone(330, 0.0, 0.18, 'triangle', 0.15, 290);
-    tone(246, 0.19, 0.32, 'triangle', 0.15, 196);
+    // Попробуйте снова: лёгкий игривый «ой-ой» без грусти
+    tone(440, 0.0, 0.12, 'triangle', 0.16, 370);
+    tone(370, 0.13, 0.22, 'triangle', 0.16, 310);
   } else if (idx === 0) {
-    // VIP 3 недели: торжественная королевская фанфара
-    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, i * 0.09, 0.45, 'triangle', 0.16));
+    // VIP 3 недели: яркий праздничный фанфарный перебор + аккорд
+    [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => {
+      tone(f, i * 0.07, 0.42, 'triangle', 0.2);
+      tone(f * 2, i * 0.07, 0.25, 'sine', 0.08);
+    });
   } else if (idx === 2 || idx === 6) {
-    // Монеты 4 D€ или 2 D€: звон золотых монет
-    tone(1318.5, 0.0, 0.28, 'sine', 0.18);
-    tone(1760.0, 0.08, 0.38, 'sine', 0.18);
-    if (idx === 2) tone(2093.0, 0.17, 0.45, 'sine', 0.16);
+    // Монеты 4 D€ или 2 D€: настоящий звонкий перезвон монет (высокие металлические обертоны)
+    const coinHit = (t, base) => {
+      tone(base, t, 0.35, 'sine', 0.22);
+      tone(base * 1.48, t, 0.28, 'sine', 0.16);
+      tone(base * 2.15, t, 0.18, 'triangle', 0.10);
+    };
+    coinHit(0.0, 2637);
+    coinHit(0.09, 3136);
+    coinHit(0.18, 3520);
+    if (idx === 2) coinHit(0.27, 4186);
   } else if (idx === 4 || idx === 8) {
-    // Продвижение 5 или 3 дня: взлёт ракеты вверх
-    tone(220, 0.0, 0.48, 'sawtooth', 0.09, 1180);
-    tone(880, 0.42, 0.25, 'sine', 0.15, 1320);
+    // Продвижение 5 или 3 дня: бодрый взлёт ракеты + яркая искра
+    tone(190, 0.0, 0.42, 'sawtooth', 0.11, 1350);
+    tone(380, 0.0, 0.42, 'triangle', 0.14, 1760);
+    tone(1568, 0.40, 0.28, 'sine', 0.22, 2093);
   } else if (idx === 10) {
-    // +1 позиция: «чик-чик» ключа в замке и мягкий скрип открывающейся двери
-    tone(2400, 0.0, 0.035, 'square', 0.12, 900);
-    tone(2650, 0.14, 0.035, 'square', 0.12, 950);
-    tone(310, 0.32, 0.45, 'sawtooth', 0.06, 465);
-    tone(587.33, 0.78, 0.30, 'sine', 0.15);
+    // +1 позиция: два сухих металлических щелчка замка «чик-чик» + плавное открытие + колокольчик
+    tone(1800, 0.0, 0.022, 'square', 0.22, 420);
+    tone(2200, 0.015, 0.02, 'triangle', 0.18, 600);
+    tone(1950, 0.16, 0.022, 'square', 0.22, 450);
+    tone(2400, 0.175, 0.02, 'triangle', 0.18, 650);
+    tone(240, 0.32, 0.35, 'triangle', 0.10, 390);
+    tone(1174.66, 0.65, 0.32, 'sine', 0.20);
+    tone(1567.98, 0.74, 0.40, 'sine', 0.20);
   }
 }
 
