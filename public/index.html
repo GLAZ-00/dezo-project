@@ -1413,7 +1413,7 @@ function closeLuckyWheel() {
   document.getElementById('luckyWheelBox').innerHTML = '';
 }
 
-function spinLuckyWheel(paid) {
+async function spinLuckyWheel(paid) {
   if (wheelSpinning) return;
   getWheelAudio();
   const isEl = lang === 'el';
@@ -1421,37 +1421,54 @@ function spinLuckyWheel(paid) {
   const rotor = document.getElementById('wheelRotorImg');
   if (!rotor) return;
 
+  let spinRes;
+  try {
+    spinRes = await api('/api/wheel/spin', { method: 'POST', body: JSON.stringify({ mode: paid ? 'paid' : 'free' }) });
+  } catch (err) {
+    const msg = paid
+      ? (isEl ? 'Δεν έχετε αρκετά DezoCoin (1 D€)!' : 'Not enough DezoCoin (1 D€)!')
+      : (isEl ? 'Η δωρεάν περιστροφή χρησιμοποιήθηκε σήμερα!' : 'Free spin already used today!');
+    statusEl.innerHTML = `<span style="color:#ff8a80; text-shadow:0 2px 3px #000; font-size:12.5px;">${msg}</span>`;
+    return;
+  }
+
+  currentUser.balance = spinRes.balance;
+  if (!spinRes.freeSpinAvailable) {
+    const fb = document.getElementById('wheelFreeBtn');
+    if (fb) { fb.style.opacity = '0.45'; fb.style.background = '#000'; fb.style.cursor = 'not-allowed'; }
+  }
+
   const prizes = isEl
     ? [
         { icon: '👑', text: 'Κερδίσατε VIP 3 εβδ.!', win: true },
-        { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
+        { icon: '😕', text: 'Δοκιμάστε ξανά...', win: false },
         { icon: '🪙', text: 'Κερδίσατε 4 D€!', win: true },
-        { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
+        { icon: '😕', text: 'Δοκιμάστε ξανά...', win: false },
         { icon: '🚀', text: 'Κερδίσατε προβολή 5 ημ.!', win: true },
-        { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
+        { icon: '😕', text: 'Δοκιμάστε ξανά...', win: false },
         { icon: '🪙', text: 'Κερδίσατε 2 D€!', win: true },
-        { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
+        { icon: '😕', text: 'Δοκιμάστε ξανά...', win: false },
         { icon: '🚀', text: 'Κερδίσατε προβολή 3 ημ.!', win: true },
-        { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false },
+        { icon: '😕', text: 'Δοκιμάστε ξανά...', win: false },
         { icon: '⬆️', text: 'Κερδίσατε +1 θέση!', win: true },
-        { icon: '😔', text: 'Δοκιμάστε ξανά...', win: false }
+        { icon: '😕', text: 'Δοκιμάστε ξανά...', win: false }
       ]
     : [
         { icon: '👑', text: 'You won VIP 3 weeks!', win: true },
-        { icon: '😔', text: 'Try again...', win: false },
+        { icon: '😕', text: 'Try again...', win: false },
         { icon: '🪙', text: 'You won 4 D€!', win: true },
-        { icon: '😔', text: 'Try again...', win: false },
+        { icon: '😕', text: 'Try again...', win: false },
         { icon: '🚀', text: 'You won promotion 5 days!', win: true },
-        { icon: '😔', text: 'Try again...', win: false },
+        { icon: '😕', text: 'Try again...', win: false },
         { icon: '🪙', text: 'You won 2 D€!', win: true },
-        { icon: '😔', text: 'Try again...', win: false },
+        { icon: '😕', text: 'Try again...', win: false },
         { icon: '🚀', text: 'You won promotion 3 days!', win: true },
-        { icon: '😔', text: 'Try again...', win: false },
+        { icon: '😕', text: 'Try again...', win: false },
         { icon: '⬆️', text: 'You won +1 position!', win: true },
-        { icon: '😔', text: 'Try again...', win: false }
+        { icon: '😕', text: 'Try again...', win: false }
       ];
 
-  const idx = Math.floor(Math.random() * 12);
+  const idx = spinRes.sector.index;
   const sectorAngle = 360 / 12;
   const startAngle = wheelAngle;
   const targetStop = (360 - idx * sectorAngle) % 360;
@@ -1461,7 +1478,7 @@ function spinLuckyWheel(paid) {
   const totalSpin = wheelAngle - startAngle;
 
   wheelSpinning = true;
-  statusEl.innerHTML = `<span style="color:#ffe680; text-shadow:0 2px 3px #000;">✨ ${isEl ? 'Καλή τύχη!...' : 'Good luck!...'} ✨</span>`;
+  statusEl.innerHTML = `<span style="color:#ffe680; text-shadow:0 2px 3px #000;">✨ ${isEl ? 'Καλή επιτυχία...' : 'Good luck...'}</span>`;
   rotor.style.transition = 'transform 4.6s cubic-bezier(0.15, 0.85, 0.22, 1)';
   rotor.style.transform = `rotate(${wheelAngle}deg)`;
 
@@ -1485,10 +1502,11 @@ function spinLuckyWheel(paid) {
     playPrizeSound(idx);
     const res = prizes[idx];
     const goldStyle = res.win
-      ? 'background:linear-gradient(180deg, #fff9d2 0%, #ffd24d 50%, #c9860e 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 2px #000); font-size:13.5px;'
+      ? 'background:linear-gradient(180deg, #fff9d2 0%, #ffd24d 50%, #c9860e 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 3px #000); font-weight:900; font-size:14px;'
       : 'color:#e6cfa3; text-shadow:0 2px 3px #000; font-size:13.5px;';
-    const confetti = res.win ? `<span style="filter:drop-shadow(0 2px 2px #000); margin-left:4px; font-style:normal;">🎉</span>` : '';
-    statusEl.innerHTML = `<span style="filter:drop-shadow(0 2px 2px #000); margin-right:4px; font-style:normal;">${res.icon}</span><span style="${goldStyle}">${res.text}</span>${confetti}`;
+    const confetti = res.win ? `<span style="filter:drop-shadow(0 2px 2px #000); margin-left:4px;">🎉</span>` : '';
+    statusEl.innerHTML = `<span style="filter:drop-shadow(0 2px 2px #000); margin-right:4px;">${res.icon}</span><span style="${goldStyle}">${res.text}</span>${confetti}`;
+    if (document.getElementById('cabinetTopWidgets')) showCabinet();
   }, 4700);
 }
 </script>
