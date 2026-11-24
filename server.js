@@ -238,6 +238,7 @@ let adminMessages = [];
 
 app.post('/api/admin-messages', auth, (req, res) => {
   const { toUserId, text } = req.body;
+  
   if (!text) return res.status(400).json({ error: 'Empty' });
   const sender = users.find(u => u.id === req.user.id);
   const msg = { id: Date.now().toString(), fromId: req.user.id, fromName: toUserId ? 'Διαχειριστής (ALEX)' : (sender?.name || 'Χρήστης'), toUserId: toUserId || 'ADMIN', text, read: false, createdAt: new Date() };
@@ -264,6 +265,213 @@ app.get('/api/unread', auth, (req, res) => {
   const adIds = [...new Set(unreadAdMsgs.map(m => m.adId))];
   const unreadAdmin = adminMessages.filter(m => !m.read && m.fromId !== req.user.id && ((isAdmin && m.toUserId === 'ADMIN') || m.toUserId === req.user.id));
   res.json({ total: unreadAdMsgs.length + unreadAdmin.length, adIds, adminCount: unreadAdmin.length });
+});
+// === LUCKY WHEEL, DAILY STREAK, 7-DAY EXPIRY & TREASURE CHEST ===
+const SEVEN_DAYS_MS = 7 * 86400000;
+
+function getAthensDateStr(offsetDays = 0) {
+  const d = new Date(Date.now() + offsetDays * 86400000);
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Athens' }).format(d);
+}
+
+function syncUserRewards(user) {
+  if (!user) return;
+  if (typeof user.balance !== 'number') user.balance = 0;
+  if (typeof user.euroBalance !== 'number') user.euroBalance = 0;
+  if (!Array.isArray(user.bonusBatches)) user.bonusBatches = [];
+  if (!Array.isArray(user.dcHistory)) user.dcHistory = [];
+  if (!Array.isArray(user.treasure)) user.treasure = [];
+  if (typeof user.extraSlots !== 'number') user.extraSlots = 0;
+  if (typeof user.streakCount !== 'number') user.streakCount = 0;
+
+  const now = Date.now();
+  let expiredDc = 0;
+  user.bonusBatches = user.bonusBatches.filter(b => {
+    if (b.amount > 0 && b.expiresAt <= now) {
+      expiredDc += b.amount;
+      return false;
+    }
+    return b.amount > 0;
+  });
+  if (expiredDc > 0) {
+    user.balance = Math.max(0, user.balance - expiredDc);
+    user.dcHistory.unshift({ id: uuidv4(), type: 'expire', amount: -expiredDc, note: 'Λήξη 7 ημερών / 7-day bonus expired', date: now });
+  }
+  user.treasure = user.treasure.filter(t => t.expiresAt > now);
+}
+
+function grantBonusDc(user, amount, note) {
+  syncUserRewards(user);
+  const now = Date.now();
+  user.balance += amount;
+  user.bonusBatches.push({ id: uuidv4(), amount, expiresAt: now + SEVEN_DAYS_MS });
+  user.dcHistory.unshift({ id: uuidv4(), type: 'bonus', amount, note, expiresAt: now + SEVEN_DAYS_MS, date: now });
+}
+
+function spendDc(user, cost, note) {
+  syncUserRewards(user);
+  if (user.balance < cost) return false;
+  let rem = cost;
+  user.bonusBatches.sort((a, b) => a.expiresAt - b.expiresAt);
+  for (const b of user.bonusBatches) {
+    if (rem <= 0) break;
+    const take = Math.min(b.amount, rem);
+    b.amount -= take;
+    rem -= take;
+  }
+  user.bonusBatches = user.bonusBatches.filter(b => b.amount > 0);
+  user.balance -= cost;
+  user.dcHistory.unshift({ id: uuidv4(), type: 'spend', amount: -cost, note, date: Date.now() });
+  return true;
+}
+
+const WHEEL_SECTORS_12 = [
+  { index: 0, code: 'dc_2', label_el: '2 DezoCoin', label_en: '2 DezoCoin', weight: 16 },
+  { index: 1, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 18 },
+  { index: 2, code: 'promo_3', label_el: 'Προώθηση 3 ημερών', label_en: '3-Day Promotion', weight: 10 },
+  { index: 3, code: 'dc_4', label_el: '4 DezoCoin', label_en: '4 DezoCoin', weight: 7 },
+  { index: 4, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 18 },
+  { index: 5, code: 'slot_1', label_el: '+1 Θέση αγγελίας', label_en: '+1 Listing Slot', weight: 5 },
+  { index: 6, code: 'dc_2', label_el: '2 DezoCoin', label_en: '2 DezoCoin', weight: 14 },
+  { index: 7, code: 'promo_5', label_el: 'Προώθηση 5 ημερών', label_en: '5-Day Promotion', weight: 5 },
+  { index: 8, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 18 },
+  { index: 9, code: 'vip_21', label_el: 'VIP 3 εβδομάδες', label_en: 'VIP 3 Weeks', weight: 3 },
+  { index: 10, code: 'promo_3', label_el: 'Προώθηση 3 ημερών', label_en: '3-Day Promotion', weight: 8 },
+  { index: 11, code: 'retry', label_el: 'Δοκιμάστε ξανά', label_en: 'Try again', weight: 18 }
+];
+
+app.get('/api/wheel/state', auth, (req, res) => {
+  const user = users.find(u => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  syncUserRewards(user);
+  const today = getAthensDateStr(0);
+  const yesterday = getAthensDateStr(-1);
+  if (user.lastStreakDate && user.lastStreakDate !== today && user.lastStreakDate !== yesterday) {
+    user.streakCount = 0;
+  }
+  res.json({
+    balance: user.balance,
+    euroBalance: user.euroBalance,
+    freeSpinAvailable: user.lastFreeSpinDate !== today,
+    dailyCoinAvailable: user.lastStreakDate !== today,
+    streakCount: user.streakCount,
+    treasure: user.treasure,
+    dcHistory: user.dcHistory,
+    extraSlots: user.extraSlots
+  });
+});
+
+app.post('/api/wheel/daily-coin', auth, (req, res) => {
+  const user = users.find(u => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  syncUserRewards(user);
+  const today = getAthensDateStr(0);
+  const yesterday = getAthensDateStr(-1);
+  if (user.lastStreakDate === today) {
+    return res.status(400).json({ error: 'Already claimed today' });
+  }
+  user.streakCount = (user.lastStreakDate === yesterday) ? (user.streakCount % 28) + 1 : 1;
+  user.lastStreakDate = today;
+
+  let reward = 1;
+  if (user.streakCount === 7) reward = 2;
+  else if (user.streakCount === 14) reward = 3;
+  else if (user.streakCount === 21) reward = 4;
+  else if (user.streakCount === 28) reward = 5;
+
+  grantBonusDc(user, reward, `Καθημερινό μπόνους Ημέρα ${user.streakCount}/28 / Daily bonus Day ${user.streakCount}/28`);
+  res.json({
+    ok: true,
+    reward,
+    streakCount: user.streakCount,
+    balance: user.balance,
+    dcHistory: user.dcHistory
+  });
+});
+
+app.post('/api/wheel/spin', auth, (req, res) => {
+  const user = users.find(u => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  syncUserRewards(user);
+  const mode = req.body.mode === 'paid' ? 'paid' : 'free';
+  const today = getAthensDateStr(0);
+
+  if (mode === 'free') {
+    if (user.lastFreeSpinDate === today) return res.status(400).json({ error: 'Free spin already used today' });
+    user.lastFreeSpinDate = today;
+  } else {
+    if (!spendDc(user, 1, 'Περιστροφή Τροχού / Lucky Wheel spin (-1 DC)')) {
+      return res.status(400).json({ error: 'Not enough DezoCoin' });
+    }
+  }
+
+  const totalWeight = WHEEL_SECTORS_12.reduce((s, x) => s + x.weight, 0);
+  let r = Math.random() * totalWeight;
+  let picked = WHEEL_SECTORS_12[0];
+  for (const s of WHEEL_SECTORS_12) {
+    r -= s.weight;
+    if (r <= 0) { picked = s; break; }
+  }
+
+  const now = Date.now();
+  if (picked.code === 'dc_2') {
+    grantBonusDc(user, 2, 'Κέρδος Τροχού / Wheel prize (+2 DC)');
+  } else if (picked.code === 'dc_4') {
+    grantBonusDc(user, 4, 'Κέρδος Τροχού / Wheel prize (+4 DC)');
+  } else if (picked.code !== 'retry') {
+    user.treasure.push({
+      id: uuidv4(),
+      code: picked.code,
+      label_el: picked.label_el,
+      label_en: picked.label_en,
+      createdAt: now,
+      expiresAt: now + SEVEN_DAYS_MS
+    });
+  }
+
+  res.json({
+    ok: true,
+    sector: picked,
+    balance: user.balance,
+    freeSpinAvailable: user.lastFreeSpinDate !== today,
+    treasure: user.treasure,
+    dcHistory: user.dcHistory
+  });
+});
+
+app.post('/api/treasure/use', auth, (req, res) => {
+  const user = users.find(u => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  syncUserRewards(user);
+  const { itemId, adId } = req.body;
+  const idx = user.treasure.findIndex(t => t.id === itemId);
+  if (idx === -1) return res.status(404).json({ error: 'Reward not found or expired' });
+  const item = user.treasure[idx];
+
+  if (item.code === 'slot_1') {
+    user.extraSlots = (user.extraSlots || 0) + 1;
+    user.treasure.splice(idx, 1);
+    return res.json({ ok: true, extraSlots: user.extraSlots, treasure: user.treasure });
+  }
+
+  const ad = ads.find(a => a.id === adId && a.userId === req.user.id);
+  if (!ad) return res.status(400).json({ error: 'Select an active ad' });
+
+  const now = Date.now();
+  if (item.code === 'vip_21') {
+    ad.vip = true;
+    ad.vipUntil = now + 21 * 86400000;
+  } else if (item.code === 'promo_5') {
+    ad.promoted = true;
+    ad.promotedUntil = now + 5 * 86400000;
+    ad.created = now;
+  } else if (item.code === 'promo_3') {
+    ad.promoted = true;
+    ad.promotedUntil = now + 3 * 86400000;
+    ad.created = now;
+  }
+  user.treasure.splice(idx, 1);
+  res.json({ ok: true, ad, treasure: user.treasure });
 });
 // Serve index.html from public
 app.get('*', (req, res) => {
