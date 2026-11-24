@@ -868,7 +868,7 @@ async function showCabinet() {
     </div>
         <div id="cabinetTopWidgets" style="position:relative; min-height:155px; margin-bottom:16px; display:flex; align-items:center; justify-content:center;">
       <div id="luckyChanceSlot" style="display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2;">
-        <div onclick="alert(lang==='el' ? '🎰 Η Τυχερή σου Ευκαιρία — ο Τροχός της Τύχης ανοίγει στο επόμενο βήμα!' : '🎰 Your Lucky Chance — Wheel of Fortune opens in the next step!')" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+          <div onclick="openLuckyWheel()" title="Lucky Chance" style="cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; transition:transform .2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
           <img src="/image_658f5f82.jpg" alt="DezoCoin" style="width:104px; height:122px; object-fit:cover; border-radius:50%; filter:drop-shadow(0 6px 12px rgba(0,0,0,0.22));">
 
             <span style="font-size:12px; font-weight:800; color:#b37819; margin-top:4px; letter-spacing:0.3px;">${lang === 'el' ? 'Ευκαιρία' : 'Lucky Chance'}</span>
@@ -1067,5 +1067,28 @@ document.addEventListener('touchstart', checkUnread, { passive: true });
   <div><strong>ΔΕΖΩ.gr</strong> — Μια Δεύτερη Ζωή για τα πράγματά σας • Αθήνα, Ελλάδα</div>
     <div><span onclick="openSupportChat()" style="color:var(--primary); font-weight:600; cursor:pointer; text-decoration:underline;">Επικοινωνία με διαχειριστή / Αναφορά</span> • Όροι Χρήσης</div>
 </footer>
+  <div id="luckyWheelModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.86); z-index:9999; align-items:center; justify-content:center; padding:10px;">
+  <div id="luckyWheelBox" style="position:relative; width:min(92vw, 430px); aspect-ratio:2/3; border-radius:16px; overflow:hidden; background:#09140e; box-shadow:0 12px 40px rgba(0,0,0,0.75);"></div>
+</div>
+
+<script>
+function openLuckyWheel() {
+  if (!currentUser) return showLogin();
+  const isEl = lang === 'el';
+  const imgSrc = isEl ? '/grok_1795467322366.jpg' : '/grok_1795468524793.jpg';
+
+  const box = document.getElementById('luckyWheelBox');
+  box.innerHTML = `
+    <img src="${imgSrc}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill; display:block; transform-origin:50% 41%; transform:scaleY(0.955); pointer-events:none;">
+    <span onclick="closeLuckyWheel()" style="position:absolute; top:10px; right:12px; width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,0.65); color:#fff; font-size:22px; line-height:32px; text-align:center; cursor:pointer; z-index:10; border:1px solid rgba(255,255,255,0.35);">&times;</span>
+  `;
+  document.getElementById('luckyWheelModal').style.display = 'flex';
+}
+
+function closeLuckyWheel() {
+  document.getElementById('luckyWheelModal').style.display = 'none';
+  document.getElementById('luckyWheelBox').innerHTML = '';
+}
+</script>
 </body>
 </html>
