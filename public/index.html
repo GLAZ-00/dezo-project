@@ -1263,6 +1263,7 @@ async function openLuckyWheel() {
 
   const box = document.getElementById('luckyWheelBox');
   box.innerHTML = `
+      <img src="${imgSrc}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill;">
     <div style="position:absolute; inset:0; transform-origin:50% 40.5%; transform:scaleY(0.955); pointer-events:none;">
       <img src="${imgSrc}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill; clip-path:circle(30.65% at 50.0% 40.5%); transform:scale(1.06); transform-origin:50.0% 40.5%; filter:brightness(0.42);">
     </div>
