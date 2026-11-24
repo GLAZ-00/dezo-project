@@ -1428,8 +1428,8 @@ async function spinLuckyWheel(paid) {
   } catch (err) {
     const msg = paid
       ? (isEl ? 'Δεν έχετε αρκετά DezoCoin (1 D€)!' : 'Not enough DezoCoin (1 D€)!')
-      : (isEl ? 'Η δωρεάν περιστροφή χρησιμοποιήθηκε σήμερα!' : 'Free spin already used today!');
-    statusEl.innerHTML = `<span style="color:#ff8a80; text-shadow:0 2px 3px #000; font-size:12.5px;">${msg}</span>`;
+      : (isEl ? 'Δωρεάν περιστροφή: αύριο' : 'Free spin: tomorrow');
+    statusEl.innerHTML = `<span style="color:#ff8a80; text-shadow:0 2px 3px #000; font-size:11.5px;">${msg}</span>`;
     return;
   }
 
