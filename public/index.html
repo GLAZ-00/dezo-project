@@ -1269,16 +1269,16 @@ async function openLuckyWheel() {
   let st = { balance: currentUser.balance || 0, freeSpinAvailable: true, dailyCoinAvailable: true, streakCount: 0 };
   try { st = await api('/api/wheel/state'); currentUser.balance = st.balance; } catch (e) {}
 
-  const box = document.getElementById('luckyWheelBox');
+    const box = document.getElementById('luckyWheelBox');
   box.innerHTML = `
-    <div style="position:absolute; inset:0; transform-origin:50% 40.5%; transform:scaleY(0.955); pointer-events:none;">
-      <img src="${imgSrc}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill; display:block;">
+    <div style="position:absolute; top:0; right:0; bottom:0; left:0; transform-origin:50% 40.5%; transform:scaleY(0.955); pointer-events:none;">
+      <img src="${imgSrc}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:fill; display:block;">
     </div>
-    <div id="wheelRotorImg" style="position:absolute; inset:0; clip-path:circle(30.65% at 50.0% 40.05%); transform-origin:50.0% 40.05%; will-change:transform; pointer-events:none;">
-      <img src="${imgSrc}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill; display:block; transform-origin:50% 40.5%; transform:scaleY(0.955);">
+    <div id="wheelRotorImg" style="position:absolute; top:0; right:0; bottom:0; left:0; -webkit-clip-path:circle(30.65% at 50.0% 40.05%); clip-path:circle(30.65% at 50.0% 40.05%); transform-origin:50.0% 40.05%; will-change:transform; pointer-events:none;">
+      <img src="${imgSrc}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:fill; display:block; transform-origin:50% 40.5%; transform:scaleY(0.955);">
     </div>
-    <div id="wheelCenterCoinBtn" onclick="claimDailyCenterCoin()" title="${isEl ? 'Πατήστε για καθημερινό μπόνους' : 'Tap for daily bonus'}" style="position:absolute; left:50%; top:40.05%; width:43.2%; aspect-ratio:1/1; transform:translate(-50%,-50%); border-radius:50%; overflow:hidden; cursor:pointer; z-index:4; background:radial-gradient(circle, #e5c470 78%, #8f6218 100%); box-shadow:0 3px 8px rgba(0,0,0,0.65), inset 0 0 0 2px #6b4407; ${st.dailyCoinAvailable ? 'filter:drop-shadow(0 0 12px rgba(255,215,80,0.95));' : ''}">
-      <img src="/grok_1795376942103.jpg" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.035); clip-path:circle(47.2% at 50% 50%);">
+    <div id="wheelCenterCoinBtn" onclick="claimDailyCenterCoin()" title="${isEl ? 'Πατήστε για καθημερινό μπόνους' : 'Tap for daily bonus'}" style="position:absolute; left:50%; top:40.05%; width:43.2%; height:28.1%; transform:translate(-50%,-50%); border-radius:50%; overflow:hidden; cursor:pointer; z-index:4; background:radial-gradient(circle, #e5c470 78%, #8f6218 100%); box-shadow:0 3px 8px rgba(0,0,0,0.65), inset 0 0 0 2px #6b4407; ${st.dailyCoinAvailable ? 'filter:drop-shadow(0 0 12px rgba(255,215,80,0.95));' : ''}">
+      <img src="/grok_1795376942103.jpg" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; transform:scale(1.035); -webkit-clip-path:circle(47.2% at 50% 50%); clip-path:circle(47.2% at 50% 50%);">
     </div>
     <svg viewBox="0 0 60 68" style="position:absolute; left:50%; top:10.6%; width:10.5%; transform:translateX(-50%); z-index:8; pointer-events:none; filter:drop-shadow(0 5px 6px rgba(0,0,0,0.8));">
       <defs>
