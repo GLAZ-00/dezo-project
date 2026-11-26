@@ -83,8 +83,9 @@ button.primary { background: var(--primary); color: #fff; border: none; padding:
       <select id="filterZone" style="flex:1; padding:6px 10px; border:1px solid #ddd; border-radius:16px; font-size:13px; background:#fafafa; outline:none; min-width:0;"><option value="">Όλες οι περιοχές</option></select>
     </div>
   </div>
-    <div style="display:flex; align-items:center; gap:14px;">
+        <div style="display:flex; align-items:center; gap:12px;">
      <span id="cartBell" onclick="handleCartClick()" title="Καλάθι" style="cursor:pointer; font-size:20px; position:relative;">🛒<span id="cartBadge" style="display:none; position:absolute; top:-4px; right:-6px; background:var(--primary); color:#fff; font-size:10px; font-weight:700; border-radius:50%; padding:1px 5px;"></span></span>
+     <span id="chatBell" onclick="handleChatBellClick()" title="Συνομιλίες" style="cursor:pointer; font-size:20px; position:relative;">💬<span id="chatBadge" style="display:none; position:absolute; top:-4px; right:-6px; background:#e53935; color:#fff; font-size:10px; font-weight:700; border-radius:50%; padding:1px 5px;"></span></span>
      <span id="msgBell" onclick="handleBellClick()" title="Μηνύματα" style="cursor:pointer; font-size:20px; position:relative;">✉️<span id="msgBadge" style="display:none; position:absolute; top:-4px; right:-6px; background:#e53935; color:#fff; font-size:10px; font-weight:700; border-radius:50%; padding:1px 5px;"></span></span>
     <span class="lang" onclick="toggleLang()" id="langToggle">EN</span>
     <span id="userMenu" style="cursor:pointer;" onclick="showLogin()">Σύνδεση</span>
