@@ -920,9 +920,12 @@ async function showCabinet() {
         </div>
       </div>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:16px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:16px;">
       <button class="primary" style="padding:12px;" onclick="showCabinet()">${lang === 'el' ? 'Τα πράγματά μου' : 'My items'}</button>
-      <div>${isAdmin ? `<button style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="openAdminInbox()">${lang === 'el' ? 'Μηνύματα' : 'Messages'}</button>` : ''}</div>
+      <div style="display:flex; gap:6px; min-width:0;">
+        ${isAdmin ? `<button style="flex:1; min-width:0; padding:10px 4px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:13px;" onclick="openAdminInbox()">${lang === 'el' ? 'Μηνύματα' : 'Messages'}</button>` : ''}
+        <button style="flex:1; min-width:0; padding:10px 6px; border:1.5px solid #d4a63a; border-radius:8px; background:linear-gradient(180deg, #fff6d6 0%, #f3d078 52%, #dfa837 100%); color:#3d2502; font-weight:800; cursor:pointer; font-size:13.5px; line-height:1.15; box-shadow:0 2px 8px rgba(212,166,58,0.32), inset 0 1px 0 rgba(255,255,255,0.75); display:inline-flex; align-items:center; justify-content:center; gap:5px; text-align:center;" onclick="openBoostShop()"><span>${lang === 'el' ? 'VIP Υπηρεσίες' : 'Boost Shop'}</span>${dcLogo(16)}</button>
+      </div>
       <button style="padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; cursor:pointer; font-size:15px;" onclick="openArchive()">${lang === 'el' ? 'Αρχείο' : 'Archive'}</button>
     </div>
     <div id="modChatZone" style="min-height:130px; margin-bottom:16px;"></div>
