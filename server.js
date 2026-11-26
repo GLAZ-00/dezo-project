@@ -229,9 +229,13 @@ app.post('/api/messages', auth, (req, res) => {
 app.get('/api/messages/:adId', auth, (req, res) => {
   const adMessages = messages.filter(m => m.adId === req.params.adId && (m.from === req.user.id || m.to === req.user.id));
   adMessages.forEach(m => { if (m.to === req.user.id) m.read = true; });
-  res.json(adMessages);
+  const enriched = adMessages.map(m => ({
+    ...m,
+    fromName: users.find(u => u.id === m.from)?.name || 'Χρήστης',
+    toName: users.find(u => u.id === m.to)?.name || 'Χρήστης'
+  }));
+  res.json(enriched);
 });
-
 // Categories
 app.get('/api/categories', (req, res) => res.json(categories));
 let adminMessages = [];
