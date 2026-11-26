@@ -842,7 +842,78 @@ function openDcHistory() {
       </div>
     </div>`;
 }
+        
 
+async function openBoostShop() {
+  if (typeof modPoll !== 'undefined' && modPoll) clearInterval(modPoll);
+  if (typeof treasureChestOpen !== 'undefined' && treasureChestOpen) closeTreasureChest();
+  const isEl = lang === 'el';
+  const box = document.getElementById('modChatZone');
+  if (!box) return;
+
+  let activeAds = [];
+  try {
+    const all = await api('/api/my-ads');
+    activeAds = (all || []).filter(a => !a.status || a.status === 'active');
+  } catch (e) {}
+
+  const adOptions = activeAds.length
+    ? activeAds.map(a => `<option value="${a.id}">${a.title}</option>`).join('')
+    : `<option value="">${isEl ? 'Δεν έχετε ενεργή αγγελία' : 'No active listing'}</option>`;
+
+  const catalog = [
+    { group: isEl ? 'VIP Κατάσταση (περιλαμβάνει 6 φωτό)' : 'VIP Status (includes 6 photos)', items: [
+      { code: 'vip_7',  name: isEl ? 'VIP 1 εβδομάδα (7 ημ.)' : 'VIP 1 Week (7 days)',    cost: 4 },
+      { code: 'vip_14', name: isEl ? 'VIP 2 εβδομάδες (14 ημ.)' : 'VIP 2 Weeks (14 days)', cost: 6 },
+      { code: 'vip_21', name: isEl ? 'VIP 3 εβδομάδες (21 ημ.)' : 'VIP 3 Weeks (21 days)', cost: 8 },
+      { code: 'vip_30', name: isEl ? 'VIP 1 μήνας (30 ημ.)' : 'VIP 1 Month (30 days)',     cost: 10 }
+    ]},
+    { group: isEl ? 'Ανύψωση στην κορυφή' : 'Top Feed Boost', items: [
+      { code: 'boost_1',  name: isEl ? 'Ανύψωση 1 ημέρα' : 'Boost 1 Day',    cost: 1 },
+      { code: 'boost_3',  name: isEl ? 'Ανύψωση 3 ημέρες' : 'Boost 3 Days',  cost: 2 },
+      { code: 'boost_5',  name: isEl ? 'Ανύψωση 5 ημέρες' : 'Boost 5 Days',  cost: 3 },
+      { code: 'boost_10', name: isEl ? 'Ανύψωση 10 ημέρες' : 'Boost 10 Days', cost: 5 }
+    ]},
+    { group: isEl ? 'Επιπλέον θέσεις & φωτογραφίες (2 δωρεάν/κατηγορία)' : 'Extra Slots & Photos (2 free/category)', items: [
+      { code: 'slot_1',  name: isEl ? '+1 Θέση αγγελίας (3 δωρεάν φωτό)' : '+1 Listing Slot (3 free photos)', cost: 4 },
+      { code: 'slot_3',  name: isEl ? '+3 Θέσεις αγγελιών' : '+3 Listing Slots',                              cost: 10 },
+      { code: 'photo_1', name: isEl ? '+1 Επιπλέον φωτογραφία (έως 6)' : '+1 Extra Photo (up to 6)',           cost: 1 }
+    ]}
+  ];
+
+  const listHtml = catalog.map(sec => `
+    <div style="font-size:11.5px; font-weight:800; color:#ffd24d; letter-spacing:0.3px; margin:8px 0 5px; text-transform:uppercase;">${sec.group}</div>
+    ${sec.items.map(it => `
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 10px; margin-bottom:5px; background:rgba(255,255,255,0.06); border:1px solid rgba(212,166,58,0.28); border-radius:8px;">
+        <span style="font-size:13px; font-weight:600; color:#fff4d4;">${it.name}</span>
+        <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+          <span style="font-size:13.5px; font-weight:800; color:#ffd24d; white-space:nowrap;">${it.cost} ${dcLogo(15)}</span>
+          <button onclick="previewShopBuy('${it.code}')" style="padding:4px 11px; background:linear-gradient(180deg, #f5cf6e 0%, #c98a14 100%); color:#1a1000; font-weight:800; border:none; border-radius:6px; cursor:pointer; font-size:12px;">${isEl ? 'Αγορά' : 'Buy'}</button>
+        </div>
+      </div>`).join('')}
+  `).join('');
+
+  box.innerHTML = `
+    <div id="boostShopPanel" style="background:linear-gradient(135deg, #0d2b1c 0%, #071910 100%); border:1.5px solid #d4a63a; border-radius:12px; padding:12px 14px; color:#fff; box-shadow:0 6px 20px rgba(0,0,0,0.22);">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,166,58,0.35); padding-bottom:8px; margin-bottom:8px;">
+        <strong style="color:#ffd24d; font-size:15px;">${isEl ? 'VIP Υπηρεσίες' : 'Boost Shop'} ${dcLogo(16)}</strong>
+        <span onclick="document.getElementById('modChatZone').innerHTML=''" style="cursor:pointer; font-size:21px; color:#ffd24d; line-height:1; padding:0 4px;">&times;</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(212,166,58,0.35); border-radius:8px; padding:6px 10px; margin-bottom:8px;">
+        <span style="font-size:12px; color:#e6cfa3; font-weight:600;">${isEl ? 'Αγγελία:' : 'Listing:'}</span>
+        <select id="shopTargetAd" style="flex:1; min-width:160px; padding:4px 8px; border-radius:6px; border:1px solid #d4a63a; background:#091f14; color:#fff; font-size:12.5px;">${adOptions}</select>
+      </div>
+      <div style="max-height:210px; overflow-y:auto; padding-right:4px;">
+        ${listHtml}
+      </div>
+    </div>`;
+}
+
+function previewShopBuy(code) {
+  alert(lang === 'el'
+    ? 'Η βιτρίνα είναι έτοιμη! Στο επόμενο βήμα ενεργοποιούμε την πληρωμή με DezoCoin.'
+    : 'Shop layout is ready! Next step: activating DezoCoin checkout.');
+}
 function renderWalletSvg(isOpen, accentColor) {
   return isOpen
     ? `<svg width="42" height="38" viewBox="0 0 44 40" style="flex-shrink:0;">
