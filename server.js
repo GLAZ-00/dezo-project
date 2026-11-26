@@ -263,12 +263,19 @@ app.delete('/api/admin-messages/:id', auth, (req, res) => {
 });
 
 app.get('/api/unread', auth, (req, res) => {
-  const user = users.find(u => u.id === req.user.id);
-  const isAdmin = user?.email === 'admin@dezo.gr' || user?.name?.trim().toUpperCase() === 'ALEX' || req.user.email === 'admin@dezo.gr';
-  const unreadAdMsgs = messages.filter(m => m.to === req.user.id && !m.read);
-  const adIds = [...new Set(unreadAdMsgs.map(m => m.adId))];
-  const unreadAdmin = adminMessages.filter(m => !m.read && m.fromId !== req.user.id && ((isAdmin && m.toUserId === 'ADMIN') || m.toUserId === req.user.id));
-  res.json({ total: unreadAdMsgs.length + unreadAdmin.length, adIds, adminCount: unreadAdmin.length });
+  const unreadMsgs = messages.filter(m => m.to === req.user.id && !m.read).sort((a, b) => (a.created || 0) - (b.created || 0));
+  const myAdSet = new Set(ads.filter(a => a.userId === req.user.id).map(a => a.id));
+  const adIds = [...new Set(unreadMsgs.filter(m => myAdSet.has(m.adId)).map(m => m.adId))];
+  const chatAdIds = [...new Set(unreadMsgs.filter(m => !myAdSet.has(m.adId)).map(m => m.adId))];
+  const isAdmin = req.user.email === 'admin@dezo.gr' || req.user.name?.trim().toUpperCase() === 'ALEX';
+  const adminMsgs = adminMessages.filter(m => !m.read && (isAdmin ? m.fromId !== req.user.id : m.toUserId === req.user.id));
+  res.json({
+    total: adIds.length + adminMsgs.length,
+    adIds,
+    chatAdIds,
+    chatCount: chatAdIds.length,
+    adminCount: adminMsgs.length
+  });
 });
 // === LUCKY WHEEL, DAILY STREAK, 7-DAY EXPIRY & TREASURE CHEST ===
 const SEVEN_DAYS_MS = 7 * 86400000;
