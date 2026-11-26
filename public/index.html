@@ -690,12 +690,70 @@ async function setAdStatus(id, status) {
   showCabinet();
 }
 
+function formatChatTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const pad = n => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function renderChatMessages() {
+  const box = document.getElementById('chatBox');
+  if (!box) return;
+  const all = window._adMessages || [];
+  const sel = window._chatPartnerId || '';
+  const list = sel ? all.filter(m => m.from === sel || m.to === sel) : all;
+
+  box.innerHTML = list.map(m => {
+    const isMe = m.from === currentUser.id;
+    const who = isMe
+      ? `${lang === 'el' ? 'Εσύ' : 'You'} → ${m.toName || ''}`
+      : `👤 ${m.fromName || ''}`;
+    const timeStr = formatChatTime(m.created);
+    return `<div class="msg ${isMe ? 'me' : 'them'}">
+      <div style="font-size:11px; color:#666; margin-bottom:3px; font-weight:600;">${who}${timeStr ? ` • ${timeStr}` : ''}</div>
+      <div>${m.text}</div>
+    </div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
 async function loadMessages(adId) {
   const msgs = await api('/api/messages/' + adId);
-  window._chatPartnerId = msgs.find(m => m.from !== currentUser.id)?.from || null;
-  const box = document.getElementById('chatBox');
-  box.innerHTML = msgs.map(m => `<div class="msg ${m.from === currentUser.id ? 'me' : 'them'}">${m.text}</div>`).join('');
-  box.scrollTop = box.scrollHeight;
+  window._adMessages = msgs;
+
+  const partnersMap = new Map();
+  msgs.forEach(m => {
+    const pid = m.from === currentUser.id ? m.to : m.from;
+    const pname = m.from === currentUser.id ? m.toName : m.fromName;
+    if (pid && pid !== currentUser.id && !partnersMap.has(pid)) {
+      partnersMap.set(pid, pname || 'Χρήστης');
+    }
+  });
+
+  window._chatPartners = Array.from(partnersMap.entries());
+  const wrap = document.getElementById('chatPartnerWrap');
+  const selEl = document.getElementById('chatPartnerSelect');
+
+  if (wrap && selEl) {
+    if (window._chatPartners.length > 0) {
+      wrap.style.display = 'inline-flex';
+      const allLabel = lang === 'el' ? `Όλα (${window._chatPartners.length})` : `All (${window._chatPartners.length})`;
+      selEl.innerHTML = `<option value="">${allLabel}</option>` +
+        window._chatPartners.map(([id, name]) => `<option value="${id}">${name}</option>`).join('');
+      if (window._chatPartnerId && partnersMap.has(window._chatPartnerId)) {
+        selEl.value = window._chatPartnerId;
+      } else {
+        window._chatPartnerId = '';
+        selEl.value = '';
+      }
+    } else {
+      wrap.style.display = 'none';
+      window._chatPartnerId = '';
+    }
+  }
+
+  renderChatMessages();
   checkUnread();
 }
 
@@ -703,7 +761,21 @@ async function sendMessage(adId, toUserId) {
   const input = document.getElementById('msgInput');
   const text = input.value.trim();
   if (!text) return;
-  const realTo = (toUserId === currentUser.id && window._chatPartnerId) ? window._chatPartnerId : toUserId;
+
+  let realTo = toUserId;
+  if (toUserId === currentUser.id) {
+    if (window._chatPartnerId) {
+      realTo = window._chatPartnerId;
+    } else if (window._chatPartners && window._chatPartners.length === 1) {
+      realTo = window._chatPartners[0][0];
+    } else {
+      alert(lang === 'el'
+        ? 'Επιλέξτε πρώτα παραλήπτη από τη λίστα (👤) πάνω δεξιά!'
+        : 'Please select a recipient from the list (👤) at top right first!');
+      return;
+    }
+  }
+
   await api('/api/messages', { method: 'POST', body: JSON.stringify({ adId, text, toUserId: realTo }) });
   input.value = '';
   loadMessages(adId);
