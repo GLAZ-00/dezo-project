@@ -652,9 +652,14 @@ async function showAd(id) {
       </div>
     </div>
     
-${(currentUser && (!ad.status || ad.status === 'active')) ? `<div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">${isOwner ? `<button onclick="setAdStatus('${ad.id}','sold')" style="flex:1; padding:10px; background:#e8f5e9; color:#2e7d32; border:1px solid #a5d6a7; border-radius:8px; cursor:pointer; font-weight:600;">✅ Πουλήθηκε / Στο αρχείο</button>` : ''}${(currentUser.email === 'admin@dezo.gr' || (currentUser.name && currentUser.name.trim().toUpperCase() === 'ALEX')) ? `<button onclick="setAdStatus('${ad.id}','rejected')" style="flex:1; padding:10px; background:#fff8e1; color:#e65100; border:1px solid #ffe082; border-radius:8px; cursor:pointer; font-weight:600;">⚠️ Απόρριψη</button>` : ''}</div>` : ''}
       ${currentUser ? `
-       <h3 style="display:flex; align-items:center; gap:14px;"><span>${tr('message')}</span>${ad.ownerName ? `<span style="font-size:15px; font-weight:600; color:#444;">👤 ${ad.ownerName}</span>` : ''}</h3>
+       <h3 style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+         <span style="display:inline-flex; align-items:center; gap:10px;"><span>${tr('message')}</span>${ad.ownerName ? `<span style="font-size:15px; font-weight:600; color:#444;">👤 ${ad.ownerName}</span>` : ''}</span>
+         <span id="chatPartnerWrap" style="display:none; align-items:center; gap:5px;">
+           <span style="font-size:15px;">👤</span>
+           <select id="chatPartnerSelect" onchange="window._chatPartnerId = this.value; renderChatMessages();" style="padding:4px 8px; border:1px solid #ccc; border-radius:8px; font-size:13px; font-weight:600; background:#fff; color:#222; max-width:165px;"></select>
+         </span>
+       </h3>
         <div class="chat-box" id="chatBox"></div>
           <div style="display:flex; gap:8px;">
             <input id="msgInput" placeholder="${tr('message')}..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
