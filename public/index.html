@@ -1240,17 +1240,42 @@ async function openArchive() {
   }).join('') : `<p style="color:#888; text-align:center; padding:16px 0;">${lang === 'el' ? 'Το αρχείο είναι άδειο' : 'Archive is empty'}</p>`;
 }
 window._unreadAdIds = [];
+window._unreadChatAdIds = [];
 window._unreadAdmin = 0;
 async function checkUnread() {
   const badge = document.getElementById('msgBadge');
-  if (!currentUser || !badge) { if (badge) badge.style.display = 'none'; return; }
-    try {
+  const chatBadge = document.getElementById('chatBadge');
+  if (!currentUser) {
+    if (badge) badge.style.display = 'none';
+    if (chatBadge) chatBadge.style.display = 'none';
+    return;
+  }
+  try {
     const data = await api('/api/unread?t=' + Date.now());
     window._unreadAdIds = data.adIds || [];
+    window._unreadChatAdIds = data.chatAdIds || [];
     window._unreadAdmin = data.adminCount || 0;
-    if (data.total > 0) { badge.textContent = data.total; badge.style.display = 'inline-block'; }
-    else { badge.style.display = 'none'; }
+    if (badge) {
+      if (data.total > 0) { badge.textContent = data.total; badge.style.display = 'inline-block'; }
+      else { badge.style.display = 'none'; }
+    }
+    if (chatBadge) {
+      const cCount = data.chatCount || window._unreadChatAdIds.length;
+      if (cCount > 0) { chatBadge.textContent = cCount; chatBadge.style.display = 'inline-block'; }
+      else { chatBadge.style.display = 'none'; }
+    }
   } catch (e) {}
+}
+async function handleChatBellClick() {
+  if (!currentUser) return showLogin();
+  await checkUnread();
+  if (window._unreadChatAdIds && window._unreadChatAdIds.length > 0) {
+    const nextAdId = window._unreadChatAdIds[0];
+    await showAd(nextAdId);
+    checkUnread();
+  } else {
+    alert(lang === 'el' ? 'Δεν υπάρχουν νέα μηνύματα από πωλητές.' : 'No new replies from sellers.');
+  }
 }
 async function handleBellClick() {
   if (!currentUser) return showLogin();
