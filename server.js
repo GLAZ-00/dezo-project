@@ -528,6 +528,150 @@ app.post('/api/treasure/use', auth, (req, res) => {
   user.treasure.splice(idx, 1);
   res.json({ ok: true, ad, treasure: user.treasure });
 });
+  user.treasure.splice(idx, 1);
+  res.json({ ok: true, ad, treasure: user.treasure });
+});
+
+// === BOOST SHOP (/api/shop/buy) ===
+const SHOP_CATALOG = {
+  vip_7:    { cost: 4,  type: 'vip',   days: 7,  el: 'VIP 1 εβδομάδα (7 ημ.)', en: 'VIP 1 Week (7 days)' },
+  vip_14:   { cost: 6,  type: 'vip',   days: 14, el: 'VIP 2 εβδομάδες (14 ημ.)', en: 'VIP 2 Weeks (14 days)' },
+  vip_21:   { cost: 8,  type: 'vip',   days: 21, el: 'VIP 3 εβδομάδες (21 ημ.)', en: 'VIP 3 Weeks (21 days)' },
+  vip_30:   { cost: 10, type: 'vip',   days: 30, el: 'VIP 1 μήνας (30 ημ.)', en: 'VIP 1 Month (30 days)' },
+  boost_1:  { cost: 1,  type: 'boost', days: 1,  el: 'Προώθηση 1 ημέρας', en: '1-Day Boost' },
+  boost_3:  { cost: 2,  type: 'boost', days: 3,  el: 'Προώθηση 3 ημερών', en: '3-Day Boost' },
+  boost_5:  { cost: 3,  type: 'boost', days: 5,  el: 'Προώθηση 5 ημερών', en: '5-Day Boost' },
+  boost_10: { cost: 5,  type: 'boost', days: 10, el: 'Προώθηση 10 ημερών', en: '10-Day Boost' },
+  slot_1:   { cost: 4,  type: 'slot',  count: 1, el: '+1 Θέση αγγελίας', en: '+1 Listing Slot' },
+  slot_3:   { cost: 10, type: 'slot',  count: 3, el: '+3 Θέσεις αγγελιών', en: '+3 Listing Slots' },
+  photo_1:  { cost: 1,  type: 'photo', count: 1, el: '+1 Επιπλέον φωτογραφία', en: '+1 Extra Photo' }
+};
+
+app.post('/api/shop/buy', auth, (req, res) => {
+  const user = users.find(u => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  syncUserRewards(user);
+  const { itemCode, adId } = req.body;
+  const item = SHOP_CATALOG[itemCode];
+  if (!item) return res.status(400).json({ error: 'Invalid item' });
+
+  let targetAd = null;
+  if (item.type === 'vip' || item.type === 'boost' || item.type === 'photo') {
+    targetAd = ads.find(a => a.id === adId && a.userId === user.id && (!a.status || a.status === 'active'));
+    if (!targetAd) return res.status(400).json({ error: 'SELECT_AD' });
+  }
+
+  if (item.type === 'photo') {
+    const curMax = Math.max(3, (targetAd.photos || []).length, targetAd.maxPhotos || 3);
+    if (curMax >= 6 || targetAd.vip) {
+      return res.status(400).json({ error: 'MAX_PHOTOS_REACHED' });
+    }
+  }
+
+  if (!spendDc(user, item.cost, `Αγορά: ${item.el} / Shop: ${item.en} (-${item.cost} DC)`)) {
+    return res.status(400).json({ error: 'NOT_ENOUGH_DC' });
+  }
+
+  const now = Date.now();
+  if (item.type === 'slot') {
+    user.extraSlots = (user.extraSlots || 0) + item.count;
+  } else if (item.type === 'photo') {
+    const curMax = Math.max(3, (targetAd.photos || []).length, targetAd.maxPhotos || 3);
+    targetAd.maxPhotos = Math.min(6, curMax + 1);
+  } else if (item.type === 'vip') {
+    targetAd.vip = true;
+    targetAd.vipUntil = Math.max(targetAd.vipUntil || now, now) + item.days * 86400000;
+    targetAd.maxPhotos = 6;
+  } else if (item.type === 'boost') {
+    targetAd.promoted = true;
+    targetAd.promotedUntil = Math.max(targetAd.promotedUntil || now, now) + item.days * 86400000;
+    if (!targetAd.originalCreated) targetAd.originalCreated = targetAd.created;
+    targetAd.created = now;
+  }
+
+  res.json({
+    ok: true,
+    balance: user.balance,
+    extraSlots: user.extraSlots,
+    dcHistory: user.dcHistory
+  });
+});
+
+// === SMART AD EDIT (12h/3 tries for 1st photo, extra photos, max 20% text diff) ===
+function calcTextChangeRatio(origText, newText) {
+  const a = (origText || '').trim();
+  const b = (newText || '').trim();
+  if (!a && !b) return 0;
+  if (a === b) return 0;
+  const maxLen = Math.max(a.length, b.length, 1);
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  let j = 0;
+  while (j < (a.length - i) && j < (b.length - i) && a[a.length - 1 - j] === b[b.length - 1 - j]) j++;
+  const changedChars = Math.max(a.length - i - j, b.length - i - j);
+  return changedChars / maxLen;
+}
+
+app.put('/api/ads/:id', auth, (req, res) => {
+  const ad = ads.find(a => a.id === req.params.id && a.userId === req.user.id);
+  if (!ad) return res.status(404).json({ error: 'Not found' });
+  const user = users.find(u => u.id === req.user.id);
+  const isAdmin = user?.email === 'admin@dezo.gr' || user?.name?.trim().toUpperCase() === 'ALEX';
+
+  const { description, price, photos, phoneVisible } = req.body;
+  const now = Date.now();
+  const createdTs = ad.originalCreated || ad.created || now;
+
+  // 1. Проверка описания (не более 20% изменений от исходного описания + защита от бесконечных правок)
+  if (typeof description === 'string') {
+    if (ad.originalDescription === undefined) ad.originalDescription = ad.description || '';
+    if (!isAdmin) {
+      if ((ad.descEdits || 0) >= 4) {
+        return res.status(400).json({ error: 'DESC_EDIT_LIMIT' });
+      }
+      if (calcTextChangeRatio(ad.originalDescription, description) > 0.20) {
+        return res.status(400).json({ error: 'DESC_20_PERCENT' });
+      }
+    }
+    if (description !== ad.description) {
+      ad.description = description;
+      ad.descEdits = (ad.descEdits || 0) + 1;
+    }
+  }
+
+  // 2. Проверка фотографий
+  if (Array.isArray(photos) && photos.length > 0) {
+    const allowedMax = ad.vip ? 6 : Math.max(3, (ad.photos || []).length, ad.maxPhotos || 3);
+    if (!isAdmin && photos.length > allowedMax) {
+      return res.status(400).json({ error: 'PHOTO_LIMIT', allowedMax });
+    }
+    648: const oldFirst = (ad.photos && ad.photos[0]) || '';
+649: const newFirst = photos[0] || '';
+    if (!isAdmin && oldFirst && newFirst && oldFirst !== newFirst) {
+      const within12h = (now - createdTs) <= 12 * 3600000;
+      const tries = ad.firstPhotoEdits || 0;
+      if (!within12h || tries >= 3) {
+        return res.status(400).json({ error: 'FIRST_PHOTO_LOCKED' });
+      }
+      ad.firstPhotoEdits = tries + 1;
+    }
+    const oldRest = JSON.stringify((ad.photos || []).slice(1));
+    const newRest = JSON.stringify(photos.slice(1));
+    if (!isAdmin && oldRest !== newRest) {
+      if ((ad.otherPhotoEdits || 0) >= 6) {
+        return res.status(400).json({ error: 'OTHER_PHOTO_LIMIT' });
+      }
+      ad.otherPhotoEdits = (ad.otherPhotoEdits || 0) + 1;
+    }
+    ad.photos = photos.slice(0, 6);
+  }
+
+  if (price !== undefined && price !== '') ad.price = Number(price) || 0;
+  if (phoneVisible !== undefined) ad.phoneVisible = Boolean(phoneVisible);
+
+  res.json(ad);
+});
+
 // Serve index.html from public
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
