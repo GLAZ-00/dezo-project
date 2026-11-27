@@ -527,12 +527,8 @@ app.post('/api/treasure/use', auth, (req, res) => {
   }
   user.treasure.splice(idx, 1);
   res.json({ ok: true, ad, treasure: user.treasure });
-});
-  user.treasure.splice(idx, 1);
-  res.json({ ok: true, ad, treasure: user.treasure });
-});
 
-// === BOOST SHOP (/api/shop/buy) ===
+  // === BOOST SHOP (/api/shop/buy) ===
 const SHOP_CATALOG = {
   vip_7:    { cost: 4,  type: 'vip',   days: 7,  el: 'VIP 1 εβδομάδα (7 ημ.)', en: 'VIP 1 Week (7 days)' },
   vip_14:   { cost: 6,  type: 'vip',   days: 14, el: 'VIP 2 εβδομάδες (14 ημ.)', en: 'VIP 2 Weeks (14 days)' },
