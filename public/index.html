@@ -652,7 +652,12 @@ async function showAd(id) {
         ${!isOwner ? `<button id="adCartBtn" onclick="toggleCart('${ad.id}')" title="Στο καλάθι" style="padding:5px 12px; border:1px solid ${isInCart(ad.id) ? 'var(--primary)' : '#ccc'}; background:${isInCart(ad.id) ? '#e8f5e9' : '#fff'}; color:${isInCart(ad.id) ? 'var(--primary)' : '#333'}; border-radius:8px; cursor:pointer; font-size:16px; font-weight:700;">🛒${isInCart(ad.id) ? ' ✓' : ''}</button>` : ''}
       </div>
     </div>
-    
+            ${(isOwner || (currentUser && (currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX'))) ? `
+          <div style="display:flex; gap:8px; margin-top:12px;">
+            ${isOwner ? `<button onclick="setAdStatus('${ad.id}', 'sold')" style="flex:1; padding:10px 8px; border:1px solid #2e7d32; background:#e8f5e9; color:#1b5e20; border-radius:8px; font-weight:700; cursor:pointer; font-size:13px;">✅ ${lang === 'el' ? 'Πουλήθηκε / Στο αρχείο' : 'Sold / Archive'}</button>` : ''}
+            ${isOwner ? `<button onclick="openEditAdModal('${ad.id}')" style="padding:10px 10px; border:1px solid var(--primary); background:#fff; color:var(--primary); border-radius:8px; font-weight:700; cursor:pointer; font-size:13px;">✏️ ${lang === 'el' ? 'Επεξεργασία' : 'Edit'}</button>` : ''}
+            ${(currentUser && (currentUser.email === 'admin@dezo.gr' || currentUser.name?.trim().toUpperCase() === 'ALEX')) ? `<button onclick="setAdStatus('${ad.id}', 'rejected')" style="flex:1; padding:10px 8px; border:1px solid #f59e0b; background:#fffbeb; color:#b45309; border-radius:8px; font-weight:700; cursor:pointer; font-size:13px;">⚠️ ${lang === 'el' ? 'Απόρριψη' : 'Reject'}</button>` : ''}
+          </div>` : ''}
       ${currentUser ? `
        <h3 style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
          <span style="display:inline-flex; align-items:center; gap:10px;"><span>${tr('message')}</span>${ad.ownerName ? `<span style="font-size:15px; font-weight:600; color:#444;">👤 ${ad.ownerName}</span>` : ''}</span>
