@@ -238,13 +238,21 @@ app.post('/api/ads/:id/status', auth, (req, res) => {
 });
 
 app.delete('/api/ads/:id', auth, (req, res) => {
-  const idx = ads.findIndex(a => a.id === req.params.id);
-  const user = users.find(u => u.id === req.user.id);
-  const isAdmin = user?.email === 'admin@dezo.gr' || user?.name?.trim().toUpperCase() === 'ALEX';
-  if (idx === -1 || (ads[idx].userId !== req.user.id && !isAdmin)) return res.status(403).json({ error: 'Forbidden' });
+  const idx = ads.findIndex(a => a.id === req.params.id && a.userId === req.user.id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  const ad = ads[idx];
+  const createdTs = ad.originalCreated || ad.created || 0;
+  if ((Date.now() - createdTs) < 30 * 86400000) {
+    const u = users.find(x => x.id === req.user.id);
+    if (u) {
+      if (!Array.isArray(u.deletedSlotLogs)) u.deletedSlotLogs = [];
+      u.deletedSlotLogs.push({ category: ad.category, created: createdTs });
+    }
+  }
   ads.splice(idx, 1);
   res.json({ ok: true });
 });
+
 
 // Messages
 app.post('/api/messages', auth, (req, res) => {
