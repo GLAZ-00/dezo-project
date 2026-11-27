@@ -122,10 +122,37 @@ app.post('/api/upload', auth, upload.array('photos', 6), async (req, res) => {
   }
 });
 
+function countUsedSlotsByCat(userId, userObj) {
+  const now = Date.now();
+  const thirtyDays = 30 * 86400000;
+  const byCat = {};
+  // Считаем все объявления за последние 30 дней (активные, проданные, в архиве, отклонённые)
+  ads.filter(a => a.userId === userId && (now - (a.originalCreated || a.created || 0)) < thirtyDays)
+     .forEach(a => { byCat[a.category] = (byCat[a.category] || 0) + 1; });
+  // Плюс те, что пользователь удалил навсегда до истечения 30 дней
+  if (userObj && Array.isArray(userObj.deletedSlotLogs)) {
+    userObj.deletedSlotLogs = userObj.deletedSlotLogs.filter(s => (now - s.created) < thirtyDays);
+    userObj.deletedSlotLogs.forEach(s => { byCat[s.category] = (byCat[s.category] || 0) + 1; });
+  }
+  return byCat;
+}
+
 // Create ad
 app.post('/api/ads', auth, (req, res) => {
   // 1. Добавили subcategory в список — достаём её из посылки фронтенда
   const { title, description, price, category, subcategory, photos, city, phoneVisible } = req.body;
+  const authorCheck = users.find(u => u.id === req.user.id);
+  const isAdmin = authorCheck?.email === 'admin@dezo.gr' || authorCheck?.name?.trim().toUpperCase() === 'ALEX';
+  if (!isAdmin && authorCheck) {
+    const byCat = countUsedSlotsByCat(req.user.id, authorCheck);
+    const inThisCat = byCat[category] || 0;
+    if (inThisCat >= 2) {
+      const usedExtra = Object.values(byCat).reduce((sum, cnt) => sum + Math.max(0, cnt - 2), 0);
+      if (usedExtra >= (authorCheck.extraSlots || 0)) {
+        return res.status(400).json({ error: 'NO_SLOTS' });
+      }
+    }
+  }
   const ad = {
     id: uuidv4(),
     userId: req.user.id,
