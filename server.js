@@ -645,8 +645,8 @@ app.put('/api/ads/:id', auth, (req, res) => {
     if (!isAdmin && photos.length > allowedMax) {
       return res.status(400).json({ error: 'PHOTO_LIMIT', allowedMax });
     }
-    648: const oldFirst = (ad.photos && ad.photos[0]) || '';
-649: const newFirst = photos[0] || '';
+const oldFirst = (ad.photos && ad.photos[0]) || '';
+ const newFirst = photos[0] || '';
     if (!isAdmin && oldFirst && newFirst && oldFirst !== newFirst) {
       const within12h = (now - createdTs) <= 12 * 3600000;
       const tries = ad.firstPhotoEdits || 0;
