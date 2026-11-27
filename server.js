@@ -96,8 +96,17 @@ const upload = multer({ storage, limits: { fileSize: 30 * 1024 * 1024 } });
 
 app.post('/api/upload', auth, upload.array('photos', 6), async (req, res) => {
   if (!req.files || !req.files.length) return res.status(400).json({ error: 'No files' });
+  const user = users.find(u => u.id === req.user.id);
+  const isAdmin = user?.email === 'admin@dezo.gr' || user?.name?.trim().toUpperCase() === 'ALEX';
+  const extraPhotos = req.body.isEdit === '1' ? 0 : Math.max(0, req.files.length - 3);
+  if (!isAdmin && extraPhotos > 0) {
+    if (!user || !spendDc(user, extraPhotos, `Επιπλέον φωτογραφίες (${extraPhotos}) / Extra photos (${extraPhotos}) (-${extraPhotos} DC)`)) {
+      return res.status(400).json({ error: 'NOT_ENOUGH_DC_PHOTOS', needed: extraPhotos });
+    }
+  }
   try {
     const urls = [];
+
     for (const file of req.files) {
       const filename = `${uuidv4()}.jpg`;
             await sharp(file.buffer)
