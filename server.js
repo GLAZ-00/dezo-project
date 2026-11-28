@@ -164,7 +164,7 @@ app.post('/api/ads', auth, (req, res) => {
     price: Number(price),
     category,
     subcategory: subcategory || 'Άλλο',
-    photos: Array.isArray(photos) ? photos : (photos ? [photos] : []),
+    photos: (() => { const arr = Array.isArray(photos) ? photos : (photos ? [photos] : []); return (isAdmin || authorCheck?.vip) ? arr.slice(0, 6) : arr.slice(0, 3); })(),
     city: city || 'Αθήνα',
     phone: users.find(u => u.id === req.user.id)?.phone || '',
     phoneVisible: !!phoneVisible,
