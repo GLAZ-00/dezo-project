@@ -1750,23 +1750,23 @@ function openRulesModal() {
         <span onclick="document.getElementById('rulesInfoModal').classList.remove('open')" style="cursor:pointer; font-size:24px; line-height:1; color:#666;">&times;</span>
       </div>
       <div style="display:flex; flex-direction:column; gap:10px;">
-        <div style="background:#f8faf8; border-left:3px solid var(--primary); padding:8px 10px; border-radius:6px;">
+                <div style="background:#f8faf8; border-left:3px solid var(--primary); padding:8px 10px; border-radius:6px;">
           <strong>1. ${isEl ? 'Δωρεάν & Επιπλέον Θέσεις Αγγελιών (30 ημέρες)' : 'Free & Extra Listing Slots (30 days)'}</strong><br>
           ${isEl
-            ? 'Έχετε <b>2 δωρεάν θέσεις σε κάθε κατηγορία</b>. Κάθε θέση δεσμεύεται για <b>30 ημέρες</b> από τη δημοσίευση (ακόμα κι αν το προϊόν πουληθεί νωρίτερα). Για επιπλέον αγγελίες στην ίδια κατηγορία μπορείτε να αγοράσετε θέσεις από το <b>VIP Υπηρεσίες</b> (+1 θέση = 4 DC, +3 θέσεις = 10 DC).'
-            : 'You get <b>2 free listing slots per category</b>. Each slot stays reserved for <b>30 days</b> from posting (even if sold earlier). Extra slots can be purchased in <b>Boost Shop</b> (+1 slot = 4 DC, +3 slots = 10 DC).'}
+            ? 'Έχετε <b>2 δωρεάν θέσεις σε κάθε κατηγορία</b>. Κάθε θέση δεσμεύεται για <b>30 ημέρες</b> από τη δημοσίευση (ακόμα κι αν το προϊόν πουληθεί νωρίτερα). Επιπλέον θέσεις αγοράζονται με <b>DezoCoin (DC)</b> από το <b>VIP Υπηρεσίες</b> (+1 θέση = 4 DC, +3 θέσεις = 10 DC). Μπορείτε να κερδίσετε δωρεάν DC ή θέσεις στον τροχό <b>Lucky Chance</b> (κάτω κουμπί) και στο κεντρικό νόμισμα.'
+            : 'You get <b>2 free listing slots per category</b>. Each slot stays reserved for <b>30 days</b> from posting (even if sold earlier). Extra slots can be purchased with <b>DezoCoin (DC)</b> in <b>Boost Shop</b> (+1 slot = 4 DC, +3 slots = 10 DC). You can win free DC or slots in the <b>Lucky Chance</b> wheel (bottom button) and daily center coin.'}
         </div>
         <div style="background:#fffdf5; border-left:3px solid #d4a63a; padding:8px 10px; border-radius:6px;">
-          <strong>2. ${isEl ? 'Φωτογραφίες & Κανόνες Επεξεργασίας' : 'Photos & Editing Rules'}</strong><br>
+          <strong>2. ${isEl ? 'Φωτογραφίες & Κανόνες Επεξεργασίας (έως 150 χαρακτήρες)' : 'Photos & Editing Rules (max 150 chars)'}</strong><br>
           ${isEl
-            ? 'Κάθε αγγελία περιλαμβάνει <b>3 δωρεάν φωτογραφίες</b>. Οι 4η, 5η και 6η κοστίζουν <b>1 DC</b> η καθεμία (ή παρέχονται <b>δωρεάν με VIP</b>). Η <b>1η (κύρια) φωτογραφία</b> μπορεί να αλλάξει τις πρώτες <b>12 ώρες</b> (έως 3 φορές) και μετά κλειδώνει. Οι υπόλοιπες (2–6) μπορούν να ενημερωθούν για επιπλέον γωνίες του ίδιου προϊόντος. Η περιγραφή επιτρέπει αλλαγές έως <b>20%</b>. Απαγορεύονται κολάζ διαφορετικών προϊόντων.'
-            : 'Each listing includes <b>3 free photos</b>. Photos 4, 5, and 6 cost <b>1 DC</b> each (or <b>free with VIP</b>). The <b>1st (cover) photo</b> can be changed within the first <b>12 hours</b> (up to 3 tries) and then locks permanently. Photos 2–6 can be updated to show different angles of the same item. Description edits are limited to <b>20%</b> change. Collages of different items are prohibited.'}
+            ? 'Μπορείτε να ανεβάσετε έως <b>6 φωτογραφίες</b> για επιλογή σειράς, αλλά αποθηκεύονται <b>3 δωρεάν φωτογραφίες</b> (οι υπόλοιπες αφαιρούνται και μπορούν να προστεθούν αργότερα από το <b>VIP Υπηρεσίες</b> με <b>1 DC</b> ανά φωτογραφία έως 6, ή <b>δωρεάν με VIP</b>). Η <b>1η φωτογραφία</b> μπορεί να αλλάξει τις πρώτες <b>12 ώρες</b> (έως 3 φορές) και μετά κλειδώνει. Η περιγραφή έχει όριο <b>150 χαρακτήρες</b> και επιτρέπει τροποποίηση έως <b>40% (ελάχ. 45 χαρακτήρες)</b>. Απαγορεύονται κολάζ διαφορετικών προϊόντων.'
+            : 'You can upload up to <b>6 photos</b> to arrange order, while <b>3 free photos</b> are saved (extra ones are removed and can be added later via <b>Boost Shop</b> for <b>1 DC</b> each up to 6, or <b>free with VIP</b>). The <b>1st photo</b> can be changed within <b>12 hours</b> (up to 3 times) and then locks permanently. Descriptions are limited to <b>150 characters</b> and allow edits up to <b>40% (min 45 chars)</b>. Collages of different items are prohibited.'}
         </div>
         <div style="background:#f4f8fd; border-left:3px solid #1976d2; padding:8px 10px; border-radius:6px;">
-          <strong>3. ${isEl ? 'DezoCoin (DC), VIP & Προώθηση' : 'DezoCoin (DC), VIP & Boost'}</strong><br>
+          <strong>3. ${isEl ? 'DezoCoin (DC), VIP & Πρόσκληση Φίλων' : 'DezoCoin (DC), VIP & Friend Invites'}</strong><br>
           ${isEl
-            ? 'Ισοτιμία: <b>4 DC = 1 €</b> (1 DC = 0.25 €). Κερδίστε δωρεάν DC καθημερινά από το κεντρικό νόμισμα και τον τροχό <b>Lucky Chance</b>, καθώς και προσκαλώντας φίλους (+4 DC σε εσάς, +2 DC στον φίλο). Στο <b>VIP Υπηρεσίες</b> μπορείτε να ενεργοποιήσετε VIP (1–4 εβδ.) ή Ανύψωση στην κορυφή (1–10 ημέρες).'
-            : 'Rate: <b>4 DC = 1 €</b> (1 DC = 0.25 €). Earn free DC daily from the center coin and <b>Lucky Chance</b> wheel, or by inviting friends (+4 DC for you, +2 DC for your friend). Use <b>Boost Shop</b> for VIP status (1–4 weeks) or Top Feed Boost (1–10 days).'}
+            ? 'Ισοτιμία: <b>4 DC = 1 €</b> (1 DC = 0.25 €). Κερδίστε DC από το καθημερινό νόμισμα, τον τροχό <b>Lucky Chance</b> ή προσκαλώντας φίλους (<b>+4 DC</b> σε εσάς, <b>+2 DC</b> στον φίλο). <b>Προϋπόθεση μπόνους πρόσκλησης:</b> ο φίλος πρέπει να εγγραφεί με πραγματικό ενεργό λογαριασμό και να <b>δημοσιεύσει την 1η του ενεργή αγγελία</b>. Στο <b>VIP Υπηρεσίες</b> ενεργοποιείτε VIP (1–4 εβδ.) ή Ανύψωση (1–10 ημέρες).'
+            : 'Rate: <b>4 DC = 1 €</b> (1 DC = 0.25 €). Earn DC from the daily coin, <b>Lucky Chance</b> wheel, or inviting friends (<b>+4 DC</b> for you, <b>+2 DC</b> for your friend). <b>Invite bonus condition:</b> your friend must register with a real active account and <b>publish their 1st active listing</b>. Use <b>Boost Shop</b> for VIP (1–4 weeks) or Top Feed Boost (1–10 days).'}
         </div>
         <div style="background:#f9f9f9; border-left:3px solid #555; padding:8px 10px; border-radius:6px;">
           <strong>4. ${isEl ? 'Μηνύματα & Συνομιλίες' : 'Messages & Chats'}</strong><br>
