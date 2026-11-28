@@ -597,20 +597,16 @@ app.post('/api/shop/buy', auth, (req, res) => {
 });
 
 // === SMART AD EDIT (12h/3 tries for 1st photo, extra photos, max 20% text diff) ===
-function calcTextChangeRatio(origText, newText) {
+function calcChangedChars(origText, newText) {
   const a = (origText || '').trim();
   const b = (newText || '').trim();
-  if (!a && !b) return 0;
   if (a === b) return 0;
-  const maxLen = Math.max(a.length, b.length, 1);
   let i = 0;
   while (i < a.length && i < b.length && a[i] === b[i]) i++;
   let j = 0;
   while (j < (a.length - i) && j < (b.length - i) && a[a.length - 1 - j] === b[b.length - 1 - j]) j++;
-  const changedChars = Math.max(a.length - i - j, b.length - i - j);
-  return changedChars / maxLen;
+  return Math.max(a.length - i - j, b.length - i - j);
 }
-
 app.put('/api/ads/:id', auth, (req, res) => {
   const ad = ads.find(a => a.id === req.params.id && a.userId === req.user.id);
   if (!ad) return res.status(404).json({ error: 'Not found' });
@@ -621,24 +617,26 @@ app.put('/api/ads/:id', auth, (req, res) => {
   const now = Date.now();
   const createdTs = ad.originalCreated || ad.created || now;
 
-  // 1. Проверка описания (не более 20% изменений от исходного описания + защита от бесконечных правок)
+    // 1. Проверка описания (макс. 150 знаков; не более 20% изменений от исходного, но минимум 30 знаков)
   if (typeof description === 'string') {
-    if (ad.originalDescription === undefined) ad.originalDescription = ad.description || '';
+    const cleanDesc = description.slice(0, 150);
+    if (ad.originalDescription === undefined) ad.originalDescription = (ad.description || '').slice(0, 150);
+    const maxAllowedDiff = Math.max(Math.ceil(ad.originalDescription.length * 0.20), 30);
+    const diffChars = calcChangedChars(ad.originalDescription, cleanDesc);
     if (!isAdmin) {
-      if ((ad.descEdits || 0) >= 4) {
+      if ((ad.descEdits || 0) >= 5) {
         return res.status(400).json({ error: 'DESC_EDIT_LIMIT' });
       }
-      if (calcTextChangeRatio(ad.originalDescription, description) > 0.20) {
-        return res.status(400).json({ error: 'DESC_20_PERCENT' });
+      if (diffChars > maxAllowedDiff) {
+        return res.status(400).json({ error: 'DESC_20_PERCENT', diffChars, maxAllowedDiff });
       }
     }
-    if (description !== ad.description) {
-      ad.description = description;
+    if (cleanDesc !== ad.description) {
+      ad.description = cleanDesc;
       ad.descEdits = (ad.descEdits || 0) + 1;
     }
   }
-
-  // 2. Проверка фотографий
+// 2. Проверка фотографий
   if (Array.isArray(photos) && photos.length > 0) {
     const allowedMax = ad.vip ? 6 : Math.max(3, (ad.photos || []).length, ad.maxPhotos || 3);
     if (!isAdmin && photos.length > allowedMax) {
