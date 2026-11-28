@@ -602,11 +602,18 @@ function calcChangedChars(origText, newText) {
   const a = (origText || '').trim();
   const b = (newText || '').trim();
   if (a === b) return 0;
-  let i = 0;
-  while (i < a.length && i < b.length && a[i] === b[i]) i++;
-  let j = 0;
-  while (j < (a.length - i) && j < (b.length - i) && a[a.length - 1 - j] === b[b.length - 1 - j]) j++;
-  return Math.max(a.length - i - j, b.length - i - j);
+  const m = a.length, n = b.length;
+  if (!m) return n;
+  if (!n) return m;
+  let prev = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    const curr = [i];
+    for (let j = 1; j <= n; j++) {
+      curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = curr;
+  }
+  return prev[n];
 }
 app.put('/api/ads/:id', auth, (req, res) => {
   const ad = ads.find(a => a.id === req.params.id && a.userId === req.user.id);
