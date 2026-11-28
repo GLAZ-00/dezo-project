@@ -992,10 +992,34 @@ async function openBoostShop() {
     </div>`;
 }
 
-function previewShopBuy(code) {
-  alert(lang === 'el'
-    ? 'Η βιτρίνα είναι έτοιμη! Στο επόμενο βήμα ενεργοποιούμε την πληρωμή με DezoCoin.'
-    : 'Shop layout is ready! Next step: activating DezoCoin checkout.');
+async function previewShopBuy(code) {
+  const isEl = lang === 'el';
+  const needsAd = !code.startsWith('slot_');
+  const sel = document.getElementById('shopTargetAd');
+  const adId = sel ? sel.value : '';
+  if (needsAd && !adId) {
+    return alert(isEl ? 'Επιλέξτε πρώτα μια ενεργή αγγελία από τη λίστα!' : 'Please select an active listing from the list first!');
+  }
+  try {
+    const res = await api('/api/shop/buy', {
+      method: 'POST',
+      body: JSON.stringify({ itemCode: code, adId })
+    });
+    if (res.error === 'NOT_ENOUGH_DC') {
+      return alert(isEl ? 'Δεν έχετε αρκετά DezoCoin (DC)!' : 'Not enough DezoCoin (DC)!');
+    }
+    if (res.error === 'MAX_PHOTOS_REACHED') {
+      return alert(isEl ? 'Αυτή η αγγελία έχει ήδη το μέγιστο όριο (6 φωτογραφίες).' : 'This listing already has the maximum 6 photos.');
+    }
+    if (res.error) {
+      return alert(res.error);
+    }
+    alert(isEl ? '✅ Η αγορά ολοκληρώθηκε και εφαρμόστηκε!' : '✅ Purchase completed and applied!');
+    await showCabinet();
+    openBoostShop();
+  } catch (e) {
+    alert(isEl ? 'Σφάλμα σύνδεσης' : 'Connection error');
+  }
 }
 function renderWalletSvg(isOpen, accentColor) {
   return isOpen
