@@ -565,7 +565,9 @@ function renderAds(list) {
    if (!list.length) { main.innerHTML = bannerHtml + `<p style="text-align:center;padding:40px;color:#888;">${lang === 'el' ? 'Δεν βρέθηκαν αγγελίες' : 'No listings found'}</p>`; return; }
   main.innerHTML = bannerHtml + `<div class="ads-grid">${list.map(ad => `
     <div class="ad-card" onclick="showAd('${ad.id}')">
-      ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
+            ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
+      ${(ad.boostUntil && ad.boostUntil > Date.now()) ? `<div class="badge" style="top:${ad.vip ? '34px' : '8px'}; background:#1976d2;">🚀 ${Math.max(1, Math.ceil((ad.boostUntil - Date.now()) / 86400000))} ${lang === 'el' ? 'ημ.' : 'd.'}</div>` : ''}
+      ${(ad.isExtraSlot && currentUser && currentUser.id === ad.userId) ? `<div class="badge" style="top:auto; bottom:62px; left:8px; background:#d32f2f;">➕ ${lang === 'el' ? 'Θέση' : 'Slot'}</div>` : ''}
       ${Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;">${tr('new')}</div>` : ''}
       <img src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placeholder.com'}" alt="">
       <div class="info">
@@ -871,7 +873,14 @@ async function postAd() {
   })});
       btn.disabled = false; btn.textContent = tr('publishBtn');
   closeModal('postModal');
-  alert(lang==='el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
+      const isAdminUser = currentUser?.email === 'admin@dezo.gr' || currentUser?.name?.trim().toUpperCase() === 'ALEX';
+    if (!isAdminUser && !currentUser?.vip && photoUrls.length > 3) {
+      alert(lang === 'el'
+        ? '✅ Αγγελία δημοσιεύτηκε!\n\nℹ️ Αποθηκεύτηκαν οι 3 πρώτες φωτογραφίες (δωρεάν όριο). Αν θέλετε να αλλάξετε τη σειρά, να επιλέξετε ποιες 3 θα εμφανίζονται ή να προσθέσετε έως 6 με DC, πατήστε «Επεξεργασία».'
+        : '✅ Ad published!\n\nℹ️ Only the first 3 photos were saved (free limit). To reorder, choose which 3 to keep, or add up to 6 with DC, tap "Edit" on your listing.');
+    } else {
+      alert(lang === 'el' ? 'Αγγελία δημοσιεύτηκε!' : 'Ad published!');
+    }
   showHome();
 }
  const dcLogo = (h = 20) => `<svg width="${h}" height="${h}" viewBox="0 0 40 40" style="vertical-align:-4px; display:inline-block; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.22));"><defs><linearGradient id="dzMiniG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff3b0"/><stop offset="45%" stop-color="#f5c451"/><stop offset="100%" stop-color="#b37819"/></linearGradient></defs><circle cx="20" cy="20" r="18.5" fill="url(#dzMiniG)" stroke="#8c580c" stroke-width="1.5"/><circle cx="20" cy="20" r="15.5" fill="none" stroke="#fff8dc" stroke-width="0.9" stroke-dasharray="1.5 1.8" opacity="0.85"/><g transform="translate(5,6) scale(0.76)" fill="none" stroke="#046c4e" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 H15 C24 3 27 9.5 27 18 C27 26.5 24 33 15 33 H5 Z" stroke-width="4.4"/><path d="M35 6 C32 3.5 28 3 24 4.5 C18 6.8 14.5 12 14.5 18 C14.5 24 18 29.2 24 31.5 C28 33 32 32.5 35 30" stroke-width="4.4"/><line x1="2" y1="15" x2="36" y2="15" stroke-width="3.6"/><line x1="2" y1="21" x2="36" y2="21" stroke-width="3.6"/></g></svg>`;
