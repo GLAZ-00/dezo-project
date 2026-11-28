@@ -565,10 +565,10 @@ function renderAds(list) {
    if (!list.length) { main.innerHTML = bannerHtml + `<p style="text-align:center;padding:40px;color:#888;">${lang === 'el' ? 'Δεν βρέθηκαν αγγελίες' : 'No listings found'}</p>`; return; }
   main.innerHTML = bannerHtml + `<div class="ads-grid">${list.map(ad => `
     <div class="ad-card" onclick="showAd('${ad.id}')">
-            ${ad.vip ? `<div class="badge">${tr('vip')}</div>` : ''}
-      ${(ad.boostUntil && ad.boostUntil > Date.now()) ? `<div class="badge" style="top:${ad.vip ? '34px' : '8px'}; background:#1976d2;">🚀 ${Math.max(1, Math.ceil((ad.boostUntil - Date.now()) / 86400000))} ${lang === 'el' ? 'ημ.' : 'd.'}</div>` : ''}
-      ${(ad.isExtraSlot && currentUser && currentUser.id === ad.userId) ? `<div class="badge" style="top:auto; bottom:62px; left:8px; background:#d32f2f;">➕ ${lang === 'el' ? 'Θέση' : 'Slot'}</div>` : ''}
-      ${Date.now() - ad.created < 86400000 ? `<div class="badge new" style="left:auto;right:8px;">${tr('new')}</div>` : ''}
+                  ${ad.vip ? `<div class="badge" style="top:8px; left:8px;">${tr('vip')}</div>` : ''}
+      ${(ad.promotedUntil && ad.promotedUntil > Date.now()) ? `<div class="badge" style="top:${ad.vip ? '34px' : '8px'}; left:8px; background:#1976d2;">🚀 ${Math.max(1, Math.ceil((ad.promotedUntil - Date.now()) / 86400000))} ${lang === 'el' ? 'ημ.' : 'd.'}</div>` : ''}
+      ${ad.isExtraSlot ? `<div class="badge" style="top:${(ad.vip && ad.promotedUntil && ad.promotedUntil > Date.now()) ? '60px' : ((ad.vip || (ad.promotedUntil && ad.promotedUntil > Date.now())) ? '34px' : '8px')}; left:8px; background:#d32f2f;">➕ ${lang === 'el' ? 'Θέση' : 'Slot'}</div>` : ''}
+      ${Date.now() - ad.created < 86400000 ? `<div class="badge new" style="top:8px; left:auto; right:8px;">${tr('new')}</div>` : ''}
       <img src="${ad.photos && ad.photos[0] ? ad.photos[0] : 'https://placeholder.com'}" alt="">
       <div class="info">
         <div style="font-weight:600;margin-bottom:4px;">${ad.title}</div>
