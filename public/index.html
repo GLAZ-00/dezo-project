@@ -1835,15 +1835,17 @@ function updateEditDescCounter() {
 
   const a = (window._editOrigDesc || '').trim();
   const b = val.trim();
-  let diff = 0;
-  if (a !== b) {
-    let i = 0;
-    while (i < a.length && i < b.length && a[i] === b[i]) i++;
-    let j = 0;
-    while (j < (a.length - i) && j < (b.length - i) && a[a.length - 1 - j] === b[b.length - 1 - j]) j++;
-    diff = Math.max(a.length - i - j, b.length - i - j);
+  const m = a.length, n = b.length;
+  let prev = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    const curr = [i];
+    for (let j = 1; j <= n; j++) {
+      curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = curr;
   }
-  const maxD = window._editMaxDiff || 30;
+  const diff = prev[n];
+  const maxD = Math.max(Math.ceil(a.length * 0.40), 45);
   const ok = diff <= maxD;
   diffEl.style.color = ok ? '#2e7d32' : '#d32f2f';
   diffEl.textContent = isEl
@@ -1856,16 +1858,19 @@ function renderEditPhotosGrid() {
   const grid = document.getElementById('editPhotosGrid');
   if (!grid) return;
   const arr = window._editPhotos || [];
-  grid.innerHTML = arr.map((url, idx) => `
+  let html = arr.map((url, idx) => `
     <div style="position:relative; width:74px; height:74px; border:2px solid ${idx === 0 ? 'var(--primary)' : '#ddd'}; border-radius:8px; overflow:hidden; background:#f5f5f5;">
       <img src="${url}" style="width:100%; height:100%; object-fit:cover;">
       <span style="position:absolute; top:2px; left:2px; background:rgba(0,0,0,0.65); color:#fff; font-size:10px; padding:1px 4px; border-radius:4px;">${idx === 0 ? '1η' : idx + 1}</span>
-      ${idx > 0 && !window._editFirstLocked ? `<button type="button" onclick="makeEditPhotoFirst(${idx})" title="${isEl ? 'Ορισμός ως 1η' : 'Set as 1st'}" style="position:absolute; bottom:2px; left:2px; background:var(--primary); color:#fff; border:none; border-radius:4px; font-size:10px; padding:2px 4px; cursor:pointer;">★ 1η</button>` : ''}
+      ${idx > 0 && !window._editFirstLocked ? `<button type="button" onclick="makeEditPhotoFirst(${idx})" style="position:absolute; bottom:2px; left:2px; background:var(--primary); color:#fff; border:none; border-radius:4px; font-size:10px; padding:2px 4px; cursor:pointer;">★ 1η</button>` : ''}
       ${(idx > 0 || !window._editFirstLocked) && arr.length > 1 ? `<button type="button" onclick="removeEditPhoto(${idx})" style="position:absolute; top:2px; right:2px; background:#e53935; color:#fff; border:none; border-radius:4px; font-size:10px; padding:1px 4px; cursor:pointer;">✕</button>` : ''}
     </div>
   `).join('');
+  if (arr.length < 6) {
+    html += `<div onclick="document.getElementById('editAdFiles').click()" style="width:74px; height:74px; border:2px dashed var(--primary); border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; color:var(--primary); background:#f4faf4; font-weight:700; font-size:11px;"><span style="font-size:20px; line-height:1;">+ 📷</span><span>${isEl ? 'Προσθήκη' : 'Add'}</span></div>`;
+  }
+  grid.innerHTML = html;
 }
-
 function makeEditPhotoFirst(idx) {
   if (window._editFirstLocked || idx <= 0) return;
   const arr = window._editPhotos;
