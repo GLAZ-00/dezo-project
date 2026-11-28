@@ -1787,6 +1787,11 @@ async function openEditAdModal(adId) {
   const triesLeft = Math.max(0, 3 - (ad.firstPhotoEdits || 0));
   const firstLocked = !within12h || triesLeft <= 0;
 
+  window._editOrigDesc = (ad.originalDescription !== undefined ? ad.originalDescription : (ad.description || '')).slice(0, 150);
+  window._editMaxDiff = Math.max(Math.ceil(window._editOrigDesc.length * 0.20), 30);
+  window._editPhotos = [...(ad.photos || [])];
+  window._editFirstLocked = firstLocked;
+
   m.innerHTML = `
     <div class="modal-content" style="max-width:480px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -1800,49 +1805,118 @@ async function openEditAdModal(adId) {
       </div>
       <label style="font-size:12.5px; font-weight:700;">${isEl ? 'Τιμή (€)' : 'Price (€)'}</label>
       <input id="editAdPrice" type="number" value="${ad.price || 0}" style="width:100%; padding:8px; margin:4px 0 10px; border:1px solid #ccc; border-radius:8px;">
-      <label style="font-size:12.5px; font-weight:700;">${isEl ? 'Περιγραφή (έως 20% τροποποίηση)' : 'Description (up to 20% change)'}</label>
-      <textarea id="editAdDesc" rows="3" style="width:100%; padding:8px; margin:4px 0 10px; border:1px solid #ccc; border-radius:8px;">${ad.description || ''}</textarea>
-      <label style="font-size:12.5px; font-weight:700;">${isEl ? 'Αντικατάσταση φωτογραφιών (προαιρετικά)' : 'Replace photos (optional)'}</label>
-      <input id="editAdFiles" type="file" accept="image/*" multiple style="width:100%; margin:4px 0 12px;">
+      
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label style="font-size:12.5px; font-weight:700;">${isEl ? 'Περιγραφή (έως 150 χαρακτήρες)' : 'Description (max 150 chars)'}</label>
+        <span id="editDescLenCounter" style="font-size:11.5px; color:#666;">0 / 150</span>
+      </div>
+      <textarea id="editAdDesc" maxlength="150" rows="3" oninput="updateEditDescCounter()" style="width:100%; padding:8px; margin:4px 0 4px; border:1px solid #ccc; border-radius:8px;">${(ad.description || '').slice(0, 150)}</textarea>
+      <div id="editDescDiffCounter" style="font-size:11.5px; margin-bottom:10px; font-weight:600;"></div>
+
+      <label style="font-size:12.5px; font-weight:700;">${isEl ? 'Φωτογραφίες (κάντε κλικ για αλλαγή σειράς ή αντικατάσταση)' : 'Photos (tap to reorder or replace)'}</label>
+      <div id="editPhotosGrid" style="display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 10px;"></div>
+      <input id="editAdFiles" type="file" accept="image/*" multiple onchange="handleEditFilesSelect(this)" style="width:100%; margin:0 0 12px;">
+      
       <button class="primary" style="width:100%; padding:10px;" onclick="saveEditedAd('${ad.id}')">${isEl ? 'Αποθήκευση αλλαγών' : 'Save changes'}</button>
     </div>`;
   m.classList.add('open');
+  updateEditDescCounter();
+  renderEditPhotosGrid();
+}
+
+function updateEditDescCounter() {
+  const isEl = lang === 'el';
+  const ta = document.getElementById('editAdDesc');
+  const lenEl = document.getElementById('editDescLenCounter');
+  const diffEl = document.getElementById('editDescDiffCounter');
+  if (!ta || !lenEl || !diffEl) return;
+  const val = ta.value || '';
+  lenEl.textContent = `${val.length} / 150`;
+
+  const a = (window._editOrigDesc || '').trim();
+  const b = val.trim();
+  let diff = 0;
+  if (a !== b) {
+    let i = 0;
+    while (i < a.length && i < b.length && a[i] === b[i]) i++;
+    let j = 0;
+    while (j < (a.length - i) && j < (b.length - i) && a[a.length - 1 - j] === b[b.length - 1 - j]) j++;
+    diff = Math.max(a.length - i - j, b.length - i - j);
+  }
+  const maxD = window._editMaxDiff || 30;
+  const ok = diff <= maxD;
+  diffEl.style.color = ok ? '#2e7d32' : '#d32f2f';
+  diffEl.textContent = isEl
+    ? `Αλλαγή κειμένου: ${diff} / ${maxD} χαρακτήρες ${ok ? '✓' : '(Υπέρβαση ορίου!)'}`
+    : `Text change: ${diff} / ${maxD} chars ${ok ? '✓' : '(Limit exceeded!)'}`;
+}
+
+function renderEditPhotosGrid() {
+  const isEl = lang === 'el';
+  const grid = document.getElementById('editPhotosGrid');
+  if (!grid) return;
+  const arr = window._editPhotos || [];
+  grid.innerHTML = arr.map((url, idx) => `
+    <div style="position:relative; width:74px; height:74px; border:2px solid ${idx === 0 ? 'var(--primary)' : '#ddd'}; border-radius:8px; overflow:hidden; background:#f5f5f5;">
+      <img src="${url}" style="width:100%; height:100%; object-fit:cover;">
+      <span style="position:absolute; top:2px; left:2px; background:rgba(0,0,0,0.65); color:#fff; font-size:10px; padding:1px 4px; border-radius:4px;">${idx === 0 ? '1η' : idx + 1}</span>
+      ${idx > 0 && !window._editFirstLocked ? `<button type="button" onclick="makeEditPhotoFirst(${idx})" title="${isEl ? 'Ορισμός ως 1η' : 'Set as 1st'}" style="position:absolute; bottom:2px; left:2px; background:var(--primary); color:#fff; border:none; border-radius:4px; font-size:10px; padding:2px 4px; cursor:pointer;">★ 1η</button>` : ''}
+      ${(idx > 0 || !window._editFirstLocked) && arr.length > 1 ? `<button type="button" onclick="removeEditPhoto(${idx})" style="position:absolute; top:2px; right:2px; background:#e53935; color:#fff; border:none; border-radius:4px; font-size:10px; padding:1px 4px; cursor:pointer;">✕</button>` : ''}
+    </div>
+  `).join('');
+}
+
+function makeEditPhotoFirst(idx) {
+  if (window._editFirstLocked || idx <= 0) return;
+  const arr = window._editPhotos;
+  const [picked] = arr.splice(idx, 1);
+  arr.unshift(picked);
+  renderEditPhotosGrid();
+}
+
+function removeEditPhoto(idx) {
+  if (idx === 0 && window._editFirstLocked) return;
+  if (window._editPhotos.length <= 1) return;
+  window._editPhotos.splice(idx, 1);
+  renderEditPhotosGrid();
+}
+
+async function handleEditFilesSelect(input) {
+  if (!input.files || !input.files.length) return;
+  const fd = new FormData();
+  fd.append('isEdit', '1');
+  for (let i = 0; i < Math.min(input.files.length, 6); i++) fd.append('photos', input.files[i]);
+  const upRes = await fetch('/api/upload', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + localStorage.getItem('dezo_token') },
+    body: fd
+  }).then(r => r.json());
+  if (upRes.urls && upRes.urls.length) {
+    for (const u of upRes.urls) {
+      if (window._editPhotos.length < 6) {
+        window._editPhotos.push(u);
+      } else {
+        const replaceIdx = window._editFirstLocked ? 1 : 0;
+        window._editPhotos[replaceIdx] = u;
+      }
+    }
+    renderEditPhotosGrid();
+  }
+  input.value = '';
 }
 
 async function saveEditedAd(adId) {
   const isEl = lang === 'el';
-  const ad = await api('/api/ads/' + adId);
-  let photos = [...(ad.photos || [])];
-  const filesInput = document.getElementById('editAdFiles');
-  if (filesInput && filesInput.files && filesInput.files.length > 0) {
-    const fd = new FormData();
-    fd.append('isEdit', '1');
-    for (let i = 0; i < Math.min(filesInput.files.length, 6); i++) fd.append('photos', filesInput.files[i]);
-    const upRes = await fetch('/api/upload', {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + localStorage.getItem('dezo_token') },
-      body: fd
-    }).then(r => r.json());
-    if (upRes.urls && upRes.urls.length) {
-      const within12h = (Date.now() - (ad.originalCreated || ad.created || 0)) <= 12 * 3600000;
-      const firstLocked = !within12h || (ad.firstPhotoEdits || 0) >= 3;
-      if (firstLocked && photos.length > 0) {
-        photos = [photos[0], ...upRes.urls.slice(0, 5)];
-      } else {
-        photos = upRes.urls;
-      }
-    }
-  }
   const res = await api('/api/ads/' + adId, {
     method: 'PUT',
     body: JSON.stringify({
       price: document.getElementById('editAdPrice').value,
       description: document.getElementById('editAdDesc').value,
-      photos
+      photos: window._editPhotos
     })
   });
   if (res.error === 'FIRST_PHOTO_LOCKED') return alert(isEl ? 'Η 1η φωτογραφία είναι κλειδωμένη!' : '1st photo is locked!');
-  if (res.error === 'DESC_20_PERCENT') return alert(isEl ? 'Η περιγραφή δεν μπορεί να αλλάξει πάνω από 20%!' : 'Description cannot change by more than 20%!');
+  if (res.error === 'DESC_20_PERCENT') return alert(isEl ? `Η περιγραφή δεν μπορεί να αλλάξει πάνω από ${res.maxAllowedDiff || 30} χαρακτήρες!` : `Description cannot change by more than ${res.maxAllowedDiff || 30} chars!`);
   if (res.error === 'DESC_EDIT_LIMIT') return alert(isEl ? 'Εξαντλήθηκε το όριο επεξεργασιών περιγραφής.' : 'Description edit limit reached.');
   if (res.error === 'PHOTO_LIMIT') return alert(isEl ? `Επιτρέπονται έως ${res.allowedMax} φωτογραφίες για αυτή την αγγελία.` : `Up to ${res.allowedMax} photos allowed for this listing.`);
   if (res.error) return alert(res.error);
