@@ -141,8 +141,9 @@ function countUsedSlotsByCat(userId, userObj) {
 app.post('/api/ads', auth, (req, res) => {
   // 1. Добавили subcategory в список — достаём её из посылки фронтенда
   const { title, description, price, category, subcategory, photos, city, phoneVisible } = req.body;
-  const authorCheck = users.find(u => u.id === req.user.id);
+    const authorCheck = users.find(u => u.id === req.user.id);
   const isAdmin = authorCheck?.email === 'admin@dezo.gr' || authorCheck?.name?.trim().toUpperCase() === 'ALEX';
+  let usedPaidSlot = false;
   if (!isAdmin && authorCheck) {
     const byCat = countUsedSlotsByCat(req.user.id, authorCheck);
     const inThisCat = byCat[category] || 0;
@@ -151,13 +152,15 @@ app.post('/api/ads', auth, (req, res) => {
       if (usedExtra >= (authorCheck.extraSlots || 0)) {
         return res.status(400).json({ error: 'NO_SLOTS' });
       }
+      usedPaidSlot = true;
     }
   }
   const ad = {
     id: uuidv4(),
     userId: req.user.id,
     title,
-    description,
+        description: (description || '').slice(0, 150),
+    isExtraSlot: usedPaidSlot,
     price: Number(price),
     category,
     subcategory: subcategory || 'Άλλο',
