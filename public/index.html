@@ -1953,6 +1953,9 @@ async function saveEditedAd(adId) {
   document.getElementById('editAdModal').classList.remove('open');
   alert(isEl ? '✅ Οι αλλαγές αποθηκεύτηκαν!' : '✅ Changes saved!');
   showAd(adId);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = origBtnText; }
+  }
 }
 </script>
 </body>
