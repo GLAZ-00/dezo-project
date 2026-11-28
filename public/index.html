@@ -1725,6 +1725,131 @@ async function spinLuckyWheel(paid) {
     if (document.getElementById('cabinetTopWidgets')) showCabinet();
   }, 4700);
 }
+function openRulesModal() {
+  const isEl = lang === 'el';
+  let m = document.getElementById('rulesInfoModal');
+  if (!m) {
+    m = document.createElement('div');
+    m.id = 'rulesInfoModal';
+    m.className = 'modal';
+    m.onclick = (e) => { if (e.target === m) m.classList.remove('open'); };
+    document.body.appendChild(m);
+  }
+  m.innerHTML = `
+    <div class="modal-content" style="max-width:540px; line-height:1.5; font-size:14px; color:#222;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:12px;">
+        <h3 style="margin:0; color:var(--primary);">📘 ${isEl ? 'Όροι Χρήσης & Πώς λειτουργεί το ΔΕΖΩ' : 'Terms & How ΔΕΖΩ Works'}</h3>
+        <span onclick="document.getElementById('rulesInfoModal').classList.remove('open')" style="cursor:pointer; font-size:24px; line-height:1; color:#666;">&times;</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="background:#f8faf8; border-left:3px solid var(--primary); padding:8px 10px; border-radius:6px;">
+          <strong>1. ${isEl ? 'Δωρεάν & Επιπλέον Θέσεις Αγγελιών (30 ημέρες)' : 'Free & Extra Listing Slots (30 days)'}</strong><br>
+          ${isEl
+            ? 'Έχετε <b>2 δωρεάν θέσεις σε κάθε κατηγορία</b>. Κάθε θέση δεσμεύεται για <b>30 ημέρες</b> από τη δημοσίευση (ακόμα κι αν το προϊόν πουληθεί νωρίτερα). Για επιπλέον αγγελίες στην ίδια κατηγορία μπορείτε να αγοράσετε θέσεις από το <b>VIP Υπηρεσίες</b> (+1 θέση = 4 DC, +3 θέσεις = 10 DC).'
+            : 'You get <b>2 free listing slots per category</b>. Each slot stays reserved for <b>30 days</b> from posting (even if sold earlier). Extra slots can be purchased in <b>Boost Shop</b> (+1 slot = 4 DC, +3 slots = 10 DC).'}
+        </div>
+        <div style="background:#fffdf5; border-left:3px solid #d4a63a; padding:8px 10px; border-radius:6px;">
+          <strong>2. ${isEl ? 'Φωτογραφίες & Κανόνες Επεξεργασίας' : 'Photos & Editing Rules'}</strong><br>
+          ${isEl
+            ? 'Κάθε αγγελία περιλαμβάνει <b>3 δωρεάν φωτογραφίες</b>. Οι 4η, 5η και 6η κοστίζουν <b>1 DC</b> η καθεμία (ή παρέχονται <b>δωρεάν με VIP</b>). Η <b>1η (κύρια) φωτογραφία</b> μπορεί να αλλάξει τις πρώτες <b>12 ώρες</b> (έως 3 φορές) και μετά κλειδώνει. Οι υπόλοιπες (2–6) μπορούν να ενημερωθούν για επιπλέον γωνίες του ίδιου προϊόντος. Η περιγραφή επιτρέπει αλλαγές έως <b>20%</b>. Απαγορεύονται κολάζ διαφορετικών προϊόντων.'
+            : 'Each listing includes <b>3 free photos</b>. Photos 4, 5, and 6 cost <b>1 DC</b> each (or <b>free with VIP</b>). The <b>1st (cover) photo</b> can be changed within the first <b>12 hours</b> (up to 3 tries) and then locks permanently. Photos 2–6 can be updated to show different angles of the same item. Description edits are limited to <b>20%</b> change. Collages of different items are prohibited.'}
+        </div>
+        <div style="background:#f4f8fd; border-left:3px solid #1976d2; padding:8px 10px; border-radius:6px;">
+          <strong>3. ${isEl ? 'DezoCoin (DC), VIP & Προώθηση' : 'DezoCoin (DC), VIP & Boost'}</strong><br>
+          ${isEl
+            ? 'Ισοτιμία: <b>4 DC = 1 €</b> (1 DC = 0.25 €). Κερδίστε δωρεάν DC καθημερινά από το κεντρικό νόμισμα και τον τροχό <b>Lucky Chance</b>, καθώς και προσκαλώντας φίλους (+4 DC σε εσάς, +2 DC στον φίλο). Στο <b>VIP Υπηρεσίες</b> μπορείτε να ενεργοποιήσετε VIP (1–4 εβδ.) ή Ανύψωση στην κορυφή (1–10 ημέρες).'
+            : 'Rate: <b>4 DC = 1 €</b> (1 DC = 0.25 €). Earn free DC daily from the center coin and <b>Lucky Chance</b> wheel, or by inviting friends (+4 DC for you, +2 DC for your friend). Use <b>Boost Shop</b> for VIP status (1–4 weeks) or Top Feed Boost (1–10 days).'}
+        </div>
+        <div style="background:#f9f9f9; border-left:3px solid #555; padding:8px 10px; border-radius:6px;">
+          <strong>4. ${isEl ? 'Μηνύματα & Συνομιλίες' : 'Messages & Chats'}</strong><br>
+          ${isEl
+            ? 'Το εικονίδιο <b>✉️</b> δείχνει μηνύματα για τις δικές σας αγγελίες, ενώ το <b>💬</b> ανοίγει απευθείας τις απαντήσεις πωλητών σε αγγελίες που σας ενδιαφέρουν.'
+            : 'The <b>✉️</b> icon shows messages for your own listings, while <b>💬</b> opens seller replies on listings you inquired about.'}
+        </div>
+      </div>
+    </div>`;
+  m.classList.add('open');
+}
+
+async function openEditAdModal(adId) {
+  const isEl = lang === 'el';
+  const ad = await api('/api/ads/' + adId);
+  if (!ad || ad.error) return;
+  let m = document.getElementById('editAdModal');
+  if (!m) {
+    m = document.createElement('div');
+    m.id = 'editAdModal';
+    m.className = 'modal';
+    m.onclick = (e) => { if (e.target === m) m.classList.remove('open'); };
+    document.body.appendChild(m);
+  }
+  const within12h = (Date.now() - (ad.originalCreated || ad.created || 0)) <= 12 * 3600000;
+  const triesLeft = Math.max(0, 3 - (ad.firstPhotoEdits || 0));
+  const firstLocked = !within12h || triesLeft <= 0;
+
+  m.innerHTML = `
+    <div class="modal-content" style="max-width:480px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h3 style="margin:0;">✏️ ${isEl ? 'Επεξεργασία αγγελίας' : 'Edit listing'}</h3>
+        <span onclick="document.getElementById('editAdModal').classList.remove('open')" style="cursor:pointer; font-size:24px;">&times;</span>
+      </div>
+      <div style="font-size:12px; color:#666; margin-bottom:8px;">
+        ${firstLocked
+          ? (isEl ? '🔒 Η 1η φωτογραφία είναι κλειδωμένη (πέρασαν 12 ώρες ή 3 αλλαγές). Μπορείτε να αλλάξετε τις υπόλοιπες.' : '🔒 1st photo is locked (12h or 3 tries passed). You can update the other photos.')
+          : (isEl ? `🔓 Η 1η φωτογραφία μπορεί να αλλάξει (απομένουν ${triesLeft} προσπάθειες εντός 12 ωρών).` : `🔓 1st photo can be changed (${triesLeft} tries left within 12h).`)}
+      </div>
+      <label style="font-size:12.5px; font-weight:700;">${isEl ? 'Τιμή (€)' : 'Price (€)'}</label>
+      <input id="editAdPrice" type="number" value="${ad.price || 0}" style="width:100%; padding:8px; margin:4px 0 10px; border:1px solid #ccc; border-radius:8px;">
+      <label style="font-size:12.5px; font-weight:700;">${isEl ? 'Περιγραφή (έως 20% τροποποίηση)' : 'Description (up to 20% change)'}</label>
+      <textarea id="editAdDesc" rows="3" style="width:100%; padding:8px; margin:4px 0 10px; border:1px solid #ccc; border-radius:8px;">${ad.description || ''}</textarea>
+      <label style="font-size:12.5px; font-weight:700;">${isEl ? 'Αντικατάσταση φωτογραφιών (προαιρετικά)' : 'Replace photos (optional)'}</label>
+      <input id="editAdFiles" type="file" accept="image/*" multiple style="width:100%; margin:4px 0 12px;">
+      <button class="primary" style="width:100%; padding:10px;" onclick="saveEditedAd('${ad.id}')">${isEl ? 'Αποθήκευση αλλαγών' : 'Save changes'}</button>
+    </div>`;
+  m.classList.add('open');
+}
+
+async function saveEditedAd(adId) {
+  const isEl = lang === 'el';
+  const ad = await api('/api/ads/' + adId);
+  let photos = [...(ad.photos || [])];
+  const filesInput = document.getElementById('editAdFiles');
+  if (filesInput && filesInput.files && filesInput.files.length > 0) {
+    const fd = new FormData();
+    fd.append('isEdit', '1');
+    for (let i = 0; i < Math.min(filesInput.files.length, 6); i++) fd.append('photos', filesInput.files[i]);
+    const upRes = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + localStorage.getItem('dezo_token') },
+      body: fd
+    }).then(r => r.json());
+    if (upRes.urls && upRes.urls.length) {
+      const within12h = (Date.now() - (ad.originalCreated || ad.created || 0)) <= 12 * 3600000;
+      const firstLocked = !within12h || (ad.firstPhotoEdits || 0) >= 3;
+      if (firstLocked && photos.length > 0) {
+        photos = [photos[0], ...upRes.urls.slice(0, 5)];
+      } else {
+        photos = upRes.urls;
+      }
+    }
+  }
+  const res = await api('/api/ads/' + adId, {
+    method: 'PUT',
+    body: JSON.stringify({
+      price: document.getElementById('editAdPrice').value,
+      description: document.getElementById('editAdDesc').value,
+      photos
+    })
+  });
+  if (res.error === 'FIRST_PHOTO_LOCKED') return alert(isEl ? 'Η 1η φωτογραφία είναι κλειδωμένη!' : '1st photo is locked!');
+  if (res.error === 'DESC_20_PERCENT') return alert(isEl ? 'Η περιγραφή δεν μπορεί να αλλάξει πάνω από 20%!' : 'Description cannot change by more than 20%!');
+  if (res.error === 'DESC_EDIT_LIMIT') return alert(isEl ? 'Εξαντλήθηκε το όριο επεξεργασιών περιγραφής.' : 'Description edit limit reached.');
+  if (res.error === 'PHOTO_LIMIT') return alert(isEl ? `Επιτρέπονται έως ${res.allowedMax} φωτογραφίες για αυτή την αγγελία.` : `Up to ${res.allowedMax} photos allowed for this listing.`);
+  if (res.error) return alert(res.error);
+  document.getElementById('editAdModal').classList.remove('open');
+  alert(isEl ? '✅ Οι αλλαγές αποθηκεύτηκαν!' : '✅ Changes saved!');
+  showAd(adId);
+}
 </script>
 </body>
 </html>
