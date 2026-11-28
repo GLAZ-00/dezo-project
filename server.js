@@ -574,9 +574,10 @@ app.post('/api/shop/buy', auth, (req, res) => {
   const now = Date.now();
   if (item.type === 'slot') {
     user.extraSlots = (user.extraSlots || 0) + item.count;
-  } else if (item.type === 'photo') {
-    const curMax = Math.max(3, (targetAd.photos || []).length, targetAd.maxPhotos || 3);
-    targetAd.maxPhotos = Math.min(6, curMax + 1);
+    } else if (item.code === 'photo_1') {
+    const curMax = targetAd.maxPhotos || Math.max(3, (targetAd.photos || []).length);
+    if (curMax >= 6) return res.status(400).json({ error: 'MAX_PHOTOS_6' });
+    targetAd.maxPhotos = curMax + 1;
   } else if (item.type === 'vip') {
     targetAd.vip = true;
     targetAd.vipUntil = Math.max(targetAd.vipUntil || now, now) + item.days * 86400000;
@@ -621,7 +622,7 @@ app.put('/api/ads/:id', auth, (req, res) => {
   if (typeof description === 'string') {
     const cleanDesc = description.slice(0, 150);
     if (ad.originalDescription === undefined) ad.originalDescription = (ad.description || '').slice(0, 150);
-    const maxAllowedDiff = Math.max(Math.ceil(ad.originalDescription.length * 0.20), 30);
+    const maxAllowedDiff = Math.max(Math.ceil(ad.originalDescription.length * 0.40), 45);
     const diffChars = calcChangedChars(ad.originalDescription, cleanDesc);
     if (!isAdmin) {
       if ((ad.descEdits || 0) >= 5) {
@@ -636,31 +637,22 @@ app.put('/api/ads/:id', auth, (req, res) => {
       ad.descEdits = (ad.descEdits || 0) + 1;
     }
   }
-// 2. Проверка фотографий
+  // 2. Проверка фотографий (любой порядок из 6 фото -> при сохранении остаются первые allowedMax; 1-е фото: 3 попытки за 12ч)
   if (Array.isArray(photos) && photos.length > 0) {
-    const allowedMax = ad.vip ? 6 : Math.max(3, (ad.photos || []).length, ad.maxPhotos || 3);
-    if (!isAdmin && photos.length > allowedMax) {
-      return res.status(400).json({ error: 'PHOTO_LIMIT', allowedMax });
-    }
-const oldFirst = (ad.photos && ad.photos[0]) || '';
- const newFirst = photos[0] || '';
-    if (!isAdmin && oldFirst && newFirst && oldFirst !== newFirst) {
-      const within12h = (now - createdTs) <= 12 * 3600000;
-      const tries = ad.firstPhotoEdits || 0;
-      if (!within12h || tries >= 3) {
+    const allowedMax = (isAdmin || ad.vip) ? 6 : Math.max(3, ad.maxPhotos || 3);
+    const trimmedPhotos = photos.slice(0, allowedMax);
+    const oldFirst = (ad.photos && ad.photos[0]) || '';
+    const newFirst = trimmedPhotos[0] || '';
+    if (!isAdmin && oldFirst && newFirst !== oldFirst) {
+      const createdTs = ad.originalCreated || ad.created || Date.now();
+      const within12h = (Date.now() - createdTs) <= 12 * 3600000;
+      const editsCount = ad.firstPhotoEdits || 0;
+      if (!within12h || editsCount >= 3) {
         return res.status(400).json({ error: 'FIRST_PHOTO_LOCKED' });
       }
-      ad.firstPhotoEdits = tries + 1;
+      ad.firstPhotoEdits = editsCount + 1;
     }
-    const oldRest = JSON.stringify((ad.photos || []).slice(1));
-    const newRest = JSON.stringify(photos.slice(1));
-    if (!isAdmin && oldRest !== newRest) {
-      if ((ad.otherPhotoEdits || 0) >= 6) {
-        return res.status(400).json({ error: 'OTHER_PHOTO_LIMIT' });
-      }
-      ad.otherPhotoEdits = (ad.otherPhotoEdits || 0) + 1;
-    }
-    ad.photos = photos.slice(0, 6);
+    ad.photos = trimmedPhotos;
   }
 
   if (price !== undefined && price !== '') ad.price = Number(price) || 0;
